@@ -1,1 +1,1 @@
-#Hotchairs - Exadel Summer 2020
+Hotchairs - Exadel Summer 2020 Internship
