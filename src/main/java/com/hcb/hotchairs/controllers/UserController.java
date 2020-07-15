@@ -31,9 +31,8 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getById(@PathVariable("id") Long id) {
         User user = userService.getById(id);
-        return Objects.isNull(user)
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(userConverter.toDTO(user));
+        return Objects.isNull(user) ?
+                ResponseEntity.notFound().build() : ResponseEntity.ok(userConverter.toDTO(user));
     }
 
     @GetMapping("/")
