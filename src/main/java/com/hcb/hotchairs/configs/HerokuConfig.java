@@ -1,10 +1,8 @@
-package com.hcb.hotchairs;
+package com.hcb.hotchairs.configs;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.sql.DataSource;
 
 @Configuration
 public class HerokuConfig {
