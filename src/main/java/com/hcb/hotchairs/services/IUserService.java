@@ -1,7 +1,6 @@
 package com.hcb.hotchairs.services;
 
 import com.hcb.hotchairs.entities.User;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

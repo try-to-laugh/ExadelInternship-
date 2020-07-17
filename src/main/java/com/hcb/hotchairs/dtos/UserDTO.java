@@ -13,6 +13,6 @@ public class UserDTO {
     private Long hrId;
 
     /* TODO:
-        > Validation annotations.
+        1. Annotation-based validation, with almost all DTO objects.
      */
 }
