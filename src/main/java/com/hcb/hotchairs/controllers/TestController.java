@@ -36,7 +36,7 @@ public class TestController {
     }
 
     @GetMapping("/adminAuth")
-    @PreAuthorize("hasAnyAuthority('Admin')")
+    @PreAuthorize("hasAuthority('Admin')")
     public ResponseEntity<String> checkAdminAuth() {
         return ResponseEntity.ok("Admin logged in.");
     }

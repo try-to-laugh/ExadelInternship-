@@ -23,24 +23,15 @@ public class LoginInfoConverter {
             return null;
         }
 
-        LoginInfoDTO loginInfoDTO = new LoginInfoDTO();
-        loginInfoDTO.setId(user.getId());
-        loginInfoDTO.setUsername(user.getEmail());
-        loginInfoDTO.setPassword(user.getPassword());
-        loginInfoDTO.setAuthorities(user.getRoles().stream()
-                .map(roleConverter::toDTO)
-                .collect(Collectors.toList()));
-
-        loginInfoDTO.setIsAccountNonExpired(true);
-        loginInfoDTO.setIsAccountNonLocked(true);
-        loginInfoDTO.setIsCredentialsNonExpired(true);
-        loginInfoDTO.setIsEnabled(true);
-
-        return loginInfoDTO;
-    }
-
-    @Deprecated
-    public User fromDTO(LoginInfoDTO loginInfoDTO) {
-        return null;
+        return new LoginInfoDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getRoles().stream().map(roleConverter::toDTO).collect(Collectors.toList()),
+                true,
+                true,
+                true,
+                true
+        );
     }
 }
