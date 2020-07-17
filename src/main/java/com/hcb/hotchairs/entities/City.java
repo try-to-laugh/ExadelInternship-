@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,8 +18,9 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "Cities")
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "Cities")
 public class City {
 
     @Id

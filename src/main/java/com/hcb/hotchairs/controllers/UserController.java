@@ -20,23 +20,19 @@ import java.util.stream.Collectors;
 public class UserController {
 
     private final IUserService userService;
-    private final UserConverter userConverter;
 
     @Autowired
-    public UserController(IUserService userService, UserConverter userConverter) {
+    public UserController(IUserService userService) {
         this.userService = userService;
-        this.userConverter = userConverter;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getById(@PathVariable("id") Long id) {
-        User user = userService.getById(id);
-        return Objects.isNull(user) ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(userConverter.toDTO(user));
+        return ResponseEntity.ok(userService.getById(id));
     }
 
-    @GetMapping("/")
-    public List<UserDTO> getAll() {
-        return userService.getAll().stream().map(userConverter::toDTO).collect(Collectors.toList());
+    @GetMapping("")
+    public ResponseEntity<List<UserDTO>> getAll() {
+        return ResponseEntity.ok(userService.getAll());
     }
 }
