@@ -41,6 +41,6 @@ public class Reservation {
     private List<Detail> details = new ArrayList<>();
 
     /* TODO:
-        Specify the presentation format of days of the week, time for each day of the week.
+        1. Specify the presentation format for repeatable reservations.
      */
 }

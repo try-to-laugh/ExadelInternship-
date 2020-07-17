@@ -35,6 +35,9 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "password")
+    private String password;
+
     @ManyToOne
     @JoinColumn(name = "hr_id")
     private User hr;
@@ -50,7 +53,6 @@ public class User {
     )
     private List<Role> roles = new ArrayList<>();
 
-    // TODO: Check, if we need here orphanRemoval.
     @OneToMany(mappedBy = "user")
     private List<Comment> comments = new ArrayList<>();
 
