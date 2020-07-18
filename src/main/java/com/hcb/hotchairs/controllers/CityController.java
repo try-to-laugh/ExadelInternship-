@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.controllers;
 
+import com.hcb.hotchairs.services.impl.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,17 +17,20 @@ import java.util.stream.Collectors;
 @RequestMapping("/cities")
 public class CityController {
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_IMPLEMENTED)
-                .body("Content will be here, just wait...");
+    private final CityService cityService;
+
+    @Autowired
+    public CityController(CityService cityService){
+        this.cityService = cityService;
     }
 
-    @GetMapping("")
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(cityService.getById(id));
+    }
+
+    @GetMapping("/")
     public ResponseEntity<Object> getAll() {
-        return ResponseEntity
-                .status(HttpStatus.NOT_IMPLEMENTED)
-                .body("Content will be here, just wait...");
+        return ResponseEntity.ok(cityService.getAll());
     }
 }
