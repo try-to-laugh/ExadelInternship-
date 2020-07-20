@@ -1,4 +1,4 @@
-package com.hcb.hotchairs;
+package com.hcb.hotchairs.configs;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +42,9 @@ public class SwaggerConfig {
 
     private ApiInfo metadata() {
         return new ApiInfoBuilder()
-                .title("CATS Api")
-                .description("TEAM 3")
-                .version("1.3/4")
+                .title("Hot Chairs Api")
+                .description("TEAM 1")
+                .version("1.0")
                 .build();
     }
 }
