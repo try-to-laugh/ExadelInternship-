@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface IOfficeService {
     List<OfficeDTO> getAll();
+    List<OfficeDTO> getAllByCityId(Long cityId);
     OfficeDTO getById(Long id);
 }

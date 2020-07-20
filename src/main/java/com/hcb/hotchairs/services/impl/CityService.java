@@ -28,6 +28,11 @@ public class CityService implements ICityService {
     }
 
     @Override
+    public List<CityDTO> getAllByCountryId(Long countryId){
+        return cityDAO.findAllByCountryId(countryId).stream().map(cityConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
     public CityDTO getById(Long id){
         return cityConverter.toDTO(cityDAO.findById(id).orElse(null));
     }

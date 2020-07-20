@@ -27,6 +27,11 @@ public class FloorController {
         return ResponseEntity.ok(floorService.getById(id));
     }
 
+    @GetMapping("/byOffice/{id}")
+    public ResponseEntity<Object> getByOfficeId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(floorService.getAllByOfficeId(id));
+    }
+
     @GetMapping("")
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(floorService.getAll());

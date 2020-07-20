@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface ICityService {
     List<CityDTO> getAll();
+    List<CityDTO> getAllByCountryId(Long countryId);
     CityDTO getById(Long id);
 }
