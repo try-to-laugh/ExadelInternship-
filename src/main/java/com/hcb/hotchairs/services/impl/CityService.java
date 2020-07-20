@@ -22,10 +22,12 @@ public class CityService implements ICityService {
         this.cityConverter =cityConverter;
     }
 
+    @Override
     public List<CityDTO> getAll(){
         return cityDAO.findAll().stream().map(cityConverter::toDTO).collect(Collectors.toList());
     }
 
+    @Override
     public CityDTO getById(Long id){
         return cityConverter.toDTO(cityDAO.findById(id).orElse(null));
     }

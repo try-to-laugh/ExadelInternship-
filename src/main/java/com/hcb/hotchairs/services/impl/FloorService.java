@@ -20,10 +20,12 @@ public class FloorService implements IFloorService {
         this.floorConverter = floorConverter;
     }
 
+    @Override
     public List<FloorDTO> getAll(){
         return floorDAO.findAll().stream().map(floorConverter::toDTO).collect(Collectors.toList());
     }
 
+    @Override
     public FloorDTO getById(Long id){
         return floorConverter.toDTO(floorDAO.findById(id).orElse(null));
     }

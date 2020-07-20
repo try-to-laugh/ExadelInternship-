@@ -22,10 +22,12 @@ public class OfficeService implements IOfficeService {
         this.officeConverter = officeConverter;
     }
 
+    @Override
     public List<OfficeDTO> getAll(){
         return officeDAO.findAll().stream().map(officeConverter::toDTO).collect(Collectors.toList());
     }
 
+    @Override
     public OfficeDTO getById(Long id){
         return officeConverter.toDTO(officeDAO.findById(id).orElse(null));
     }
