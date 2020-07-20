@@ -169,15 +169,9 @@ public class DBRestoreService implements IDBRestoreService {
 
         // TODO: Country pictures
 
-        Country belarus = restoreCountriesDAO.save(new Country((long) 1, "Belarus", null,
-                "Wait, we find resource to place our pictures",
-                "Wait, we find resource to place our pictures"));
-        Country ukraine = restoreCountriesDAO.save(new Country((long) 2, "Ukraine", null,
-                "Wait, we find resource to place our pictures",
-                "Wait, we find resource to place our pictures"));
-        Country russia = restoreCountriesDAO.save(new Country((long) 3, "Russia",  null,
-                "Wait, we find resource to place our pictures",
-                "Wait, we find resource to place our pictures"));
+        Country belarus = restoreCountriesDAO.save(new Country((long) 1, "Belarus", null));
+        Country ukraine = restoreCountriesDAO.save(new Country((long) 2, "Ukraine", null));
+        Country russia = restoreCountriesDAO.save(new Country((long) 3, "Russia",  null));
 
         City minsk = restoreCitiesDAO.save(new City((long) 1, "Minsk", null, belarus));
         City kharkiv = restoreCitiesDAO.save(new City((long) 2, "Kharkiv", null, ukraine));

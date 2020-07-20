@@ -16,8 +16,6 @@ public class CountryConverter {
         CountryDTO countryDTO = new CountryDTO();
         countryDTO.setId(country.getId());
         countryDTO.setName(country.getName());
-        countryDTO.setPictureEnabled(country.getPictureEnabled());
-        countryDTO.setPictureDisabled(country.getPictureDisabled());
         return countryDTO;
     }
 }
