@@ -31,10 +31,4 @@ public class Country {
 
     @OneToMany(mappedBy = "country", orphanRemoval = true)
     private List<City> cities = new ArrayList<>();
-
-    @Column(name = "pictureDisabled", columnDefinition = "TEXT")
-    private String pictureDisabled;
-
-    @Column(name = "pictureEnabled", columnDefinition = "TEXT")
-    private String pictureEnabled;
 }
