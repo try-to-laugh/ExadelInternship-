@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface ICityDAO extends JpaRepository<City, Long> {
 
-    @Query("FROM City WHERE Country.id = ?1")
+    @Query("FROM City WHERE country.id = ?1")
     List<City> findAllByCountryId(Long countryId);
 }
