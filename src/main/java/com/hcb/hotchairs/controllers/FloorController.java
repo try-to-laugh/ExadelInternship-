@@ -1,6 +1,7 @@
 package com.hcb.hotchairs.controllers;
 
 import com.hcb.hotchairs.converters.FloorConverter;
+import com.hcb.hotchairs.services.IFloorService;
 import com.hcb.hotchairs.services.impl.FloorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/floors")
 public class FloorController {
 
-    private final FloorService floorService;
+    private final IFloorService floorService;
 
     @Autowired
-    FloorController(FloorService floorService){
+    FloorController(IFloorService floorService){
         this.floorService = floorService;
     }
 

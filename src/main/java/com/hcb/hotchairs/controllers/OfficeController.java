@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.controllers;
 
+import com.hcb.hotchairs.services.IOfficeService;
 import com.hcb.hotchairs.services.impl.OfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +16,10 @@ import javax.persistence.Access;
 @RequestMapping("/offices")
 public class OfficeController {
 
-    private final OfficeService officeService;
+    private final IOfficeService officeService;
 
     @Autowired
-    public OfficeController(OfficeService officeService) {
+    public OfficeController(IOfficeService officeService) {
         this.officeService = officeService;
     }
 

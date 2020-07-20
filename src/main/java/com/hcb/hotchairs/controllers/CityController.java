@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.controllers;
 
+import com.hcb.hotchairs.services.ICityService;
 import com.hcb.hotchairs.services.impl.CityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +18,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/cities")
 public class CityController {
 
-    private final CityService cityService;
+    private final ICityService cityService;
 
     @Autowired
-    public CityController(CityService cityService){
+    public CityController(ICityService cityService){
         this.cityService = cityService;
     }
 
