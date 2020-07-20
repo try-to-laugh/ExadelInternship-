@@ -1,13 +1,11 @@
 package com.hcb.hotchairs.dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class CountryDTO {
+public class TagDTO {
     private Long id;
     private String name;
 }

@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.controllers;
 
+import com.hcb.hotchairs.services.IPlaceService;
 import com.hcb.hotchairs.services.impl.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,10 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/places")
 public class PlaceController {
 
-    private final PlaceService placeService;
+    private final IPlaceService placeService;
 
     @Autowired
-    public PlaceController(PlaceService placeService){
+    public PlaceController(IPlaceService placeService){
         this.placeService = placeService;
     }
 

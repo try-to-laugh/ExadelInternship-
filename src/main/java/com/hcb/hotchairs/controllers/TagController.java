@@ -1,5 +1,7 @@
 package com.hcb.hotchairs.controllers;
 
+import com.hcb.hotchairs.services.ITagService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,18 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/tags")
 public class TagController {
+    private final ITagService tagService;
+
+    @Autowired
+    public TagController(ITagService tagService){
+        this.tagService = tagService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_IMPLEMENTED)
-                .body("Content will be here, just wait...");
+        return ResponseEntity.ok(tagService.getById(id));
     }
 
     @GetMapping("")
     public ResponseEntity<Object> getAll() {
-        return ResponseEntity
-                .status(HttpStatus.NOT_IMPLEMENTED)
-                .body("Content will be here, just wait...");
+        return ResponseEntity.ok(tagService.getAll());
     }
 }
