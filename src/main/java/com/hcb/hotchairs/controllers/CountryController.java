@@ -1,6 +1,9 @@
 package com.hcb.hotchairs.controllers;
 
+import com.hcb.hotchairs.converters.CountryConverter;
+import com.hcb.hotchairs.dtos.CountryDTO;
 import com.hcb.hotchairs.entities.Country;
+import com.hcb.hotchairs.services.ICountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,37 +19,20 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/countries")
 public class CountryController {
+    private final ICountryService countryService;
 
-    //private final ICountryService countryService;
-    //private final CountryConverter countryConverter;
-
-    /*@Autowired
-    public CountryController(ICountryService countryService, CountryConverter countryConverter) {
+    @Autowired
+    public CountryController(ICountryService countryService) {
         this.countryService = countryService;
-        this.countryConverter = countryConverter;
-    }*/
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_IMPLEMENTED)
-                .body("Content will be here, just wait...");
+        return ResponseEntity.ok(countryService.getById(id));
     }
 
-    /*public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
-        Country country = countryService.getById(id);
-        return Objects.isNull(country) ?
-                ResponseEntity.notFound().build() : ResponseEntity.ok(countryConverter.toDTO(country));
-    }*/
-
-    @GetMapping("")
-    public ResponseEntity<Object> getAll() {
-        return ResponseEntity
-                .status(HttpStatus.NOT_IMPLEMENTED)
-                .body("Content will be here, just wait...");
+    @GetMapping("/")
+    public ResponseEntity<List<CountryDTO>> getAll() {
+        return ResponseEntity.ok(countryService.getAll());
     }
-
-    /*public ResponseEntity<List<CountryDTO>> getAll() {
-        return ResponseEntity.ok(countryService.getAll().stream().map(countryConverter::toDTO).collect(Collectors.toList()));
-    }*/
 }

@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "Countries")
 public class Country {
 
@@ -30,6 +32,9 @@ public class Country {
     @OneToMany(mappedBy = "country", orphanRemoval = true)
     private List<City> cities = new ArrayList<>();
 
-    @Column(name = "pictureLink")
-    private String pictureLink;
+    @Column(name = "pictureDisabled", columnDefinition = "TEXT")
+    private String pictureDisabled;
+
+    @Column(name = "pictureEnabled", columnDefinition = "TEXT")
+    private String pictureEnabled;
 }
