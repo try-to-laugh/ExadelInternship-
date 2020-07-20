@@ -30,7 +30,7 @@ public class CityController {
         return ResponseEntity.ok(cityService.getById(id));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(cityService.getAll());
     }

@@ -1,9 +1,14 @@
 package com.hcb.hotchairs.controllers;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.hcb.hotchairs.converters.CountryConverter;
+import com.hcb.hotchairs.dtos.CityDTO;
 import com.hcb.hotchairs.dtos.CountryDTO;
 import com.hcb.hotchairs.entities.Country;
 import com.hcb.hotchairs.services.ICountryService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -64,8 +69,30 @@ public class CountryController {
         return ResponseEntity.ok(countryService.getById(id));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<List<CountryDTO>> getAll() {
         return ResponseEntity.ok(countryService.getAll());
+    }
+
+    @GetMapping("/cities/{id}")
+    public ResponseEntity<List<CityDTO>> getCountryCities(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(countryService.getCountryCities(id));
+    }
+
+    @GetMapping("/extended/{id}")
+    public ResponseEntity<Object> getExtendedCountryInfo(@PathVariable("id") Long id) {
+        CountryDTO countryDTO = countryService.getById(id);
+        List<CityDTO> cityDTOList = countryService.getCountryCities(id);
+
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        class ExtendedCountryInfo {
+            @JsonUnwrapped
+            private CountryDTO country;
+            private List<CityDTO> cities;
+        }
+
+        return ResponseEntity.ok(new ExtendedCountryInfo(countryDTO, cityDTOList));
     }
 }

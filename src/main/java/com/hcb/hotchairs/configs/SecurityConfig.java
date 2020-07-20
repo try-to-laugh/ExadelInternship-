@@ -13,6 +13,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -32,16 +38,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors()
+                .and()
                 .csrf()
                     .disable()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.OPTIONS, "**").permitAll()
+                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .antMatchers("/test/**", "/restore/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .formLogin()
                     .permitAll()
-                    .defaultSuccessUrl("/main", true)
+                    .defaultSuccessUrl("/main", false)
                 .and()
                 .rememberMe()
                     .key("Cv2XaEtT66YHtdNhJuUn")
@@ -54,9 +62,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         /* TODO:
             1. Disable Test API before release.
             2. Recheck RememberMe options (Remember time, request <remember-me> parameter name, etc.).
-            3. DefaultSuccessfulUrl() second parameter, maybe we don't need force redirection to /index.
-            4. Enable CSRF.
+            3. Enable CSRF.
          */
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration().applyPermitDefaultValues();
+
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(Collections.singletonList("*"));
+        configuration.setAllowedMethods(Collections.singletonList("*"));
+        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 
     @Override
