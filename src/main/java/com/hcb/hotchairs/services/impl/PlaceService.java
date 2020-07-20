@@ -23,10 +23,12 @@ public class PlaceService implements IPlaceService {
         this.placeConverter = placeConverter;
     }
 
+    @Override
     public  List<PlaceDTO> getAll(){
         return placeDAO.findAll().stream().map(placeConverter::toDTO).collect(Collectors.toList());
     }
 
+    @Override
     public PlaceDTO getById(Long id){
         return placeConverter.toDTO(placeDAO.findById(id).orElse(null));
     }

@@ -4,6 +4,7 @@ import com.hcb.hotchairs.services.ILoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -30,7 +32,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .csrf()
+                    .disable()
                 .authorizeRequests()
+                    .antMatchers(HttpMethod.OPTIONS, "**").permitAll()
                     .antMatchers("/test/**", "/restore/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
@@ -50,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             1. Disable Test API before release.
             2. Recheck RememberMe options (Remember time, request <remember-me> parameter name, etc.).
             3. DefaultSuccessfulUrl() second parameter, maybe we don't need force redirection to /index.
+            4. Enable CSRF.
          */
     }
 
