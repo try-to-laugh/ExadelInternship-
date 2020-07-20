@@ -28,8 +28,13 @@ public class CommentService implements ICommentService {
     }
 
     @Override
-    public List<CommentDTO> getByUserId(Long id){
-        return commentDAO.findByUserId(id).stream().map(commentConverter::toDTO).collect(Collectors.toList());
+    public List<CommentDTO> getAllByUserId(Long userId){
+        return commentDAO.findAllByUserId(userId).stream().map(commentConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentDTO> getAllByPlaceId(Long placeId){
+        return commentDAO.findAllByPlaceId(placeId).stream().map(commentConverter::toDTO).collect(Collectors.toList());
     }
 
     @Override

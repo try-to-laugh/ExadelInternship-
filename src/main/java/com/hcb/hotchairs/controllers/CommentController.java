@@ -28,8 +28,13 @@ public class CommentController {
     }
 
     @GetMapping("/byUser/{id}")
-    public ResponseEntity<Object> getByUserId(@PathVariable("id") Long id){
-        return ResponseEntity.ok(commentService.getByUserId(id));
+    public ResponseEntity<Object> getAllByUserId(@PathVariable("id") Long id){
+        return ResponseEntity.ok(commentService.getAllByUserId(id));
+    }
+
+    @GetMapping("byPlace/{id}")
+    public ResponseEntity<Object> getAllByPlaceId(@PathVariable("id") Long id){
+        return ResponseEntity.ok(commentService.getAllByPlaceId(id));
     }
 
     @GetMapping("")
