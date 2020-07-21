@@ -59,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/configuration/security",
                     "/swagger-ui.html",
                     "/webjars/**").permitAll()
+                    .antMatchers("/**").permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .antMatchers("/test/**", "/restore/**").permitAll()
                     .anyRequest().authenticated()
@@ -87,6 +88,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             1. Disable Test API before release.
             2. Recheck RememberMe options (Remember time, request <remember-me> parameter name, etc.).
             3. Enable CSRF.
+            4. DISABLE /** PERMIT ALL!!!
          */
     }
 
