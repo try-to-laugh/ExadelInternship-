@@ -12,11 +12,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -28,11 +28,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final ILoginService loginService;
 
+    private final RESTAuthenticationEntryPoint entryPoint;
+    private final RESTAuthenticationFailureHandler failureHandler;
+    private final RESTAuthenticationSuccessHandler successHandler;
+
     @Autowired
     public SecurityConfig(PasswordEncoder passwordEncoder,
-                                     ILoginService loginService) {
+                          ILoginService loginService,
+                          RESTAuthenticationEntryPoint entryPoint,
+                          RESTAuthenticationFailureHandler failureHandler,
+                          RESTAuthenticationSuccessHandler successHandler) {
         this.passwordEncoder = passwordEncoder;
         this.loginService = loginService;
+        this.entryPoint = entryPoint;
+        this.failureHandler = failureHandler;
+        this.successHandler = successHandler;
     }
 
     @Override
@@ -47,9 +57,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/test/**", "/restore/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(entryPoint)
+                .and()
                 .formLogin()
                     .permitAll()
-                    .defaultSuccessUrl("/main", false)
+                    .successHandler(successHandler)
+                    .failureHandler(failureHandler)
                 .and()
                 .rememberMe()
                     .key("Cv2XaEtT66YHtdNhJuUn")
@@ -57,7 +71,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                     .logoutUrl("/logout")
-                    .logoutSuccessUrl("/login");
+                    .permitAll()
+                    .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) ->
+                            httpServletResponse.setStatus(HttpServletResponse.SC_OK))
+                    .deleteCookies("JSESSIONID")
+                    .invalidateHttpSession(true);
 
         /* TODO:
             1. Disable Test API before release.

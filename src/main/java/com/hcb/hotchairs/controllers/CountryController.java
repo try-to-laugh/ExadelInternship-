@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.support.ServletContextResource;
 
 import javax.servlet.ServletContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -94,5 +95,26 @@ public class CountryController {
         }
 
         return ResponseEntity.ok(new ExtendedCountryInfo(countryDTO, cityDTOList));
+    }
+
+    @GetMapping("/extended")
+    public ResponseEntity<?> getAllExtendedCountryInfo() {
+        List<CountryDTO> countryDTOList = countryService.getAll();
+
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        class ExtendedCountryInfo {
+            @JsonUnwrapped
+            private CountryDTO country;
+            private List<CityDTO> cities;
+        }
+
+        List<ExtendedCountryInfo> extendedCountryInfos = new ArrayList<>();
+        for (CountryDTO country: countryDTOList) {
+            extendedCountryInfos.add(new ExtendedCountryInfo(country, countryService.getCountryCities(country.getId())));
+        }
+
+        return ResponseEntity.ok(extendedCountryInfos);
     }
 }
