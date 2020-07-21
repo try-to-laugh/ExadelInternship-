@@ -11,5 +11,8 @@ import java.util.List;
 public interface ICommentDAO extends JpaRepository<Comment, Long> {
 
     @Query("FROM Comment WHERE user.id = ?1")
-    List<Comment> findByUserId(Long userId);
+    List<Comment> findAllByUserId(Long userId);
+
+    @Query("FROM Comment WHERE place.id = ?1")
+    List<Comment> findAllByPlaceId(Long placeId);
 }

@@ -29,6 +29,11 @@ public class OfficeController {
         return ResponseEntity.ok(officeService.getById(id));
     }
 
+    @GetMapping("/byCity/{id}")
+    public ResponseEntity<Object> getByCityId(@PathVariable("id") Long id){
+        return ResponseEntity.ok(officeService.getAllByCityId((id)));
+    }
+
     @GetMapping("")
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(officeService.getAll());

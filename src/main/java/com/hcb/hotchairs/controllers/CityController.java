@@ -30,6 +30,11 @@ public class CityController {
         return ResponseEntity.ok(cityService.getById(id));
     }
 
+    @GetMapping("/byCountry/{id}")
+    public ResponseEntity<Object> getAllByCountryId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(cityService.getAllByCountryId(id));
+    }
+
     @GetMapping("/")
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(cityService.getAll());

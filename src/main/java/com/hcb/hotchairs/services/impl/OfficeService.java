@@ -28,6 +28,11 @@ public class OfficeService implements IOfficeService {
     }
 
     @Override
+    public List<OfficeDTO> getAllByCityId(Long cityId){
+        return officeDAO.findAllByCityId(cityId).stream().map(officeConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
     public OfficeDTO getById(Long id){
         return officeConverter.toDTO(officeDAO.findById(id).orElse(null));
     }

@@ -26,6 +26,11 @@ public class FloorService implements IFloorService {
     }
 
     @Override
+    public List<FloorDTO> getAllByOfficeId(Long id){
+        return floorDAO.findAllByOfficeId(id).stream().map(floorConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
     public FloorDTO getById(Long id){
         return floorConverter.toDTO(floorDAO.findById(id).orElse(null));
     }
