@@ -19,5 +19,5 @@ public class ReservationDTO {
     private Date endDate;
     private Timestamp startTime;
     private Timestamp endTime;
-    private List<Boolean> weekDays;
+    private int[] weekDays;
 }

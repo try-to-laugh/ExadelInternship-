@@ -9,7 +9,7 @@ import java.util.List;
 public class PlaceDTO {
     private Long id;
     private Long capacity;
-    private Long florId;
+    private Long floorId;
     private String name;
     private List<RoleDTO> roles;
     private List<TagDTO> tags;

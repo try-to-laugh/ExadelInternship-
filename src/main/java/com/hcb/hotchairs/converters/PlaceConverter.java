@@ -29,7 +29,7 @@ public class PlaceConverter {
         placeDTO.setCapacity(place.getCapacity());
         placeDTO.setName(place.getName());
         placeDTO.setId(place.getId());
-        placeDTO.setFlorId(place.getFloor().getId());
+        placeDTO.setFloorId(place.getFloor().getId());
 
         if(!Objects.isNull(place.getRoles())){
             placeDTO.setRoles(place.getRoles().stream().map(roleConverter::toDTO).collect(Collectors.toList()));

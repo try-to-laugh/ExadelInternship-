@@ -1,8 +1,10 @@
 package com.hcb.hotchairs.entities;
 
+import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +24,10 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table(name = "Reservations")
+@TypeDef(
+        name = "int-array",
+        typeClass = IntArrayType.class
+)
 public class Reservation {
 
     @Id
@@ -56,14 +62,10 @@ public class Reservation {
     @Column(name = "end_timestamp")
     private Timestamp endTime;
 
-    @Type(type = "list-array")
-    @Column(name = "week_days")
-    private List<Boolean> weekDays;
+    @Type(type = "int-array")
+    @Column(name = "week_days", columnDefinition = "integer[]")
+    private int[] weekDays;
 
     @OneToMany(mappedBy = "reservation", orphanRemoval = true)
     private List<Detail> details = new ArrayList<>();
-
-    /* TODO:
-        1. Specify the presentation format for repeatable reservations.
-     */
 }
