@@ -35,7 +35,7 @@ public class CityController {
         return ResponseEntity.ok(cityService.getAllByCountryId(id));
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(cityService.getAll());
     }
