@@ -37,7 +37,6 @@ public class UserController {
                 != null) {
             entityModel = EntityModel.of(userDTO, //
                     linkTo(methodOn(UserController.class).getById(userDTO.getId())).withSelfRel(),
-                    new Link("here", "My Bookings"),
                     new Link("here", "Staff Bookings"),
                     new Link("here", "Manage Offices"),
                     new Link("here", "Manage Roles"));
@@ -45,7 +44,6 @@ public class UserController {
                 != null) {
             entityModel = EntityModel.of(userDTO, //
                     linkTo(methodOn(UserController.class).getById(userDTO.getId())).withSelfRel(),
-                    new Link("here", "My Bookings"),
                     new Link("here", "Staff Bookings"),
                     new Link("none", "Manage Offices"),
                     new Link("none", "Manage Roles"));
@@ -53,7 +51,6 @@ public class UserController {
                 != null) {
             entityModel = EntityModel.of(userDTO, //
                     linkTo(methodOn(UserController.class).getById(userDTO.getId())).withSelfRel(),
-                    new Link("here", "My Bookings"),
                     new Link("none", "Staff Bookings"),
                     new Link("here", "Manage Offices"),
                     new Link("none", "Manage Roles"));
@@ -61,14 +58,12 @@ public class UserController {
                 != null) {
             entityModel = EntityModel.of(userDTO, //
                     linkTo(methodOn(UserController.class).getById(userDTO.getId())).withSelfRel(),
-                    new Link("here", "My Bookings"),
                     new Link("here", "Staff Bookings"),
                     new Link("here", "Manage Offices"),
                     new Link("here", "Manage Roles"));
         } else {
             entityModel = EntityModel.of(userDTO, //
                     linkTo(methodOn(UserController.class).getById(userDTO.getId())).withSelfRel(),
-                    new Link("here", "My Bookings"),
                     new Link("none", "Staff Bookings"),
                     new Link("none", "Manage Offices"),
                     new Link("none", "Manage Roles"));
