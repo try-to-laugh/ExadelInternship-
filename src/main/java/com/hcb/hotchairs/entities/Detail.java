@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.sql.Timestamp;
+import java.sql.Date;
 
 @Data
 @Entity
@@ -24,17 +24,10 @@ public class Detail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "start_timestamp")
-    private Timestamp start;
-
-    @Column(name = "end_timestamp")
-    private Timestamp end;
-
     @ManyToOne
     @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    @ManyToOne
-    @JoinColumn(name = "place_id")
-    private Place place;
+    @Column(name = "date")
+    private Date date;
 }
