@@ -61,6 +61,6 @@ public class Place {
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "place", orphanRemoval = true)
-    private List<Detail> details = new ArrayList<>();
+    private List<Detail> Reservation = new ArrayList<>();
 }
 
