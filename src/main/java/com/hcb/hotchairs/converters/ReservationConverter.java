@@ -24,6 +24,7 @@ public class ReservationConverter {
         reservationDTO.setEndDate(reservation.getEndDate());
         reservationDTO.setStartTime(reservation.getStartTime());
         reservationDTO.setEndTime(reservation.getEndTime());
+        reservationDTO.setWeekDays(reservation.getWeekDays());
         return reservationDTO;
     }
 }

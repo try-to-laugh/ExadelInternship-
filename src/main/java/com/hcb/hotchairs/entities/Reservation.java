@@ -2,6 +2,7 @@ package com.hcb.hotchairs.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,10 @@ public class Reservation {
 
     @Column(name = "end_timestamp")
     private Timestamp endTime;
+
+    @Type(type = "list-array")
+    @Column(name = "week_days")
+    private List<Boolean> weekDays;
 
     @OneToMany(mappedBy = "reservation", orphanRemoval = true)
     private List<Detail> details = new ArrayList<>();
