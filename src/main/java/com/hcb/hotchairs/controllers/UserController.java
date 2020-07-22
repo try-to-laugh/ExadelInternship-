@@ -18,12 +18,12 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private static final Link NOT_HR = new Link("none", "Staff Bookings");
-    private static final Link IS_HR = new Link("here", "Staff Bookings");
-    private static final Link NOT_OFFICE_MANAGER = new Link("none", "Manage Offices");
-    private static final Link IS_OFFICE_MANAGER = new Link("here", "Manage Offices");
-    private static final Link NOT_ROLE_MANAGER = new Link("none", "Manage Roles");
-    private static final Link IS_ROLE_MANAGER = new Link("here", "Manage Roles");
+    private static final Link CAN_NOT_BOOK_FOR_EMPLOYEES = new Link("none", "Staff Bookings");
+    private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("here", "Staff Bookings");
+    private static final Link CAN_NOT_MANAGE_OFFICES = new Link("none", "Manage Offices");
+    private static final Link CAN_MANAGE_OFFICES = new Link("here", "Manage Offices");
+    private static final Link CAN_NOT_MANAGE_ROLES = new Link("none", "Manage Roles");
+    private static final Link CAN_MANAGE_ROLES = new Link("here", "Manage Roles");
 
     private final IUserService userService;
     private final UserDTOModelAssembler assembler;
@@ -40,21 +40,18 @@ public class UserController {
         EntityModel<UserDTO> entityModel;
         UserDTO userDTO = userService.getById(id);
 
-        if (userDTO.is("All")) {
+        if (userDTO.is("Admin")) {
             entityModel = assembler.toModel(userDTO,
-                    IS_HR, IS_OFFICE_MANAGER, IS_ROLE_MANAGER);
-        } else if (userDTO.is("HR")) {
-            entityModel = assembler.toModel(userDTO,
-                    IS_HR, NOT_OFFICE_MANAGER, NOT_ROLE_MANAGER);
+                    CAN_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_MANAGE_ROLES);
         } else if (userDTO.is("Office Manager")) {
             entityModel = assembler.toModel(userDTO,
-                    NOT_HR, IS_OFFICE_MANAGER, NOT_ROLE_MANAGER);
-        } else if (userDTO.is("Admin")) {
+                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
+        } else if (userDTO.is("HR")) {
             entityModel = assembler.toModel(userDTO,
-                    IS_HR, IS_OFFICE_MANAGER, IS_ROLE_MANAGER);
+                    CAN_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
         } else {
             entityModel = assembler.toModel(userDTO,
-                    NOT_HR, NOT_OFFICE_MANAGER, NOT_ROLE_MANAGER);
+                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
         }
 
         /**TODO
