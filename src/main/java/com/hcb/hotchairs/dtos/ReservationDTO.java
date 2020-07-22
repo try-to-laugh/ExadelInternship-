@@ -3,6 +3,7 @@ package com.hcb.hotchairs.dtos;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Date;
 import java.util.List;
@@ -17,7 +18,7 @@ public class ReservationDTO {
     private Long placeId;
     private Date startDate;
     private Date endDate;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private Time startTime;
+    private Time endTime;
     private int[] weekDays;
 }

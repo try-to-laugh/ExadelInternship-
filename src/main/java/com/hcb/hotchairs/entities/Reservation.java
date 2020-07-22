@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -57,10 +58,10 @@ public class Reservation {
     private Date endDate;
 
     @Column(name = "start_timestamp")
-    private Timestamp startTime;
+    private Time startTime;
 
     @Column(name = "end_timestamp")
-    private Timestamp endTime;
+    private Time endTime;
 
     @Type(type = "int-array")
     @Column(name = "week_days", columnDefinition = "integer[]")
