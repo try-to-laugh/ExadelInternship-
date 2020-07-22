@@ -24,6 +24,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public UserDTO getByEmail(String email) {
+        return userConverter.toDTO(userDAO.findByEmail(email));
+    }
+
+    @Override
     public UserDTO getById(Long id) {
         return userConverter.toDTO(userDAO.findById(id).orElse(null));
     }

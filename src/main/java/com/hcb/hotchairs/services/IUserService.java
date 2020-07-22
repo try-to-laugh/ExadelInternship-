@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface IUserService {
 
+    UserDTO getByEmail(String email);
     UserDTO getById(Long id);
     List<UserDTO> getAll();
 }
