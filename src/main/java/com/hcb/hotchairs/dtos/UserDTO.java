@@ -15,6 +15,11 @@ public class UserDTO {
     private Long hrId;
     private List<RoleDTO> roles;
 
+    public boolean is(String role){
+        return this.getRoles().stream().filter(roleDTO -> roleDTO.getName().equals(role)).findFirst().orElse(null)
+                != null;
+    }
+
     /* TODO:
         1. Annotation-based validation, with almost all DTO objects.
      */
