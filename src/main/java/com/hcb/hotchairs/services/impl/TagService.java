@@ -7,6 +7,7 @@ import com.hcb.hotchairs.services.ITagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +27,14 @@ public class TagService implements ITagService {
     @Override
     public List<TagDTO> getAll() {
         return tagDAO.findAll().stream().map(tagConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TagDTO> getAllFromIdCollection(Collection<Long> requestId) {
+        return tagDAO.findAllFromIdCollection(requestId)
+                .stream()
+                .map(tagConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
