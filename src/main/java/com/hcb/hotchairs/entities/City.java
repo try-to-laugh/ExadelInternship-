@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,7 +32,7 @@ public class City {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "city", orphanRemoval = true)
+    @OneToMany(mappedBy = "city", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Office> offices = new ArrayList<>();
 
     @ManyToOne

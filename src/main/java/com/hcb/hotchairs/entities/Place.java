@@ -28,7 +28,7 @@ public class Place {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "name")
@@ -57,10 +57,10 @@ public class Place {
     @JoinColumn(name = "floor_id")
     private Floor floor;
 
-    @OneToMany(mappedBy = "place", orphanRemoval = true)
+    @OneToMany(mappedBy = "place", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "place", orphanRemoval = true)
+    @OneToMany(mappedBy = "place", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
 }
 

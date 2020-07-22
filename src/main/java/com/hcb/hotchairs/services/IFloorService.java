@@ -7,4 +7,6 @@ public interface IFloorService {
     List<FloorDTO> getAll();
     List<FloorDTO> getAllByOfficeId(Long id);
     FloorDTO getById(Long id);
+    void saveBatch(List<FloorDTO> floors);
+    void save(FloorDTO floorDTO);
 }

@@ -11,6 +11,5 @@ import java.util.List;
 @Repository
 public interface IFloorDAO extends JpaRepository<Floor,Long> {
 
-    @Query("FROM Floor WHERE office.id = ?1")
     List<Floor> findAllByOfficeId(Long officeId);
 }
