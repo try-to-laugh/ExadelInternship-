@@ -47,4 +47,10 @@ public class FloorController {
         floorService.saveBatch(floors);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("")
+    public ResponseEntity<Object> saveFloor(@RequestBody FloorDTO floor) {
+        floorService.save(floor);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -45,11 +45,6 @@ public class OfficeService implements IOfficeService {
     @Transactional
     @Modifying
     public void saveOffice(OfficeDTO newOffice) {
-        Office office = officeConverter.fromDTO(newOffice);
-        try {
-            officeDAO.save(office);
-        } catch (Exception exception) {
-            System.out.println(exception.getMessage());
-        }
+        officeDAO.save(officeConverter.fromDTO(newOffice));
     }
 }

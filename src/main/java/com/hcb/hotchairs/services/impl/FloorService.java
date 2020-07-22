@@ -3,6 +3,7 @@ package com.hcb.hotchairs.services.impl;
 import com.hcb.hotchairs.converters.FloorConverter;
 import com.hcb.hotchairs.daos.IFloorDAO;
 import com.hcb.hotchairs.dtos.FloorDTO;
+import com.hcb.hotchairs.entities.Floor;
 import com.hcb.hotchairs.services.IFloorService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,12 @@ public class FloorService implements IFloorService {
     @Modifying
     public void saveBatch(List<FloorDTO> floors) {
         floorDAO.saveAll(floors.stream().map(floorConverter::fromDTO).collect(Collectors.toList()));
+    }
+
+    @Override
+    @Transactional
+    @Modifying
+    public void save(FloorDTO floorDTO) {
+        floorDAO.save(floorConverter.fromDTO(floorDTO));
     }
 }
