@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,14 +34,14 @@ public class Reservation {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "host_id")
     private Reservation host;
 
-    @OneToMany(mappedBy = "host", orphanRemoval = true)
+    @OneToMany(mappedBy = "host", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Reservation> invited = new ArrayList<>();
 
     @ManyToOne
@@ -67,6 +68,6 @@ public class Reservation {
     @Column(name = "week_days", columnDefinition = "integer[]")
     private int[] weekDays;
 
-    @OneToMany(mappedBy = "reservation", orphanRemoval = true)
+    @OneToMany(mappedBy = "reservation", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Detail> details = new ArrayList<>();
 }

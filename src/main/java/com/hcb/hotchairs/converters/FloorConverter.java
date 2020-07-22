@@ -16,7 +16,7 @@ public class FloorConverter {
 
         FloorDTO floorDTO = new FloorDTO();
         floorDTO.setId(floor.getId());
-        floorDTO.setName(floor.getName());
+        floorDTO.setNumber(floor.getNumber());
         floorDTO.setOfficeId(floor.getOffice().getId());
         return floorDTO;
     }

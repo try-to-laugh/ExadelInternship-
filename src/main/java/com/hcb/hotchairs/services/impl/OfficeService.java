@@ -3,11 +3,15 @@ package com.hcb.hotchairs.services.impl;
 import com.hcb.hotchairs.converters.OfficeConverter;
 import com.hcb.hotchairs.daos.IOfficeDAO;
 import com.hcb.hotchairs.dtos.OfficeDTO;
+import com.hcb.hotchairs.entities.Office;
 import com.hcb.hotchairs.services.IOfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,5 +39,17 @@ public class OfficeService implements IOfficeService {
     @Override
     public OfficeDTO getById(Long id){
         return officeConverter.toDTO(officeDAO.findById(id).orElse(null));
+    }
+
+    @Override
+    @Transactional
+    @Modifying
+    public void saveOffice(OfficeDTO newOffice) {
+        Office office = officeConverter.fromDTO(newOffice);
+        try {
+            officeDAO.save(office);
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
     }
 }

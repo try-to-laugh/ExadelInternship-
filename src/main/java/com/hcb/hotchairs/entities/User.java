@@ -28,7 +28,7 @@ public class User {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "name")
@@ -44,7 +44,7 @@ public class User {
     @JoinColumn(name = "hr_id")
     private User hr;
 
-    @OneToMany(mappedBy = "hr")
+    @OneToMany(mappedBy = "hr", cascade = CascadeType.ALL)
     private List<User> subordinates;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -55,9 +55,9 @@ public class User {
     )
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true)
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
 }

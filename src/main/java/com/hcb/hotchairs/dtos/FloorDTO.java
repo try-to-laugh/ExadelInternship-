@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FloorDTO {
     private Long id;
-    private String name;
+    private Integer number;
     private Long officeId;
 }
