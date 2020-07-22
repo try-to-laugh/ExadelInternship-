@@ -1,26 +1,45 @@
 package com.hcb.hotchairs.mas;
 
-import com.hcb.hotchairs.controllers.UserController;
 import com.hcb.hotchairs.dtos.UserDTO;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @Component
 public class UserDTOModelAssembler implements RepresentationModelAssembler<UserDTO, EntityModel<UserDTO>> {
 
+    private static final Link CAN_NOT_BOOK_FOR_EMPLOYEES = new Link("none", "Staff Bookings");
+    private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("here", "Staff Bookings");
+    private static final Link CAN_NOT_MANAGE_OFFICES = new Link("none", "Manage Offices");
+    private static final Link CAN_MANAGE_OFFICES = new Link("here", "Manage Offices");
+    private static final Link CAN_NOT_MANAGE_ROLES = new Link("none", "Manage Roles");
+    private static final Link CAN_MANAGE_ROLES = new Link("here", "Manage Roles");
+
     @Override
     public EntityModel<UserDTO> toModel(UserDTO userDTO) {
-        return EntityModel.of(userDTO, linkTo(methodOn(UserController.class).getById(userDTO.getId())).withSelfRel());
-    }
 
-    public EntityModel<UserDTO> toModel(UserDTO userDTO,
-                                        Link staffBookings, Link officeManager, Link roleManager) {
-        return EntityModel.of(userDTO,
-                staffBookings, officeManager, roleManager);
+        EntityModel<UserDTO> entityModel;
+
+        if (userDTO.is("Admin")) {
+            entityModel = EntityModel.of(userDTO,
+                    CAN_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_MANAGE_ROLES);
+        } else if (userDTO.is("Office Manager")) {
+            entityModel = EntityModel.of(userDTO,
+                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
+        } else if (userDTO.is("HR")) {
+            entityModel = EntityModel.of(userDTO,
+                    CAN_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
+        } else {
+            entityModel = EntityModel.of(userDTO,
+                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
+        }
+
+        /**TODO
+         * 1. clarify about the roles, whether the user can have the HR and Office Manager roles,
+         * and, if so, implement additional checks
+         */
+
+        return entityModel;
     }
 }

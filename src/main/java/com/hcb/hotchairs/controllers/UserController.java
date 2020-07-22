@@ -5,7 +5,6 @@ import com.hcb.hotchairs.services.IUserService;
 import com.hcb.hotchairs.mas.UserDTOModelAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,13 +18,6 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
 
-    private static final Link CAN_NOT_BOOK_FOR_EMPLOYEES = new Link("none", "Staff Bookings");
-    private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("here", "Staff Bookings");
-    private static final Link CAN_NOT_MANAGE_OFFICES = new Link("none", "Manage Offices");
-    private static final Link CAN_MANAGE_OFFICES = new Link("here", "Manage Offices");
-    private static final Link CAN_NOT_MANAGE_ROLES = new Link("none", "Manage Roles");
-    private static final Link CAN_MANAGE_ROLES = new Link("here", "Manage Roles");
-
     private final IUserService userService;
     private final UserDTOModelAssembler assembler;
 
@@ -37,30 +29,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<UserDTO>> getById(@PathVariable("id") Long id) {
-
-        EntityModel<UserDTO> entityModel;
-        UserDTO userDTO = userService.getById(id);
-
-        if (userDTO.is("Admin")) {
-            entityModel = assembler.toModel(userDTO,
-                    CAN_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_MANAGE_ROLES);
-        } else if (userDTO.is("Office Manager")) {
-            entityModel = assembler.toModel(userDTO,
-                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
-        } else if (userDTO.is("HR")) {
-            entityModel = assembler.toModel(userDTO,
-                    CAN_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
-        } else {
-            entityModel = assembler.toModel(userDTO,
-                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
-        }
-
-        /**TODO
-         * 1. clarify about the roles, whether the user can have the HR and Office Manager roles,
-         * and, if so, implement additional checks
-         */
-
-        return ResponseEntity.ok(entityModel);
+        return ResponseEntity.ok(assembler.toModel(userService.getById(id)));
     }
 
     @GetMapping("")
@@ -69,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/current")
-    public ResponseEntity<UserDTO> getCurrentUser(Authentication authentication) {
-        return ResponseEntity.ok(userService.getByEmail(authentication.getName()));
+    public ResponseEntity<EntityModel<UserDTO>> getCurrentUser(Authentication authentication) {
+        return ResponseEntity.ok(assembler.toModel(userService.getByEmail(authentication.getName())));
     }
 }
