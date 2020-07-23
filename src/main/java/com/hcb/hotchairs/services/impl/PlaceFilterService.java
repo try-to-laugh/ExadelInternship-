@@ -35,7 +35,7 @@ public class PlaceFilterService implements IPlaceFilterService {
     public List<PlaceDTO> getFreePlaces(PlaceFilterDTO filter, Authentication authentication) {
         List<Long> lockedPlacesId = (Objects.isNull(filter.getFloorId()))
                 ? reservationService.getAllByTimeDateAndOffice(
-                        filter.getDate(),
+                        filter.getSelectedDate(),
                         Objects.isNull(filter.getStartTime()) ? Time.valueOf("00:00:00") : filter.getStartTime(),
                         Objects.isNull(filter.getEndTime()) ? Time.valueOf("23:59:59") : filter.getEndTime(),
                         filter.getOfficeId())
@@ -43,7 +43,7 @@ public class PlaceFilterService implements IPlaceFilterService {
                     .map(ReservationDTO::getPlaceId)
                     .collect(Collectors.toList())
                 : reservationService.getAllByTimeDateAndFloor(
-                        filter.getDate(),
+                        filter.getSelectedDate(),
                         Objects.isNull(filter.getStartTime()) ? Time.valueOf("00:00:00") : filter.getStartTime(),
                         Objects.isNull(filter.getEndTime()) ? Time.valueOf("23:59:59"): filter.getEndTime(),
                         filter.getFloorId())
