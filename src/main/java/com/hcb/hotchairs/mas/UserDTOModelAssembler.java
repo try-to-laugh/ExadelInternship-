@@ -9,12 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDTOModelAssembler implements RepresentationModelAssembler<UserDTO, EntityModel<UserDTO>> {
 
-    private static final Link CAN_NOT_BOOK_FOR_EMPLOYEES = new Link("none", "Staff Bookings");
-    private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("here", "Staff Bookings");
-    private static final Link CAN_NOT_MANAGE_OFFICES = new Link("none", "Manage Offices");
-    private static final Link CAN_MANAGE_OFFICES = new Link("here", "Manage Offices");
-    private static final Link CAN_NOT_MANAGE_ROLES = new Link("none", "Manage Roles");
-    private static final Link CAN_MANAGE_ROLES = new Link("here", "Manage Roles");
+    private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("home", "Staff Bookings");
+    private static final Link CAN_MANAGE_OFFICES = new Link("/office-creation ", "Manage Offices");
+    private static final Link CAN_MANAGE_ROLES = new Link("home", "Manage Roles");
 
     @Override
     public EntityModel<UserDTO> toModel(UserDTO userDTO) {
@@ -22,17 +19,13 @@ public class UserDTOModelAssembler implements RepresentationModelAssembler<UserD
         EntityModel<UserDTO> entityModel;
 
         if (userDTO.is("Admin")) {
-            entityModel = EntityModel.of(userDTO,
-                    CAN_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_MANAGE_ROLES);
+            entityModel = EntityModel.of(userDTO, CAN_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_MANAGE_ROLES);
         } else if (userDTO.is("Office Manager")) {
-            entityModel = EntityModel.of(userDTO,
-                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
+            entityModel = EntityModel.of(userDTO, CAN_MANAGE_OFFICES);
         } else if (userDTO.is("HR")) {
-            entityModel = EntityModel.of(userDTO,
-                    CAN_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
+            entityModel = EntityModel.of(userDTO, CAN_BOOK_FOR_EMPLOYEES);
         } else {
-            entityModel = EntityModel.of(userDTO,
-                    CAN_NOT_BOOK_FOR_EMPLOYEES, CAN_NOT_MANAGE_OFFICES, CAN_NOT_MANAGE_ROLES);
+            entityModel = EntityModel.of(userDTO);
         }
 
         /**TODO
