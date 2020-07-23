@@ -12,4 +12,10 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
 
     @Query("FROM Reservation WHERE user.id = ?1")
     List<Reservation> findAllByUserId(Long userId);
+
+    /*@Query("FROM Reservation res " +
+            "ORDER BY res.stardate desc nulls first " +
+            "WHERE maxelement(res.stardate) = current_date")
+            //"WHERE user.id = ?1 AND maxelement() AND startTime = minelement (res.startTime)")
+    Reservation findNearestByUserId(Long userId);*/
 }

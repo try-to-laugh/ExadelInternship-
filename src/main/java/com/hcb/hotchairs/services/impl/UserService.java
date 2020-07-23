@@ -50,4 +50,12 @@ public class UserService implements IUserService {
     public List<ReservationDTO> getUserReservations(Long id) {
         return reservationDAO.findAllByUserId(id).stream().map(reservationConverter::toDTO).collect(Collectors.toList());
     }
+
+    /*@Override
+    public ReservationDTO getNearestUserReservations(Long id) {
+        return reservationConverter.toDTO(reservationDAO.findNearestByUserId(id));
+        /**TODO
+         * maybe add check with exception
+         *
+    }*/
 }
