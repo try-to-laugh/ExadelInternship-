@@ -13,5 +13,6 @@ public class PlaceRequestDTO {
     private Long officeId;
     private Long floorId;
     private Date date;
+    private Long seatType;
     List<Long> tagsId = new ArrayList<>();
 }

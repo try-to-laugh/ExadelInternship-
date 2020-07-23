@@ -48,35 +48,38 @@ public class PlaceController {
     }
 
     @PostMapping("/free")
-    public ResponseEntity<Object> test(@RequestBody PlaceRequestDTO request) {
+    public ResponseEntity<Object> getFreeSingeSeat(@RequestBody PlaceRequestDTO request) {
 
         List<Long> idLockedPlaces = (!Objects.isNull(request.getFloorId())) ?
-                reservationService.getAllByDateAndFloor(request.getDate(),request.getFloorId())
+                reservationService.getAllByDateAndFloor(request.getDate(), request.getFloorId())
                 .stream()
                 .map(ReservationDTO::getPlaceId)
                 .collect(Collectors.toList())
                 :
-                reservationService.getAllByDateAndOffice(request.getDate(),request.getOfficeId())
+                reservationService.getAllByDateAndOffice(request.getDate(), request.getOfficeId())
                 .stream()
                 .map(ReservationDTO::getPlaceId)
                 .collect(Collectors.toList());
 
 
-        List<TagDTO> requestedTags = (Objects.isNull(request.getTagsId())) ?
-                new ArrayList<>()
-                :
-                tagService.getAllFromIdCollection(request.getTagsId());
+        List<TagDTO> requestedTags = (Objects.isNull(request.getTagsId()))
+                ? new ArrayList<>()
+                : tagService.getAllFromIdCollection(request.getTagsId());
 
-        List<PlaceDTO> freePlaces = (!Objects.isNull(request.getFloorId())) ?
-                placeService.getFreePlaceOnFloor(idLockedPlaces,request.getFloorId())
-                :
-                placeService.getFreePlaceInOffice(idLockedPlaces,request.getOfficeId());
+        List<PlaceDTO> freePlaces = (!Objects.isNull(request.getFloorId()))
+                ? placeService.getFreePlaceOnFloor(idLockedPlaces, request.getFloorId())
+                : placeService.getFreePlaceInOffice(idLockedPlaces, request.getOfficeId());
 
         List<PlaceDTO> freePlaceMatchingTags = freePlaces.stream()
-                .filter(currentPlace->currentPlace.getTags().containsAll(requestedTags))
+                .filter(currentPlace -> currentPlace.getTags().containsAll(requestedTags))
                 .collect(Collectors.toList());
 
-        return ResponseEntity.ok(freePlaceMatchingTags);
+
+        List<PlaceDTO> freePlaceMatchingSeatType = (request.getSeatType().equals(1))
+                ? freePlaceMatchingTags.stream().filter(place -> place.getCapacity().equals(1)).collect(Collectors.toList())
+                : freePlaceMatchingTags.stream().filter(place -> place.getCapacity() > 1).collect(Collectors.toList());
+
+        return ResponseEntity.ok(freePlaceMatchingSeatType);
     }
 
 
