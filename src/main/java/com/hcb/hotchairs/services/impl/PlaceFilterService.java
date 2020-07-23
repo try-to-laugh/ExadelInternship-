@@ -59,8 +59,6 @@ public class PlaceFilterService implements IPlaceFilterService {
                 ? placeService.getFreePlaceOnFloor(lockedPlacesId, filter.getFloorId())
                 : placeService.getFreePlaceInOffice(lockedPlacesId, filter.getOfficeId());
 
-        System.out.println(freePlaces);
-
         List<PlaceDTO> freePlacesMatchingTags = freePlaces.stream()
                 .filter(currentPlace -> currentPlace.getTags().containsAll(requestedTags))
                 .collect(Collectors.toList());
