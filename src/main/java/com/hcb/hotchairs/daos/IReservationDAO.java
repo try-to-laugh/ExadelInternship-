@@ -11,9 +11,9 @@ import java.util.List;
 @Repository
 public interface IReservationDAO extends JpaRepository<Reservation, Long> {
 
-    @Query("select res from Reservation res join res.details det where res.startDate = res.endDate and det.date = ?1 and res.place.floor.id = ?2")
+    @Query("select res from Reservation res join res.details det where  det.date = ?1 and res.place.floor.id = ?2")
     List<Reservation> findAllByDateAndFloor(Date date, Long floorId);
 
-    @Query("select res from Reservation res join res.details det where res.startDate = res.startDate and det.date = ?1 and res.place.floor.office.id = ?2")
+    @Query("select res from Reservation res join res.details det where  det.date = ?1 and res.place.floor.office.id = ?2")
     List<Reservation> findAllByDateAndOffice(Date date, Long officeId);
 }
