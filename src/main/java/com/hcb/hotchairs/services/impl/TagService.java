@@ -1,7 +1,7 @@
 package com.hcb.hotchairs.services.impl;
 
 import com.hcb.hotchairs.converters.TagConverter;
-import com.hcb.hotchairs.daos.TagDAO;
+import com.hcb.hotchairs.daos.ITagDAO;
 import com.hcb.hotchairs.dtos.TagDTO;
 import com.hcb.hotchairs.services.ITagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +14,11 @@ import java.util.stream.Collectors;
 @Service
 public class TagService implements ITagService {
 
-    private final TagDAO tagDAO;
+    private final ITagDAO tagDAO;
     private final TagConverter tagConverter;
 
-
     @Autowired
-    public TagService(TagDAO tagDAO, TagConverter tagConverter){
+    public TagService(ITagDAO tagDAO, TagConverter tagConverter){
         this.tagDAO = tagDAO;
         this.tagConverter = tagConverter;
     }

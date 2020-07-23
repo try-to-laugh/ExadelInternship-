@@ -6,14 +6,29 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 
 @Repository
 public interface IReservationDAO extends JpaRepository<Reservation, Long> {
 
-    @Query("select res from Reservation res join res.details det where  det.date = ?1 and res.place.floor.id = ?2")
-    List<Reservation> findAllByDateAndFloor(Date date, Long floorId);
+    @Query("SELECT res FROM Reservation res JOIN res.details det WHERE" +
+            " det.date = ?1" +
+            " and res.startTime < ?3" +
+            " and res.endTime > ?2" +
+            " and res.place.floor.id = ?4")
+    List<Reservation> findAllByTimeDateAndFloor(Date date,
+                                                Time startTime,
+                                                Time endTime,
+                                                Long floorId);
 
-    @Query("select res from Reservation res join res.details det where  det.date = ?1 and res.place.floor.office.id = ?2")
-    List<Reservation> findAllByDateAndOffice(Date date, Long officeId);
+    @Query("SELECT res FROM Reservation res JOIN res.details det WHERE" +
+            " det.date = ?1" +
+            " and res.startTime < ?3" +
+            " and res.endTime > ?2" +
+            " and res.place.floor.office.id = ?4")
+    List<Reservation> findAllByTimeDateAndOffice(Date date,
+                                                 Time startTime,
+                                                 Time endTime,
+                                                 Long officeId);
 }

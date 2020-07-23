@@ -8,10 +8,10 @@ import java.util.Collection;
 import java.util.List;
 
 public interface IPlaceService {
+
     List<PlaceDTO> getAll();
     List<PlaceDTO> getAllByFloorId(Long floorId);
     List<PlaceDTO> getFreePlaceOnFloor(Collection<Long> closed, Long floorId);
     List<PlaceDTO> getFreePlaceInOffice(Collection<Long> closed, Long officeId);
     PlaceDTO getById(Long id);
-
 }

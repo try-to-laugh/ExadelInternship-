@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface TagDAO extends JpaRepository<Tag, Long> {
+public interface ITagDAO extends JpaRepository<Tag, Long> {
 
     @Query("FROM Tag t WHERE t.id IN :idList")
     List<Tag> findAllFromIdCollection(@Param("idList") Collection<Long> idList);
