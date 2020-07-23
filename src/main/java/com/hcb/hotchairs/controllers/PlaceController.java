@@ -1,16 +1,15 @@
 package com.hcb.hotchairs.controllers;
 
-import com.hcb.hotchairs.dtos.PlaceDTO;
-import com.hcb.hotchairs.dtos.PlaceRequestDTO;
-import com.hcb.hotchairs.dtos.ReservationDTO;
-import com.hcb.hotchairs.dtos.TagDTO;
+import com.hcb.hotchairs.dtos.*;
 import com.hcb.hotchairs.services.IPlaceService;
 import com.hcb.hotchairs.services.IReservationService;
 import com.hcb.hotchairs.services.ITagService;
+import com.hcb.hotchairs.services.IUserService;
 import com.hcb.hotchairs.services.impl.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;
@@ -26,15 +25,18 @@ public class PlaceController {
     private final IPlaceService placeService;
     private final IReservationService reservationService;
     private final ITagService tagService;
+    private final IUserService userService;
 
     @Autowired
     public PlaceController(IPlaceService placeService,
                            IReservationService reservationService,
-                           ITagService tagService){
+                           ITagService tagService,
+                           IUserService userService){
 
         this.placeService = placeService;
         this.reservationService = reservationService;
         this.tagService = tagService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")
@@ -48,7 +50,8 @@ public class PlaceController {
     }
 
     @PostMapping("/free")
-    public ResponseEntity<Object> getFreeSingeSeat(@RequestBody PlaceRequestDTO request) {
+    public ResponseEntity<Object> getFreeSingeSeat(@RequestBody PlaceRequestDTO request,
+                                                                 Authentication authentication) {
 
         List<Long> idLockedPlaces = (!Objects.isNull(request.getFloorId())) ?
                 reservationService.getAllByDateAndFloor(request.getDate(), request.getFloorId())
@@ -66,6 +69,8 @@ public class PlaceController {
                 ? new ArrayList<>()
                 : tagService.getAllFromIdCollection(request.getTagsId());
 
+        List<RoleDTO> currentUserRole = userService.getByEmail(authentication.getName()).getRoles();
+
         List<PlaceDTO> freePlaces = (!Objects.isNull(request.getFloorId()))
                 ? placeService.getFreePlaceOnFloor(idLockedPlaces, request.getFloorId())
                 : placeService.getFreePlaceInOffice(idLockedPlaces, request.getOfficeId());
@@ -74,12 +79,13 @@ public class PlaceController {
                 .filter(currentPlace -> currentPlace.getTags().containsAll(requestedTags))
                 .collect(Collectors.toList());
 
+        //когда на хероку будет авторизация
+/*        List<PlaceDTO> freePlaceMatchingTagsRoles = freePlaceMatchingTags.stream()
+                .filter(currentPlace -> currentUserRole.containsAll(currentPlace.getRoles()))
+                .collect(Collectors.toList());*/
 
-        List<PlaceDTO> freePlaceMatchingSeatType = (request.getSeatType().equals(1))
-                ? freePlaceMatchingTags.stream().filter(place -> place.getCapacity().equals(1)).collect(Collectors.toList())
-                : freePlaceMatchingTags.stream().filter(place -> place.getCapacity() > 1).collect(Collectors.toList());
 
-        return ResponseEntity.ok(freePlaceMatchingSeatType);
+        return ResponseEntity.ok(freePlaceMatchingTags);
     }
 
 

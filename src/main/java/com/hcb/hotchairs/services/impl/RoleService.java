@@ -9,6 +9,7 @@ import com.hcb.hotchairs.services.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,14 @@ public class RoleService implements IRoleService {
     @Override
     public RoleDTO getRoleById(Long id) {
         return roleConverter.toDTO(roleDAO.findById(id).orElse(null));
+    }
+
+    @Override
+    public List<RoleDTO> getAllByIdCollection(Collection<Long> rolesId) {
+        return roleDAO.findAllFromIdCollection(rolesId)
+                .stream()
+                .map(roleConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
