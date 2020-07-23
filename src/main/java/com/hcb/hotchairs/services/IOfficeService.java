@@ -8,5 +8,5 @@ public interface IOfficeService {
     List<OfficeDTO> getAll();
     List<OfficeDTO> getAllByCityId(Long cityId);
     OfficeDTO getById(Long id);
-    void saveOffice(OfficeDTO newOffice);
+    OfficeDTO saveOffice(OfficeDTO newOffice);
 }

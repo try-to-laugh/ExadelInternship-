@@ -41,14 +41,17 @@ public class FloorService implements IFloorService {
     @Override
     @Transactional
     @Modifying
-    public void saveBatch(List<FloorDTO> floors) {
-        floorDAO.saveAll(floors.stream().map(floorConverter::fromDTO).collect(Collectors.toList()));
+    public List<FloorDTO> saveBatch(List<FloorDTO> floors) {
+        return floorDAO.saveAll(floors.stream().map(floorConverter::fromDTO).collect(Collectors.toList()))
+                .stream()
+                .map(floorConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     @Modifying
-    public void save(FloorDTO floorDTO) {
-        floorDAO.save(floorConverter.fromDTO(floorDTO));
+    public FloorDTO save(FloorDTO floorDTO) {
+        return floorConverter.toDTO(floorDAO.saveAndFlush(floorConverter.fromDTO(floorDTO)));
     }
 }
