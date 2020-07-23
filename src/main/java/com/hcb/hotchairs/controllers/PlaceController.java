@@ -1,29 +1,53 @@
 package com.hcb.hotchairs.controllers;
 
+import com.hcb.hotchairs.dtos.*;
+import com.hcb.hotchairs.services.IPlaceFilterService;
 import com.hcb.hotchairs.services.IPlaceService;
-import com.hcb.hotchairs.services.impl.PlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/places")
 public class PlaceController {
 
     private final IPlaceService placeService;
+    private final IPlaceFilterService placeFilterService;
+
+    private final Long SINGLE = (long) 1;
+    private final Long MEETING = (long) 2;
 
     @Autowired
-    public PlaceController(IPlaceService placeService){
+    public PlaceController(IPlaceService placeService,
+                           IPlaceFilterService placeFilterService) {
+
         this.placeService = placeService;
+        this.placeFilterService = placeFilterService;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(placeService.getById(id));
+    }
+
+    @GetMapping("/byFloor/{id}")
+    public ResponseEntity<Object> getAllByFloorId(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(placeService.getAllByFloorId(id));
+    }
+
+    @PostMapping("/free")
+    public ResponseEntity<List<PlaceDTO>> getFreeMeetingRooms(@RequestBody PlaceFilterDTO request,
+                                                              Authentication authentication) {
+        return ResponseEntity.ok(placeFilterService.getFreePlaces(request, authentication)
+                .stream()
+                .filter(place -> request.getIsMeeting().equals(SINGLE)
+                        ? place.getCapacity() == 1
+                        : place.getCapacity() > 1)
+                .collect(Collectors.toList()));
     }
 
     @GetMapping("")
