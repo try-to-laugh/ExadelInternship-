@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.services;
 
+import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
 import com.hcb.hotchairs.entities.User;
 
@@ -10,4 +11,5 @@ public interface IUserService {
     UserDTO getByEmail(String email);
     UserDTO getById(Long id);
     List<UserDTO> getAll();
+    List<ReservationDTO> getUserReservations(Long id);
 }

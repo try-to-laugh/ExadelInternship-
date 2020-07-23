@@ -1,7 +1,10 @@
 package com.hcb.hotchairs.services.impl;
 
+import com.hcb.hotchairs.converters.ReservationConverter;
 import com.hcb.hotchairs.converters.UserConverter;
+import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.daos.IUserDAO;
+import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
 import com.hcb.hotchairs.entities.User;
 import com.hcb.hotchairs.services.IUserService;
@@ -16,11 +19,16 @@ public class UserService implements IUserService {
 
     private final IUserDAO userDAO;
     private final UserConverter userConverter;
+    private final IReservationDAO reservationDAO;
+    private final ReservationConverter reservationConverter;
 
     @Autowired
-    public UserService(IUserDAO userDAO, UserConverter userConverter) {
+    public UserService(IUserDAO userDAO, UserConverter userConverter,
+                       IReservationDAO reservationDAO, ReservationConverter reservationConverter) {
         this.userDAO = userDAO;
         this.userConverter = userConverter;
+        this.reservationDAO = reservationDAO;
+        this.reservationConverter = reservationConverter;
     }
 
     @Override
@@ -36,5 +44,10 @@ public class UserService implements IUserService {
     @Override
     public List<UserDTO> getAll() {
         return userDAO.findAll().stream().map(userConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReservationDTO> getUserReservations(Long id) {
+        return reservationDAO.findAllByUserId(id).stream().map(reservationConverter::toDTO).collect(Collectors.toList());
     }
 }
