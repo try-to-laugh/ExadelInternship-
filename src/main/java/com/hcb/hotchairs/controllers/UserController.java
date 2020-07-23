@@ -42,20 +42,16 @@ public class UserController {
         private CountryDTO country;
     }
 
-    public List<ExtendedReservationInfo> toExtendedReservationInfos(List<ReservationDTO> reservationDTOS){
+    public ExtendedReservationInfo toExtendedReservationInfo(ReservationDTO reservationDTO){
 
-        List<ExtendedReservationInfo> extendedReservationInfos = new ArrayList<>();
-        for(ReservationDTO reservationDTO : reservationDTOS){
             PlaceDTO placeDTO=placeService.getById(reservationDTO.getPlaceId());
             FloorDTO floorDTO=floorService.getById(placeDTO.getFloorId());
             OfficeDTO officeDTO=officeService.getById(floorDTO.getOfficeId());
             CityDTO cityDTO=cityService.getById(officeDTO.getCityId());
             CountryDTO countryDTO=countryService.getById(cityDTO.getCountryId());
-            extendedReservationInfos.add(new ExtendedReservationInfo(reservationDTO, placeDTO, floorDTO,
-                    officeDTO, cityDTO, countryDTO));
-        }
 
-        return extendedReservationInfos;
+        return new ExtendedReservationInfo(reservationDTO, placeDTO, floorDTO,
+                officeDTO, cityDTO, countryDTO);
     }
 
     @Autowired
@@ -89,47 +85,36 @@ public class UserController {
     @GetMapping("/reservations/{id}")
     public ResponseEntity<?> getReservationsByUserId(Long id) {
 
-        List<ReservationDTO> reservationDTOS = userService.getUserReservations(id);
+        List<ExtendedReservationInfo> extendedReservationInfos = new ArrayList<>();
 
-        return ResponseEntity.ok(toExtendedReservationInfos(reservationDTOS));
+        for(ReservationDTO reservationDTO : userService.getUserReservations(id)) {
+            extendedReservationInfos.add(toExtendedReservationInfo(reservationDTO));
+        }
+
+        return ResponseEntity.ok(extendedReservationInfos);
+    }
+
+    @GetMapping("/reservations/nearest/{id}")
+    public ResponseEntity<?> getNearestReservationByUserId(Long id) {
+        return ResponseEntity.ok(toExtendedReservationInfo(userService.getNearestUserReservation(id)));
     }
 
     @GetMapping("/current/reservations")
     public ResponseEntity<?> getCurrentUserReservations(Authentication authentication) {
 
-        List<ReservationDTO> reservationDTOS = userService.getUserReservations(
-                userService.getByEmail(authentication.getName()).getId());
+        List<ExtendedReservationInfo> extendedReservationInfos = new ArrayList<>();
 
-        return ResponseEntity.ok(toExtendedReservationInfos(reservationDTOS));
-    }
-
-   /*
-   @GetMapping("/reservations/nearest/{id}")
-   public ResponseEntity<?> getNearestReservationByUserId(Long id) {
-
-        ReservationDTO reservationDTO = userService.getNearestUserReservations(id);
-
-        @Data
-        @AllArgsConstructor
-        @NoArgsConstructor
-        class ExtendedReservationInfo {
-            private ReservationDTO reservation;
-            private PlaceDTO place;
-            private FloorDTO floor;
-            private OfficeDTO office;
-            private CityDTO city;
-            private CountryDTO country;
+        for(ReservationDTO reservationDTO : userService.getUserReservations(
+                userService.getByEmail(authentication.getName()).getId())) {
+            extendedReservationInfos.add(toExtendedReservationInfo(reservationDTO));
         }
 
-        PlaceDTO placeDTO = placeService.getById(reservationDTO.getPlaceId());
-        FloorDTO floorDTO = floorService.getById(placeDTO.getFloorId());
-        OfficeDTO officeDTO = officeService.getById(floorDTO.getOfficeId());
-        CityDTO cityDTO = cityService.getById(officeDTO.getCityId());
-        CountryDTO countryDTO = countryService.getById(cityDTO.getCountryId());
-
-        ExtendedReservationInfo extendedReservationInfos = new ExtendedReservationInfo(reservationDTO, placeDTO, floorDTO,
-                officeDTO, cityDTO, countryDTO);
-
         return ResponseEntity.ok(extendedReservationInfos);
-    }*/
+    }
+
+    @GetMapping("/current/reservations/nearest")
+    public ResponseEntity<?> getNearestReservationByUserId(Authentication authentication) {
+        return ResponseEntity.ok(toExtendedReservationInfo(userService.getNearestUserReservation(
+                userService.getByEmail(authentication.getName()).getId())));
+    }
 }

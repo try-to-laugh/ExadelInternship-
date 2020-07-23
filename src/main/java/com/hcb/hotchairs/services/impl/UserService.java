@@ -6,11 +6,11 @@ import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.daos.IUserDAO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
-import com.hcb.hotchairs.entities.User;
 import com.hcb.hotchairs.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,11 +51,42 @@ public class UserService implements IUserService {
         return reservationDAO.findAllByUserId(id).stream().map(reservationConverter::toDTO).collect(Collectors.toList());
     }
 
-    /*@Override
-    public ReservationDTO getNearestUserReservations(Long id) {
-        return reservationConverter.toDTO(reservationDAO.findNearestByUserId(id));
-        /**TODO
-         * maybe add check with exception
-         *
-    }*/
+    @Override
+    public ReservationDTO getNearestUserReservation(Long id) {
+
+        List<ReservationDTO> reservationDTOS =
+                reservationDAO.findAllByUserId(id).stream().map(reservationConverter::toDTO).collect(Collectors.toList());
+
+        int count = 0;
+        int nearStartDate = 1000000000;
+        Date nearStartTime = new Date();
+        nearStartTime.setHours(23);
+        nearStartTime.setMinutes(59);
+        nearStartTime.setSeconds(59);
+        Date curDate = new Date();
+
+        for(int i=0; i<reservationDTOS.size(); i++){
+            Date resStartDate = reservationDTOS.get(i).getStartDate();
+            Date resEndDate = reservationDTOS.get(i).getEndDate();
+
+            if(resEndDate.getDate()-curDate.getDate()>=0) {
+
+                if(curDate.getDate()-resStartDate.getDate()<nearStartDate && curDate.getDate()-resStartDate.getDate()>0){
+                    nearStartDate=curDate.getDate()-resStartDate.getDate();
+
+                    count=i;
+                }else if((curDate.getDate()-resStartDate.getDate()==nearStartDate)){
+                    Date resStartTime=reservationDTOS.get(i).getStartTime();
+
+                    if(nearStartTime.getTime()-resStartTime.getTime()>0){
+                        nearStartTime = resStartTime;
+
+                        count=i;
+                    }
+                }
+            }
+        }
+
+        return reservationDTOS.get(count);
+    }
 }
