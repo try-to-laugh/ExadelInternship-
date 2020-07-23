@@ -7,6 +7,8 @@ import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,22 @@ public class ReservationService implements IReservationService {
     @Override
     public List<ReservationDTO> getAll() {
         return reservationDAO.findAll().stream().map(reservationConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReservationDTO> getAllByTimeDateAndFloor(Date date, Time startTime, Time endTime, Long floorId) {
+        return reservationDAO.findAllByTimeDateAndFloor(date, startTime, endTime, floorId)
+                .stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReservationDTO> getAllByTimeDateAndOffice(Date date, Time startTime, Time endTime, Long officeId) {
+        return reservationDAO.findAllByTimeDateAndOffice(date, startTime, endTime, officeId)
+                .stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
