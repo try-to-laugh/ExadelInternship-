@@ -31,4 +31,7 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
                                                  Time startTime,
                                                  Time endTime,
                                                  Long officeId);
+
+    @Query("FROM Reservation WHERE user.id = ?1")
+    List<Reservation> findByUserId(Long userId);
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/floors")
@@ -43,14 +44,19 @@ public class FloorController {
     }
 
     @PostMapping("/batch")
+    @Deprecated
     public ResponseEntity<Object> saveBatchFloors(@RequestBody List<FloorDTO> floors) {
-        floorService.saveBatch(floors);
-        return ResponseEntity.ok().build();
+        List<FloorDTO> savedFloors = floorService.saveBatch(floors);
+
+        return Objects.isNull(savedFloors) ? ResponseEntity.unprocessableEntity().build()
+                : ResponseEntity.ok(savedFloors);
     }
 
     @PostMapping("")
-    public ResponseEntity<Object> saveFloor(@RequestBody FloorDTO floor) {
-        floorService.save(floor);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<FloorDTO> saveFloor(@RequestBody FloorDTO floor) {
+        FloorDTO savedFloor = floorService.save(floor);
+
+        return Objects.isNull(savedFloor.getId()) ? ResponseEntity.unprocessableEntity().build()
+                : ResponseEntity.ok(savedFloor);
     }
 }

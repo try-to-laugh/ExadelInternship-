@@ -15,9 +15,9 @@ public class DetailService implements IDetailService {
     private final IDetailDAO detailDAO;
     private final DetailConverter detailConverter;
 
-    DetailService(IDetailDAO detailDAO, DetailConverter detailConverter){
-        this.detailDAO=detailDAO;
-        this.detailConverter=detailConverter;
+    DetailService(IDetailDAO detailDAO, DetailConverter detailConverter) {
+        this.detailDAO = detailDAO;
+        this.detailConverter = detailConverter;
     }
 
     @Override

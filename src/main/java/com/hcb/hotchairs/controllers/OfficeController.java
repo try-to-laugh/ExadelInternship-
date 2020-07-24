@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/offices")
@@ -55,8 +56,10 @@ public class OfficeController {
 
     @PostMapping("")
     public ResponseEntity<OfficeDTO> saveOffice(@RequestBody OfficeDTO newOffice) {
-        officeService.saveOffice(newOffice);
-        return ResponseEntity.ok().build();
+        OfficeDTO savedOffice = officeService.saveOffice(newOffice);
+
+        return Objects.isNull(savedOffice.getId()) ? ResponseEntity.unprocessableEntity().build()
+                : ResponseEntity.ok(savedOffice);
     }
 
     @GetMapping("")
