@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -67,9 +68,41 @@ public class OfficeController {
         return ResponseEntity.ok(officeService.getAll());
     }
 
+    /*
+        This method is Deprecated and will be removed after front transition to pageable version.
+     */
+    @Deprecated
     @GetMapping("/extended")
     public ResponseEntity<?> getExtendedOfficeInfo() {
         List<OfficeDTO> offices = officeService.getAll();
+
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        class ExtendedOfficeInfo {
+            List<FloorDTO> floors;
+            private OfficeDTO office;
+            private CityDTO city;
+            private CountryDTO country;
+        }
+
+        List<ExtendedOfficeInfo> extendedOfficeInfos = new ArrayList<>();
+        for (OfficeDTO office: offices) {
+            List<FloorDTO> floors = floorService.getAllByOfficeId(office.getId());
+            CityDTO city = cityService.getById(office.getCityId());
+            CountryDTO country = countryService.getById(city.getCountryId());
+
+            extendedOfficeInfos.add(new ExtendedOfficeInfo(floors, office, city, country));
+        }
+
+        return ResponseEntity.ok(extendedOfficeInfos);
+    }
+
+    @GetMapping("/extended/paging")
+    public ResponseEntity<?> getExtendedPagingAndSortingOfficeInfo(@RequestParam(name = "pageNumber") Integer pageNumber,
+                                                                   @RequestParam(name = "pageSize") Integer pageSize,
+                                                                   @RequestParam(name = "sortMethod") String sortMethod) {
+        List<OfficeDTO> offices = officeService.getPagedAndSorted(pageNumber, pageSize, sortMethod);
 
         @Data
         @AllArgsConstructor

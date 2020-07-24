@@ -9,4 +9,5 @@ public interface IOfficeService {
     List<OfficeDTO> getAllByCityId(Long cityId);
     OfficeDTO getById(Long id);
     OfficeDTO saveOffice(OfficeDTO newOffice);
+    List<OfficeDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod);
 }
