@@ -65,7 +65,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/webjars/**").permitAll()
                     .antMatchers("/**").permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .antMatchers("/test/**", "/restore/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .exceptionHandling()
