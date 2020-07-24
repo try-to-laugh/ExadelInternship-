@@ -29,7 +29,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/countries")
+@RequestMapping("/api/countries")
 public class CountryController {
 
     private final ICountryService countryService;

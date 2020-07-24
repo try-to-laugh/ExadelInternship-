@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/places")
+@RequestMapping("/api/places")
 public class PlaceController {
 
     private final IPlaceService placeService;

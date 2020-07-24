@@ -343,7 +343,7 @@ class ApiService {
         this.httpOptions = {
             headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpHeaders"]({ 'Content-Type': 'application/json' })
         };
-        this.apiUrl = 'https://hotchairs.herokuapp.com';
+        this.apiUrl = 'https://hotchairs.herokuapp.com/api';
     }
     get(url) {
         return this.http.get(this.apiUrl + url);
@@ -729,7 +729,7 @@ class AuthenticationService {
             .set('username', username)
             .set('password', password)
             .set('remember-me', remember);
-        return this.http.post('https://hotchairs.herokuapp.com/login', body).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["take"])(1));
+        return this.http.post('https://hotchairs.herokuapp.com/api/login', body).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["take"])(1));
     }
 }
 AuthenticationService.ɵfac = function AuthenticationService_Factory(t) { return new (t || AuthenticationService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"])); };
@@ -3790,7 +3790,7 @@ class HeaderService {
         this.http = http;
     }
     getData() {
-        return this.http.get('https://hotchairs.herokuapp.com/users/current').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["take"])(1));
+        return this.http.get('https://hotchairs.herokuapp.com/api/users/current').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["take"])(1));
     }
 }
 HeaderService.ɵfac = function HeaderService_Factory(t) { return new (t || HeaderService)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"])); };

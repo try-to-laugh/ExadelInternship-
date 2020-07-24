@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/offices")
+@RequestMapping("/api/offices")
 public class OfficeController {
 
     private final IOfficeService officeService;

@@ -407,7 +407,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
             'Content-Type': 'application/json'
           })
         };
-        this.apiUrl = 'https://hotchairs.herokuapp.com';
+        this.apiUrl = 'https://hotchairs.herokuapp.com/api';
       }
 
       _createClass(ApiService, [{
@@ -1135,7 +1135,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         key: "postData",
         value: function postData(username, password, remember) {
           var body = new _angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpParams"]().set('username', username).set('password', password).set('remember-me', remember);
-          return this.http.post('https://hotchairs.herokuapp.com/login', body).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["take"])(1));
+          return this.http.post('https://hotchairs.herokuapp.com/api/login', body).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_2__["take"])(1));
         }
       }]);
 
@@ -7399,7 +7399,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       _createClass(HeaderService, [{
         key: "getData",
         value: function getData() {
-          return this.http.get('https://hotchairs.herokuapp.com/users/current').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["take"])(1));
+          return this.http.get('https://hotchairs.herokuapp.com/api/users/current').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["take"])(1));
         }
       }]);
 
