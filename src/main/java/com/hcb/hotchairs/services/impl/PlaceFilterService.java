@@ -51,6 +51,8 @@ public class PlaceFilterService implements IPlaceFilterService {
                     .map(ReservationDTO::getPlaceId)
                     .collect(Collectors.toList());
 
+        lockedPlacesId.add(Long.valueOf(0));
+
         List<TagDTO> requestedTags = (Objects.isNull(filter.getTagsId()))
                 ? new ArrayList<>()
                 : tagService.getAllFromIdCollection(filter.getTagsId());
@@ -62,6 +64,8 @@ public class PlaceFilterService implements IPlaceFilterService {
         List<PlaceDTO> freePlacesMatchingTags = freePlaces.stream()
                 .filter(currentPlace -> currentPlace.getTags().containsAll(requestedTags))
                 .collect(Collectors.toList());
+
+
 
 //        List<RoleDTO> currentUserRoles = userService.getByEmail(authentication.getName()).getRoles();
 //
