@@ -64,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/swagger-ui.html",
                     "/webjars/**").permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .antMatchers("/api/login").permitAll()
+                    .antMatchers("/api/login", "/api/logout").permitAll()
                     .antMatchers("/api/**").authenticated()
                     .antMatchers("/**").permitAll()
                     .anyRequest().authenticated()
@@ -83,12 +83,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .userDetailsService(loginService)
                 .and()
                 .logout()
-                    .logoutUrl("/logout")
-                    .permitAll()
+                    .logoutUrl("/api/logout")
                     .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) ->
                             httpServletResponse.setStatus(HttpServletResponse.SC_OK))
                     .deleteCookies("JSESSIONID")
-                    .invalidateHttpSession(true);
+                    .invalidateHttpSession(true)
+                    .permitAll();
 
         /* TODO:
             1. Disable Test API before release.
