@@ -44,7 +44,7 @@ public class OfficeService implements IOfficeService {
     @Override
     @Transactional
     @Modifying
-    public void saveOffice(OfficeDTO newOffice) {
-        officeDAO.save(officeConverter.fromDTO(newOffice));
+    public OfficeDTO saveOffice(OfficeDTO newOffice) {
+        return officeConverter.toDTO(officeDAO.save(officeConverter.fromDTO(newOffice)));
     }
 }

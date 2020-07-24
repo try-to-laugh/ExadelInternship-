@@ -10,6 +10,5 @@ import java.util.List;
 
 @Repository
 public interface IFloorDAO extends JpaRepository<Floor,Long> {
-
     List<Floor> findAllByOfficeId(Long officeId);
 }

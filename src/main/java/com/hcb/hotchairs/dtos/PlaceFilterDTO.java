@@ -13,7 +13,7 @@ import java.util.List;
 public class PlaceFilterDTO {
     private Long officeId;
     private Long floorId;
-    private Date date;
+    private Date selectedDate;
     private Time startTime;
     private Time endTime;
     private Long isMeeting;
