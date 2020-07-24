@@ -33,5 +33,5 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
                                                  Long officeId);
 
     @Query("FROM Reservation WHERE user.id = ?1")
-    List<Reservation> findAllByUserId(Long userId);
+    List<Reservation> findByUserId(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.hcb.hotchairs.services;
 
+import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
 
@@ -11,5 +12,5 @@ public interface IUserService {
     UserDTO getById(Long id);
     List<UserDTO> getAll();
     List<ReservationDTO> getUserReservations(Long id);
-    ReservationDTO getNearestUserReservation(Long id);
+    DetailDTO getNearestUserReservation(List<ReservationDTO> reservationDTOS);
 }

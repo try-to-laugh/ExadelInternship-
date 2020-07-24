@@ -29,11 +29,13 @@ public class UserController {
     private final IOfficeService officeService;
     private final ICityService cityService;
     private final ICountryService countryService;
+    private final IReservationService reservationService;
 
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
     private class ExtendedReservationInfo {
+        private DetailDTO detail;
         private ReservationDTO reservation;
         private PlaceDTO place;
         private FloorDTO floor;
@@ -42,22 +44,23 @@ public class UserController {
         private CountryDTO country;
     }
 
-    public ExtendedReservationInfo toExtendedReservationInfo(ReservationDTO reservationDTO){
+    public ExtendedReservationInfo toExtendedReservationInfo(DetailDTO detailDTO) {
 
-            PlaceDTO placeDTO=placeService.getById(reservationDTO.getPlaceId());
-            FloorDTO floorDTO=floorService.getById(placeDTO.getFloorId());
-            OfficeDTO officeDTO=officeService.getById(floorDTO.getOfficeId());
-            CityDTO cityDTO=cityService.getById(officeDTO.getCityId());
-            CountryDTO countryDTO=countryService.getById(cityDTO.getCountryId());
+        ReservationDTO reservationDTO = reservationService.getById(detailDTO.getReservationId());
+        PlaceDTO placeDTO = placeService.getById(reservationDTO.getPlaceId());
+        FloorDTO floorDTO = floorService.getById(placeDTO.getFloorId());
+        OfficeDTO officeDTO = officeService.getById(floorDTO.getOfficeId());
+        CityDTO cityDTO = cityService.getById(officeDTO.getCityId());
+        CountryDTO countryDTO = countryService.getById(cityDTO.getCountryId());
 
-        return new ExtendedReservationInfo(reservationDTO, placeDTO, floorDTO,
+        return new ExtendedReservationInfo(detailDTO, reservationDTO, placeDTO, floorDTO,
                 officeDTO, cityDTO, countryDTO);
     }
 
     @Autowired
     public UserController(IUserService userService, UserDTOModelAssembler assembler,
     IPlaceService placeService, IFloorService floorService, IOfficeService officeService,
-                          ICityService cityService, ICountryService countryService) {
+            ICityService cityService, ICountryService countryService, IReservationService reservationService) {
         this.userService = userService;
         this.assembler = assembler;
         this.placeService = placeService;
@@ -65,6 +68,7 @@ public class UserController {
         this.officeService = officeService;
         this.cityService = cityService;
         this.countryService = countryService;
+        this.reservationService=reservationService;
     }
 
     @GetMapping("/{id}")
@@ -88,7 +92,12 @@ public class UserController {
         List<ExtendedReservationInfo> extendedReservationInfos = new ArrayList<>();
 
         for(ReservationDTO reservationDTO : userService.getUserReservations(id)) {
-            extendedReservationInfos.add(toExtendedReservationInfo(reservationDTO));
+
+            List<ReservationDTO> reservationDTOS = new ArrayList<>();
+            reservationDTOS.add(reservationDTO);
+
+            extendedReservationInfos.add(toExtendedReservationInfo(
+                    userService.getNearestUserReservation(reservationDTOS)));
         }
 
         return ResponseEntity.ok(extendedReservationInfos);
@@ -96,7 +105,8 @@ public class UserController {
 
     @GetMapping("/reservations/nearest/{id}")
     public ResponseEntity<?> getNearestReservationByUserId(Long id) {
-        return ResponseEntity.ok(toExtendedReservationInfo(userService.getNearestUserReservation(id)));
+        return ResponseEntity.ok(toExtendedReservationInfo(
+                userService.getNearestUserReservation(userService.getUserReservations(id))));
     }
 
     @GetMapping("/current/reservations")
@@ -106,7 +116,12 @@ public class UserController {
 
         for(ReservationDTO reservationDTO : userService.getUserReservations(
                 userService.getByEmail(authentication.getName()).getId())) {
-            extendedReservationInfos.add(toExtendedReservationInfo(reservationDTO));
+
+            List<ReservationDTO> reservationDTOS = new ArrayList<>();
+            reservationDTOS.add(reservationDTO);
+
+            extendedReservationInfos.add(toExtendedReservationInfo(
+                    userService.getNearestUserReservation(reservationDTOS)));
         }
 
         return ResponseEntity.ok(extendedReservationInfos);
@@ -114,7 +129,8 @@ public class UserController {
 
     @GetMapping("/current/reservations/nearest")
     public ResponseEntity<?> getNearestReservationByUserId(Authentication authentication) {
-        return ResponseEntity.ok(toExtendedReservationInfo(userService.getNearestUserReservation(
-                userService.getByEmail(authentication.getName()).getId())));
+        return ResponseEntity.ok(toExtendedReservationInfo(
+                userService.getNearestUserReservation(userService.getUserReservations(
+                        userService.getByEmail(authentication.getName()).getId()))));
     }
 }
