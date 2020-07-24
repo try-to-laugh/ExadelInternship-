@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class UserDTOModelAssembler implements RepresentationModelAssembler<UserDTO, EntityModel<UserDTO>> {
 
     private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("/home", "Staff Bookings");
-    private static final Link CAN_MANAGE_OFFICES = new Link("/office-creation", "Manage Offices");
+    private static final Link CAN_MANAGE_OFFICES = new Link("/offices", "Manage Offices");
     private static final Link CAN_MANAGE_ROLES = new Link("/home", "Manage Roles");
 
     @Override
