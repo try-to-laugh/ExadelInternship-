@@ -50,12 +50,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .cors()
                 .and()
-                .csrf()
-                    .disable()
-//                .requiresChannel()
-//                    .anyRequest()
-//                    .requiresSecure()
-//                .and()
+                .requiresChannel()
+                    .anyRequest()
+                    .requiresSecure()
+                .and()
                 .authorizeRequests()
                     .antMatchers("/v2/api-docs",
                     "/configuration/ui",
