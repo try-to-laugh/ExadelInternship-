@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/floors")
+@RequestMapping("/api/floors")
 public class FloorController {
 
     private final IFloorService floorService;
