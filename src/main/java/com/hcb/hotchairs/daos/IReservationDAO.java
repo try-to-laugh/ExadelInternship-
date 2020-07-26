@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface IReservationDAO extends JpaRepository<Reservation, Long> {
@@ -31,6 +32,19 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
                                                  Time startTime,
                                                  Time endTime,
                                                  Long officeId);
+
+
+    @Query("SELECT res FROM Reservation res JOIN res.details det WHERE" +
+            " det.date = ?1" +
+            " AND res.startTime < ?3" +
+            " AND res.endTime > ?2 " +
+            " AND res.place.id = ?4")
+
+    Optional<Reservation> findByTimeDateAndPlace(Date date,
+                                                Time startTime,
+                                                Time endTime,
+                                                Long placeId);
+
 
     @Query("FROM Reservation WHERE user.id = ?1")
     List<Reservation> findByUserId(Long userId);

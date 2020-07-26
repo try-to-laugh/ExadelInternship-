@@ -7,6 +7,7 @@ import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -43,6 +44,13 @@ public class ReservationService implements IReservationService {
                 .stream()
                 .map(reservationConverter::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ReservationDTO getByTimeDateAndPlace(Date date, Time startTime, Time endTime, Long placeId) {
+        return reservationConverter.toDTO(reservationDAO.findByTimeDateAndPlace(date, startTime, endTime, placeId)
+                .orElse(null));
+
     }
 
     @Override
