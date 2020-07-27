@@ -3,8 +3,10 @@ package com.hcb.hotchairs.services.impl;
 import com.hcb.hotchairs.converters.ReservationConverter;
 import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
+import com.hcb.hotchairs.entities.Reservation;
 import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.Null;
@@ -51,6 +53,12 @@ public class ReservationService implements IReservationService {
         return reservationConverter.toDTO(reservationDAO.findByTimeDateAndPlace(date, startTime, endTime, placeId)
                 .orElse(null));
 
+    }
+
+    @Override
+    @Modifying
+    public ReservationDTO saveReservation(Reservation reservation) {
+        return reservationConverter.toDTO(reservationDAO.save(reservation));
     }
 
     @Override

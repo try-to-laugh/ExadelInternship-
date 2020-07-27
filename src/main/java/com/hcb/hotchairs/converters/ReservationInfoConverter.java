@@ -29,6 +29,36 @@ public class ReservationInfoConverter {
         reservationInfo.setFloorId(floorDTO.getId());
         reservationInfo.setFloorNumber(floorDTO.getNumber());
 
+        reservationInfo.setCurrentUserId(placeFilter.getCurrentUserId());
         return reservationInfo;
+    }
+
+    public ReservationInfoDTO toDTO(PlaceDTO placeDTO, FloorDTO floorDTO, ReservationDTO reservationDTO){
+        if(Objects.isNull(placeDTO)
+        || Objects.isNull(floorDTO)
+        || Objects.isNull(reservationDTO)){
+            return null;
+        }
+
+        ReservationInfoDTO reservationInfoDTO = new ReservationInfoDTO();
+
+        reservationInfoDTO.setCapacity(placeDTO.getCapacity());
+        reservationInfoDTO.setPlaceId(placeDTO.getId());
+        reservationInfoDTO.setPlaceName(placeDTO.getName());
+
+        reservationInfoDTO.setFloorId(floorDTO.getId());
+        reservationInfoDTO.setFloorNumber(floorDTO.getNumber());
+
+        reservationInfoDTO.setStartDate(reservationDTO.getStartDate());
+        reservationInfoDTO.setEndDate(reservationDTO.getEndDate());
+        reservationInfoDTO.setStartTime(reservationDTO.getStartTime());
+        reservationInfoDTO.setEndTime(reservationDTO.getEndTime());
+        reservationInfoDTO.setHostId(reservationDTO.getHostId());
+        reservationInfoDTO.setWeekDay(reservationDTO.getWeekDays());
+        reservationInfoDTO.setReservationId(reservationDTO.getId());
+
+        reservationInfoDTO.setCurrentUserId(reservationDTO.getUserId());
+
+        return reservationInfoDTO;
     }
 }
