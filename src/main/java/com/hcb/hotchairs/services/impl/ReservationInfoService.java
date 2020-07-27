@@ -55,16 +55,12 @@ public class ReservationInfoService implements IReservationInfoService {
     public List<ReservationInfoDTO> getFreePlace(ReservationFilterDTO reservationFilter) {
         List<Date> requiredDays = dateConverter.toDateList(reservationFilter.getStartDate(),
                 reservationFilter.getEndDate(), reservationFilter.getWeekDay());
-
-        System.out.println(reservationFilter.getEndTime() + "     " + reservationFilter.getStartTime());
-
         List<TagDTO> requestedTags = (Objects.isNull(reservationFilter.getTagsId())) ? new ArrayList<>()
                 : tagService.getAllFromIdCollection(reservationFilter.getTagsId());
 
         List<PlaceDTO> placeAtLocation = (Objects.isNull(reservationFilter.getFloorId()))
                 ? placeService.getAllByOfficeId(reservationFilter.getOfficeId())
                 : placeService.getAllByFloorId(reservationFilter.getFloorId());
-
         List<PlaceDTO> placesMatchingTag = placeAtLocation
                 .stream()
                 .filter(currentPlace -> currentPlace.getTags().containsAll(requestedTags))
