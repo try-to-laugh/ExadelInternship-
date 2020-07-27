@@ -82,14 +82,14 @@ public class OfficeService implements IOfficeService {
     }
 
     @Override
-    public byte[] getOfficeSVG(Long id) {
+    public byte[] getOfficeSvg(Long id) {
         return officeDAO.findById(id).map(Office::getSvg).orElse(null);
     }
 
     @Override
     @Modifying
     @Transactional
-    public boolean setOfficeSVG(byte[] svg, Long id) {
+    public boolean setOfficeSvg(byte[] svg, Long id) {
         Optional<Office> office = officeDAO.findById(id);
         if (office.isPresent()) {
             office.get().setSvg(svg);
@@ -102,7 +102,7 @@ public class OfficeService implements IOfficeService {
     @Override
     @Modifying
     @Transactional
-    public boolean deleteOfficeSVG(Long id) {
+    public boolean deleteOfficeSvg(Long id) {
         Optional<Office> office = officeDAO.findById(id);
         if (office.isPresent()) {
             office.get().setSvg(null);
