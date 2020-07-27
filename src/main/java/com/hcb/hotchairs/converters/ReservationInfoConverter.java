@@ -7,9 +7,7 @@ import java.util.Objects;
 @Component
 public class ReservationInfoConverter {
     public ReservationInfoDTO toDTO(PlaceDTO placeDTO, FloorDTO floorDTO, ReservationFilterDTO placeFilter){
-        if(Objects.isNull(placeDTO)
-                || Objects.isNull(floorDTO)
-                || Objects.isNull(placeFilter)){
+        if(Objects.isNull(placeDTO) || Objects.isNull(floorDTO) || Objects.isNull(placeFilter)){
             return null;
         }
 
@@ -19,7 +17,7 @@ public class ReservationInfoConverter {
         reservationInfo.setStartTime(placeFilter.getStartTime());
         reservationInfo.setEndTime(placeFilter.getEndTime());
         reservationInfo.setWeekDay(placeFilter.getWeekDay());
-        reservationInfo.setUsersId(placeFilter.getUsersId());
+        reservationInfo.setUsersId(placeFilter.getUserIds());
         reservationInfo.setCapacity(placeDTO.getCapacity());
 
         reservationInfo.setPlaceId(placeDTO.getId());
@@ -34,9 +32,7 @@ public class ReservationInfoConverter {
     }
 
     public ReservationInfoDTO toDTO(PlaceDTO placeDTO, FloorDTO floorDTO, ReservationDTO reservationDTO){
-        if(Objects.isNull(placeDTO)
-        || Objects.isNull(floorDTO)
-        || Objects.isNull(reservationDTO)){
+        if(Objects.isNull(placeDTO) || Objects.isNull(floorDTO) || Objects.isNull(reservationDTO)){
             return null;
         }
 
@@ -56,7 +52,6 @@ public class ReservationInfoConverter {
         reservationInfoDTO.setHostId(reservationDTO.getHostId());
         reservationInfoDTO.setWeekDay(reservationDTO.getWeekDays());
         reservationInfoDTO.setReservationId(reservationDTO.getId());
-
         reservationInfoDTO.setCurrentUserId(reservationDTO.getUserId());
 
         return reservationInfoDTO;
