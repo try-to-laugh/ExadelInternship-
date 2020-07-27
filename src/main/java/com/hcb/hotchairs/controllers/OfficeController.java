@@ -12,12 +12,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -25,7 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/offices")
+@RequestMapping("/api/offices")
 public class OfficeController {
 
     private final IOfficeService officeService;
@@ -67,6 +71,10 @@ public class OfficeController {
         return ResponseEntity.ok(officeService.getAll());
     }
 
+    /*
+        This method is Deprecated and will be removed after front transition to pageable version.
+     */
+    @Deprecated
     @GetMapping("/extended")
     public ResponseEntity<?> getExtendedOfficeInfo() {
         List<OfficeDTO> offices = officeService.getAll();
@@ -91,5 +99,68 @@ public class OfficeController {
         }
 
         return ResponseEntity.ok(extendedOfficeInfos);
+    }
+
+    @GetMapping("/extended/paging")
+    public ResponseEntity<?> getExtendedPagingAndSortingOfficeInfo(@RequestParam(name = "pageNumber") Integer pageNumber,
+                                                                   @RequestParam(name = "pageSize") Integer pageSize,
+                                                                   @RequestParam(name = "sortMethod") String sortMethod,
+                                                                   @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection) {
+        List<OfficeDTO> offices = officeService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection);
+
+        @Data
+        @AllArgsConstructor
+        @NoArgsConstructor
+        class ExtendedOfficeInfo {
+            List<FloorDTO> floors;
+            private OfficeDTO office;
+            private CityDTO city;
+            private CountryDTO country;
+        }
+
+        List<ExtendedOfficeInfo> extendedOfficeInfos = new ArrayList<>();
+        for (OfficeDTO office: offices) {
+            List<FloorDTO> floors = floorService.getAllByOfficeId(office.getId());
+            CityDTO city = cityService.getById(office.getCityId());
+            CountryDTO country = countryService.getById(city.getCountryId());
+
+            extendedOfficeInfos.add(new ExtendedOfficeInfo(floors, office, city, country));
+        }
+
+        return ResponseEntity.ok(extendedOfficeInfos);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getOfficesCount() {
+        return ResponseEntity.ok(officeService.getCount());
+    }
+
+    @GetMapping("/svg/{id}")
+    public ResponseEntity<byte[]> getOfficeSvg(@PathVariable Long id) {
+        byte[] svg = officeService.getOfficeSvg(id);
+
+        if (Objects.isNull(svg)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/svg+xml")).body(svg);
+        }
+    }
+
+    @PostMapping("/svg/{id}")
+    public ResponseEntity<Object> setOfficeSvg(@RequestBody byte[] svg, @PathVariable Long id) {
+        if (officeService.setOfficeSvg(svg, id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @DeleteMapping("svg/{id}")
+    public ResponseEntity<Object> deleteOfficeSvg(@PathVariable Long id) {
+        if (officeService.deleteOfficeSvg(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 }

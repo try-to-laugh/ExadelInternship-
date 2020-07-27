@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -83,7 +85,11 @@ public class UserController {
 
     @GetMapping("/current")
     public ResponseEntity<EntityModel<UserDTO>> getCurrentUser(Authentication authentication) {
-        return ResponseEntity.ok(assembler.toModel(userService.getByEmail(authentication.getName())));
+        if (Objects.isNull(authentication)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } else {
+            return ResponseEntity.ok(assembler.toModel(userService.getByEmail(authentication.getName())));
+        }
     }
 
     @GetMapping("/reservations/{id}")

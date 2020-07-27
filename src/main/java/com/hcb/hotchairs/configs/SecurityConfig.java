@@ -52,10 +52,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf()
                     .disable()
-//                .requiresChannel()
-//                    .anyRequest()
-//                    .requiresSecure()
-//                .and()
+                .requiresChannel()
+                    .anyRequest()
+                    .requiresSecure()
+                .and()
                 .authorizeRequests()
                     .antMatchers("/v2/api-docs",
                     "/configuration/ui",
@@ -63,30 +63,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/configuration/security",
                     "/swagger-ui.html",
                     "/webjars/**").permitAll()
-                    .antMatchers("/**").permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                    .antMatchers("/test/**", "/restore/**").permitAll()
+                    .antMatchers("/api/login", "/api/logout").permitAll()
+                    .antMatchers("/api/**").authenticated()
+                    .antMatchers("/**").permitAll()
                     .anyRequest().authenticated()
                 .and()
                     .exceptionHandling()
                     .authenticationEntryPoint(entryPoint)
                 .and()
                 .formLogin()
-                    .permitAll()
                     .successHandler(successHandler)
                     .failureHandler(failureHandler)
+                    .loginProcessingUrl("/api/login")
+                    .permitAll()
                 .and()
                 .rememberMe()
                     .key("Cv2XaEtT66YHtdNhJuUn")
                     .userDetailsService(loginService)
                 .and()
                 .logout()
-                    .logoutUrl("/logout")
-                    .permitAll()
+                    .logoutUrl("/api/logout")
                     .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) ->
                             httpServletResponse.setStatus(HttpServletResponse.SC_OK))
                     .deleteCookies("JSESSIONID")
-                    .invalidateHttpSession(true);
+                    .invalidateHttpSession(true)
+                    .permitAll();
 
         /* TODO:
             1. Disable Test API before release.

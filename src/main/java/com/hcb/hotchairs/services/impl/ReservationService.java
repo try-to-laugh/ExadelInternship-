@@ -6,10 +6,13 @@ import com.hcb.hotchairs.daos.IDetailDAO;
 import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
+import com.hcb.hotchairs.entities.Reservation;
 import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -51,6 +54,19 @@ public class ReservationService implements IReservationService {
                 .stream()
                 .map(reservationConverter::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ReservationDTO getByTimeDateAndPlace(Date date, Time startTime, Time endTime, Long placeId) {
+        return reservationConverter.toDTO(reservationDAO.findByTimeDateAndPlace(date, startTime, endTime, placeId)
+                .orElse(null));
+
+    }
+
+    @Override
+    @Modifying
+    public ReservationDTO saveReservation(Reservation reservation) {
+        return reservationConverter.toDTO(reservationDAO.save(reservation));
     }
 
     @Override
