@@ -32,13 +32,13 @@ public class ReservationConverter {
 
 
     public Reservation fromDTO(ReservationInfoDTO reservationInfoDTO, Long hostId){
-        if(Objects.isNull(reservationInfoDTO)){
+        if (Objects.isNull(reservationInfoDTO)) {
             return null;
         }
 
         Reservation reservation = new Reservation();
         Reservation hostReservation = null;
-        if(!Objects.isNull(hostId)){
+        if (!Objects.isNull(hostId)) {
             hostReservation = new Reservation();
             hostReservation.setId(hostId);
         }

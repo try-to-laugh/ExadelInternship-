@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -55,7 +56,8 @@ public class ReservationInfoService implements IReservationInfoService {
     public List<ReservationInfoDTO> getFreePlace(ReservationFilterDTO reservationFilter) {
         List<Date> requiredDays = dateConverter.toDateList(reservationFilter.getStartDate(),
                 reservationFilter.getEndDate(), reservationFilter.getWeekDay());
-        List<TagDTO> requestedTags = (Objects.isNull(reservationFilter.getTagsId())) ? new ArrayList<>()
+        List<TagDTO> requestedTags = (Objects.isNull(reservationFilter.getTagsId()))
+                ? Collections.emptyList()
                 : tagService.getAllFromIdCollection(reservationFilter.getTagsId());
 
         List<PlaceDTO> placeAtLocation = (Objects.isNull(reservationFilter.getFloorId()))

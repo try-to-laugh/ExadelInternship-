@@ -17,14 +17,11 @@ import java.util.stream.Collectors;
 public class ReservationInfoController {
 
     private final IReservationInfoService reservationInfoService;
+    private static final Long SINGLE = 1L;
 
-    private final Long SINGLE = (long) 1;
-    private final Long MEETING = (long) 2;
-
-    public ReservationInfoController(IReservationInfoService reservationInfoService){
+    public ReservationInfoController(IReservationInfoService reservationInfoService) {
         this.reservationInfoService = reservationInfoService;
     }
-
 
     @PostMapping("/free")
     public ResponseEntity<List<ReservationInfoDTO>> getFreePlaces(@RequestBody ReservationFilterDTO request) {
@@ -36,7 +33,7 @@ public class ReservationInfoController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<ReservationInfoDTO> bookPlace(@RequestBody ReservationInfoDTO request){
+    public ResponseEntity<ReservationInfoDTO> bookPlace(@RequestBody ReservationInfoDTO request) {
         return ResponseEntity.ok(reservationInfoService.saveReservationInfo(request));
     }
 }

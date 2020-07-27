@@ -22,8 +22,7 @@ public class DetailConverter {
     }
 
     public Detail fromDTO(Date date, Long reservationId){
-        if(Objects.isNull(date)
-        || Objects.isNull(reservationId)){
+        if( Objects.isNull(date) || Objects.isNull(reservationId)) {
             return null;
         }
 

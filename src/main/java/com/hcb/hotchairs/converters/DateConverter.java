@@ -16,7 +16,7 @@ public class DateConverter
 {
     private final Integer DAYS_IN_WEEK = 7;
     public List<Date> toDateList (Date startDate, Date endDate, int[] dayWeek){
-        if(Objects.isNull(dayWeek)){
+        if (Objects.isNull(dayWeek)) {
             return Arrays.asList(startDate);
         }
 
@@ -24,14 +24,14 @@ public class DateConverter
         LocalDate localDateEnd = LocalDate.parse(endDate.toString());
 
         List<LocalDate> dateStartWith = new ArrayList<>();
-        for(int dayNumber : dayWeek){
+        for (int dayNumber : dayWeek) {
             DayOfWeek currentDay = DayOfWeek.MONDAY.plus(dayNumber);
             dateStartWith.add(localDateStart.with(TemporalAdjusters.nextOrSame(currentDay)));
         }
 
 
         List<Date> requiredDays  = new ArrayList<>();
-        for(LocalDate element: dateStartWith){
+        for (LocalDate element: dateStartWith) {
             LocalDate current = element;
             while (current.compareTo(localDateEnd) <= 0){
                 requiredDays.add(Date.valueOf(current));
