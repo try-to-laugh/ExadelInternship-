@@ -136,7 +136,7 @@ public class OfficeController {
     }
 
     @GetMapping("/svg/{id}")
-    public ResponseEntity<byte[]> getOfficeSVG(@PathVariable Long id) {
+    public ResponseEntity<byte[]> getOfficeSvg(@PathVariable Long id) {
         byte[] svg = officeService.getOfficeSVG(id);
 
         if (Objects.isNull(svg)) {
@@ -147,7 +147,7 @@ public class OfficeController {
     }
 
     @PostMapping("/svg/{id}")
-    public ResponseEntity<Object> setOfficeSVG(@RequestBody byte[] svg, @PathVariable Long id) {
+    public ResponseEntity<Object> setOfficeSvg(@RequestBody byte[] svg, @PathVariable Long id) {
         if (officeService.setOfficeSVG(svg, id)) {
             return ResponseEntity.ok().build();
         } else {
@@ -156,7 +156,7 @@ public class OfficeController {
     }
 
     @DeleteMapping("svg/{id}")
-    public ResponseEntity<Object> deleteOfficeSVG(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteOfficeSvg(@PathVariable Long id) {
         if (officeService.deleteOfficeSVG(id)) {
             return ResponseEntity.ok().build();
         } else {

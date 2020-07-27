@@ -77,7 +77,7 @@ public class OfficeService implements IOfficeService {
     }
 
     @Override
-    public boolean isExists(Long id) {
+    public boolean getOfficeExists(Long id) {
         return officeDAO.existsById(id);
     }
 
@@ -94,9 +94,9 @@ public class OfficeService implements IOfficeService {
         if (office.isPresent()) {
             office.get().setSvg(svg);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     @Override
@@ -107,9 +107,9 @@ public class OfficeService implements IOfficeService {
         if (office.isPresent()) {
             office.get().setSvg(null);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     @Override
