@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface IDetailDAO extends JpaRepository<Detail, Long>{
-    @Query("FROM Detail WHERE reservation.id = ?1")
+    @Query("FROM Detail WHERE reservation.id = ?1 ORDER BY date ASC")
     List<Detail> findByReservationId(Long reservationId);
 }

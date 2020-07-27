@@ -12,5 +12,4 @@ public interface IUserService {
     UserDTO getById(Long id);
     List<UserDTO> getAll();
     List<ReservationDTO> getUserReservations(Long id);
-    DetailDTO getNearestUserReservation(List<ReservationDTO> reservationDTOS);
 }
