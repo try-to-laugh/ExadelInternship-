@@ -13,5 +13,6 @@ public interface IReservationService {
     List<ReservationDTO> getAll();
     List<ReservationDTO> getAllByTimeDateAndFloor(Date date, Time startTime, Time endTime, Long floorId);
     List<ReservationDTO> getAllByTimeDateAndOffice(Date date, Time startTime, Time endTime, Long officeId);
+    ReservationDTO getByTimeDateAndPlace(Date date, Time startTime, Time endTime, Long placeId);
     ReservationDTO getById(Long id);
 }

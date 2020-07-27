@@ -3,6 +3,7 @@ package com.hcb.hotchairs.controllers;
 import com.hcb.hotchairs.dtos.*;
 import com.hcb.hotchairs.services.IPlaceFilterService;
 import com.hcb.hotchairs.services.IPlaceService;
+import com.hcb.hotchairs.services.IReservationFilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,16 +18,19 @@ public class PlaceController {
 
     private final IPlaceService placeService;
     private final IPlaceFilterService placeFilterService;
+    private final IReservationFilterService reservationFilterService;
 
     private final Long SINGLE = (long) 1;
     private final Long MEETING = (long) 2;
 
     @Autowired
     public PlaceController(IPlaceService placeService,
-                           IPlaceFilterService placeFilterService) {
+                           IPlaceFilterService placeFilterService,
+                           IReservationFilterService reservationFilterService) {
 
         this.placeService = placeService;
         this.placeFilterService = placeFilterService;
+        this.reservationFilterService = reservationFilterService;
     }
 
     @GetMapping("/{id}")
@@ -39,6 +43,11 @@ public class PlaceController {
         return ResponseEntity.ok(placeService.getAllByFloorId(id));
     }
 
+    @GetMapping("/byOffice/{id}")
+    public ResponseEntity<List<PlaceDTO>> getAllByOfficeId(@PathVariable("id") Long officeId){
+        return ResponseEntity.ok(placeService.getAllByOfficeId(officeId));
+    }
+
     @PostMapping("/free")
     public ResponseEntity<List<PlaceDTO>> getFreeMeetingRooms(@RequestBody PlaceFilterDTO request,
                                                               Authentication authentication) {
@@ -47,6 +56,16 @@ public class PlaceController {
                 .filter(place -> request.getIsMeeting().equals(SINGLE)
                         ? place.getCapacity() == 1
                         : place.getCapacity() > 1)
+                .collect(Collectors.toList()));
+    }
+
+    @PostMapping("/testApi/free")
+    public ResponseEntity<List<ReservationInfoDTO>> getFreePlaces(@RequestBody ReservationFilterDTO request,
+                                                                  Authentication authentication){
+        return ResponseEntity.ok(reservationFilterService.getFreePlace(request,authentication)
+                .stream().filter(reservationInfo -> request.getIsMeeting().equals(SINGLE)
+                        ? reservationInfo.getCapacity() == 1
+                        : reservationInfo.getCapacity() > 1)
                 .collect(Collectors.toList()));
     }
 
