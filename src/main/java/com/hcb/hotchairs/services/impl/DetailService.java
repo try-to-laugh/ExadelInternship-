@@ -3,7 +3,9 @@ package com.hcb.hotchairs.services.impl;
 import com.hcb.hotchairs.converters.DetailConverter;
 import com.hcb.hotchairs.daos.IDetailDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
+import com.hcb.hotchairs.entities.Detail;
 import com.hcb.hotchairs.services.IDetailService;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,5 +30,11 @@ public class DetailService implements IDetailService {
     @Override
     public DetailDTO getById(Long id) {
         return detailConverter.toDTO(detailDAO.findById(id).orElse(null));
+    }
+
+    @Override
+    @Modifying
+    public DetailDTO saveDetail(Detail detail) {
+        return detailConverter.toDTO(detailDAO.save(detail));
     }
 }

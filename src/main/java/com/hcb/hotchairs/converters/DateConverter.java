@@ -7,31 +7,35 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class DateConverter
 {
+    private final Integer DAYS_IN_WEEK = 7;
     public List<Date> toDateList (Date startDate, Date endDate, int[] dayWeek){
+        if(Objects.isNull(dayWeek)){
+            return Arrays.asList(startDate);
+        }
+
         LocalDate localDateStart = LocalDate.parse(startDate.toString());
         LocalDate localDateEnd = LocalDate.parse(endDate.toString());
 
-
         List<LocalDate> dateStartWith = new ArrayList<>();
-        DayOfWeek monday = DayOfWeek.MONDAY;
-        for(int i = 0; i < 7;i++){
-            DayOfWeek currentDay = monday.plus(i);
-            if(dayWeek[i] == 1){
-                dateStartWith.add(localDateStart.with(TemporalAdjusters.nextOrSame(currentDay)));
-            }
+        for(int dayNumber : dayWeek){
+            DayOfWeek currentDay = DayOfWeek.MONDAY.plus(dayNumber);
+            dateStartWith.add(localDateStart.with(TemporalAdjusters.nextOrSame(currentDay)));
         }
+
 
         List<Date> requiredDays  = new ArrayList<>();
         for(LocalDate element: dateStartWith){
             LocalDate current = element;
             while (current.compareTo(localDateEnd) <= 0){
                 requiredDays.add(Date.valueOf(current));
-                current = current.plusDays(7);
+                current = current.plusDays(DAYS_IN_WEEK);
             }
         }
         return requiredDays;

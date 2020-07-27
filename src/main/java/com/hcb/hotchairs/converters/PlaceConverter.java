@@ -1,6 +1,7 @@
 package com.hcb.hotchairs.converters;
 
 import com.hcb.hotchairs.dtos.PlaceDTO;
+import com.hcb.hotchairs.entities.Floor;
 import com.hcb.hotchairs.entities.Place;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -40,5 +41,22 @@ public class PlaceConverter {
         }
 
         return placeDTO;
+    }
+
+    public Place fromDTO(PlaceDTO placeDTO){
+        if(Objects.isNull(placeDTO)){
+            return null;
+        }
+
+        Place place = new Place();
+        place.setId(placeDTO.getId());
+        place.setCapacity(placeDTO.getCapacity());
+        place.setName(placeDTO.getName());
+
+
+        place.setFloor(new Floor());
+        place.getFloor().setId(placeDTO.getFloorId());
+
+        return place;
     }
 }

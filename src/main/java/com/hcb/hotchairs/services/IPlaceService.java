@@ -3,6 +3,7 @@ package com.hcb.hotchairs.services;
 
 
 import com.hcb.hotchairs.dtos.PlaceDTO;
+import com.hcb.hotchairs.entities.Place;
 
 import java.util.Collection;
 import java.util.List;
