@@ -12,7 +12,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -101,8 +104,9 @@ public class OfficeController {
     @GetMapping("/extended/paging")
     public ResponseEntity<?> getExtendedPagingAndSortingOfficeInfo(@RequestParam(name = "pageNumber") Integer pageNumber,
                                                                    @RequestParam(name = "pageSize") Integer pageSize,
-                                                                   @RequestParam(name = "sortMethod") String sortMethod) {
-        List<OfficeDTO> offices = officeService.getPagedAndSorted(pageNumber, pageSize, sortMethod);
+                                                                   @RequestParam(name = "sortMethod") String sortMethod,
+                                                                   @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection) {
+        List<OfficeDTO> offices = officeService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection);
 
         @Data
         @AllArgsConstructor
@@ -124,5 +128,39 @@ public class OfficeController {
         }
 
         return ResponseEntity.ok(extendedOfficeInfos);
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getOfficesCount() {
+        return ResponseEntity.ok(officeService.getCount());
+    }
+
+    @GetMapping("/svg/{id}")
+    public ResponseEntity<byte[]> getOfficeSVG(@PathVariable Long id) {
+        byte[] svg = officeService.getOfficeSVG(id);
+
+        if (Objects.isNull(svg)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/svg+xml")).body(svg);
+        }
+    }
+
+    @PostMapping("/svg/{id}")
+    public ResponseEntity<Object> setOfficeSVG(@RequestBody byte[] svg, @PathVariable Long id) {
+        if (officeService.setOfficeSVG(svg, id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @DeleteMapping("svg/{id}")
+    public ResponseEntity<Object> deleteOfficeSVG(@PathVariable Long id) {
+        if (officeService.deleteOfficeSVG(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 }

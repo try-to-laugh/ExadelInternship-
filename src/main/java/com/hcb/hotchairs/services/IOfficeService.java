@@ -9,5 +9,10 @@ public interface IOfficeService {
     List<OfficeDTO> getAllByCityId(Long cityId);
     OfficeDTO getById(Long id);
     OfficeDTO saveOffice(OfficeDTO newOffice);
-    List<OfficeDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod);
+    List<OfficeDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod, String sortDirection);
+    boolean isExists(Long id);
+    byte[] getOfficeSVG(Long id);
+    boolean setOfficeSVG(byte[] svg, Long id);
+    boolean deleteOfficeSVG(Long id);
+    Long getCount();
 }

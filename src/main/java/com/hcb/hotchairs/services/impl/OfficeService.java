@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,16 +53,16 @@ public class OfficeService implements IOfficeService {
     }
 
     @Override
-    public List<OfficeDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod) {
+    public List<OfficeDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod, String sortDirection) {
         Sort sortConfig;
 
         switch (sortMethod) {
             case "city":
-                sortConfig = Sort.by(Sort.Direction.ASC, "City.name");
+                sortConfig = Sort.by(sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, "City.name");
                 break;
 
             case "country":
-                sortConfig = Sort.by(Sort.Direction.ASC, "City.Country.name");
+                sortConfig = Sort.by(sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, "City.Country.name");
                 break;
 
             default:
@@ -73,5 +74,46 @@ public class OfficeService implements IOfficeService {
         Page<Office> officePage = officeDAO.findAll(pageConfig);
 
         return officePage.get().map(officeConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isExists(Long id) {
+        return officeDAO.existsById(id);
+    }
+
+    @Override
+    public byte[] getOfficeSVG(Long id) {
+        return officeDAO.findById(id).map(Office::getSvg).orElse(null);
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean setOfficeSVG(byte[] svg, Long id) {
+        Optional<Office> office = officeDAO.findById(id);
+        if (office.isPresent()) {
+            office.get().setSvg(svg);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean deleteOfficeSVG(Long id) {
+        Optional<Office> office = officeDAO.findById(id);
+        if (office.isPresent()) {
+            office.get().setSvg(null);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public Long getCount() {
+        return officeDAO.count();
     }
 }
