@@ -92,7 +92,6 @@ public class UserController {
         }
     }
 
-
     @GetMapping("/reservations/{id}")
     public ResponseEntity<List<ExtendedReservationInfo>> getReservationsByUserId(Long id) {
 
