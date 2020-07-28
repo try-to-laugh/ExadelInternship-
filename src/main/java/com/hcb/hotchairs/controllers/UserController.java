@@ -38,7 +38,7 @@ public class UserController {
     @NoArgsConstructor
     private class ExtendedReservationInfo {
         private ReservationDTO reservation;
-        private List<DetailDTO> details;
+        private DetailDTO detail;
         private PlaceDTO place;
         private FloorDTO floor;
         private OfficeDTO office;
@@ -55,7 +55,7 @@ public class UserController {
         CityDTO cityDTO = cityService.getById(officeDTO.getCityId());
         CountryDTO countryDTO = countryService.getById(cityDTO.getCountryId());
 
-        return new ExtendedReservationInfo(reservationDTO, detailDTOs, placeDTO, floorDTO,
+        return new ExtendedReservationInfo(reservationDTO, detailDTOs.get(0), placeDTO, floorDTO,
                 officeDTO, cityDTO, countryDTO);
     }
 
@@ -94,34 +94,39 @@ public class UserController {
 
     @GetMapping("/reservations/{id}")
     public ResponseEntity<?> getReservationsByUserId(Long id) {
-        return ResponseEntity.ok(userService.getUserReservations(id).stream()
+
+        List<ReservationDTO> userReservations = userService.getUserReservations(id);
+
+        return ResponseEntity.ok(userReservations.stream()
                 .map(res -> toExtendedReservationInfo(reservationService.getReservationDetails(res.getId())))
                 .collect(Collectors.toList()));
     }
 
     @GetMapping("/reservations/nearest/{id}")
     public ResponseEntity<?> getNearestReservationByUserId(Long id) {
-        return ResponseEntity.ok(
-                toExtendedReservationInfo(
-                        reservationService.getReservationDetails(
-                                userService.getUserReservations(id).get(0).getId())));
+
+        List<DetailDTO> userDetails = userService.getUserDetails(id);
+
+        return ResponseEntity.ok(toExtendedReservationInfo(userDetails));
     }
 
     @GetMapping("/current/reservations")
     public ResponseEntity<?> getCurrentUserReservations(Authentication authentication) {
-        return ResponseEntity.ok(userService.getUserReservations
-                (userService.getByEmail(authentication.getName()).getId())
-                .stream()
+
+        UserDTO user = userService.getByEmail(authentication.getName());
+        List<ReservationDTO> userReservations = userService.getUserReservations(user.getId());
+
+        return ResponseEntity.ok(userReservations.stream()
                 .map(res -> toExtendedReservationInfo(reservationService.getReservationDetails(res.getId())))
                 .collect(Collectors.toList()));
     }
 
     @GetMapping("/current/reservations/nearest")
    public ResponseEntity<?> getNearestReservationByUserId(Authentication authentication) {
-        return ResponseEntity.ok(
-                toExtendedReservationInfo(
-                        reservationService.getReservationDetails(
-                                userService.getUserReservations(
-                                        userService.getByEmail(authentication.getName()).getId()).get(0).getId())));
+
+        UserDTO user = userService.getByEmail(authentication.getName());
+        List<DetailDTO> userDetails = userService.getUserDetails(user.getId());
+
+        return ResponseEntity.ok(toExtendedReservationInfo(userDetails));
     }
 }

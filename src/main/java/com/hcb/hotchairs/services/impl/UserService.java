@@ -9,15 +9,11 @@ import com.hcb.hotchairs.daos.IUserDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
-import com.hcb.hotchairs.entities.Detail;
-import com.hcb.hotchairs.entities.Reservation;
 import com.hcb.hotchairs.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,5 +58,10 @@ public class UserService implements IUserService {
     @Override
     public List<ReservationDTO> getUserReservations(Long id) {
         return reservationDAO.findByUserId(id).stream().map(reservationConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DetailDTO> getUserDetails(Long id) {
+        return detailDAO.findByUserId(id).stream().map(detailConverter::toDTO).collect(Collectors.toList());
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.Null;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -78,7 +77,6 @@ public class ReservationService implements IReservationService {
     public List<DetailDTO> getReservationDetails(Long id) {
         return detailDAO.findByReservationId(id)
                 .stream()
-                //.filter(detail -> detail.getDate().compareTo(new java.util.Date()) > 0)
                 .map(detailConverter::toDTO).collect(Collectors.toList());
     }
 }
