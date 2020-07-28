@@ -9,16 +9,15 @@ import com.hcb.hotchairs.daos.IUserDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
-import com.hcb.hotchairs.entities.Detail;
 import com.hcb.hotchairs.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class UserService implements IUserService {
 
@@ -58,34 +57,13 @@ public class UserService implements IUserService {
 
     @Override
     public List<ReservationDTO> getUserReservations(Long id) {
-        return reservationDAO.findByUserId(id).stream().map(reservationConverter::toDTO).collect(Collectors.toList());
+        return reservationDAO.findByUserId(id).stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public DetailDTO getNearestUserReservation(List<ReservationDTO> reservationDTOS) {
-
-        List<Detail> details= new ArrayList<>();
-
-        for(ReservationDTO reservationDTO : reservationDTOS){
-                details.addAll(detailDAO.findByReservationId(reservationDTO.getId()));
-        }
-
-        Date curDate = new Date();
-
-        details.sort((detail2, detail1) -> detail2.getDate().compareTo(detail1.getDate()));
-
-        for (Detail detail : details) {
-
-            Date resStartDate = detail.getDate();
-
-            if (resStartDate.compareTo(curDate)>0) {
-                return detailConverter.toDTO(detail);
-            }else if (resStartDate.compareTo(curDate) == 0 &&
-                    detail.getReservation().getStartTime().getTime() - curDate.getTime() > 0){
-                return detailConverter.toDTO(detail);
-            }
-        }
-
-        return null;
+    public List<DetailDTO> getUserDetails(Long id) {
+        return detailDAO.findByUserId(id).stream().map(detailConverter::toDTO).collect(Collectors.toList());
     }
 }

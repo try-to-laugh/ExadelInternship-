@@ -1,6 +1,8 @@
 package com.hcb.hotchairs.services;
 
+import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
+import com.hcb.hotchairs.entities.Detail;
 import com.hcb.hotchairs.entities.Reservation;
 
 import java.sql.Date;
@@ -16,4 +18,5 @@ public interface IReservationService {
     ReservationDTO getByTimeDateAndPlace(Date date, Time startTime, Time endTime, Long placeId);
     ReservationDTO saveReservation(Reservation reservation);
     ReservationDTO getById(Long id);
+    List<DetailDTO> getReservationDetails(Long id);
 }

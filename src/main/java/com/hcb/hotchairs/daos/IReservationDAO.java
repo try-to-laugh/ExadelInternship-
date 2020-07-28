@@ -39,13 +39,15 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
             " AND res.startTime < ?3" +
             " AND res.endTime > ?2 " +
             " AND res.place.id = ?4")
-
     Optional<Reservation> findByTimeDateAndPlace(Date date,
                                                 Time startTime,
                                                 Time endTime,
                                                 Long placeId);
 
-
-    @Query("FROM Reservation WHERE user.id = ?1")
+    @Query("FROM Reservation WHERE user.id = ?1 AND endDate >= CURRENT_DATE AND endTime > CURRENT_TIME " +
+            "ORDER BY startDate ASC, startTime ASC")
+    /**TODO
+     * MB upgrade sort and make it more suitable for terms
+     */
     List<Reservation> findByUserId(Long userId);
 }
