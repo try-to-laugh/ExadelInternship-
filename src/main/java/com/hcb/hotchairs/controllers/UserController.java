@@ -93,7 +93,7 @@ public class UserController {
     }
 
     @GetMapping("/reservations/{id}")
-    public ResponseEntity<?> getReservationsByUserId(Long id) {
+    public ResponseEntity<List<ExtendedReservationInfo>> getReservationsByUserId(Long id) {
 
         List<ReservationDTO> userReservations = userService.getUserReservations(id);
 
@@ -103,7 +103,7 @@ public class UserController {
     }
 
     @GetMapping("/reservations/nearest/{id}")
-    public ResponseEntity<?> getNearestReservationByUserId(Long id) {
+    public ResponseEntity<ExtendedReservationInfo> getNearestReservationByUserId(Long id) {
 
         List<DetailDTO> userDetails = userService.getUserDetails(id);
 
@@ -111,7 +111,8 @@ public class UserController {
     }
 
     @GetMapping("/current/reservations")
-    public ResponseEntity<?> getCurrentUserReservations(Authentication authentication) {
+    public ResponseEntity<List<ExtendedReservationInfo>> getCurrentUserReservations
+            (Authentication authentication) {
 
         UserDTO user = userService.getByEmail(authentication.getName());
         List<ReservationDTO> userReservations = userService.getUserReservations(user.getId());
@@ -122,11 +123,16 @@ public class UserController {
     }
 
     @GetMapping("/current/reservations/nearest")
-   public ResponseEntity<?> getNearestReservationByUserId(Authentication authentication) {
+   public ResponseEntity<ExtendedReservationInfo> getNearestReservationByUserId
+            (Authentication authentication) {
 
         UserDTO user = userService.getByEmail(authentication.getName());
         List<DetailDTO> userDetails = userService.getUserDetails(user.getId());
 
         return ResponseEntity.ok(toExtendedReservationInfo(userDetails));
     }
+
+    /**TODO:
+     * Add some checks with exceptions
+     */
 }

@@ -57,7 +57,9 @@ public class UserService implements IUserService {
 
     @Override
     public List<ReservationDTO> getUserReservations(Long id) {
-        return reservationDAO.findByUserId(id).stream().map(reservationConverter::toDTO).collect(Collectors.toList());
+        return reservationDAO.findByUserId(id).stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
