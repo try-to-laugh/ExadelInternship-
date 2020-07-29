@@ -65,8 +65,8 @@ public class PlaceController {
         return ResponseEntity.ok(placeService.getAll());
     }
 
-    @PostMapping("/batch")
-    public ResponseEntity<List<PlaceDTO>> savePlaces(@RequestBody List<PlaceDTO> places) {
-        return ResponseEntity.ok(placeService.savePlaces(places));
+    @PostMapping("/batch/{floorId}")
+    public ResponseEntity<List<PlaceDTO>> savePlaces(@RequestBody List<PlaceDTO> places, @PathVariable Long floorId) {
+        return ResponseEntity.ok(placeService.savePlaces(places, floorId));
     }
 }
