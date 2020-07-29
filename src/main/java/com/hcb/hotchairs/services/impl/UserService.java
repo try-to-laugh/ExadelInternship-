@@ -66,4 +66,12 @@ public class UserService implements IUserService {
     public List<DetailDTO> getUserDetails(Long id) {
         return detailDAO.findByUserId(id).stream().map(detailConverter::toDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public List<UserDTO> getByHrId(Long hrId) {
+        return userDAO.finByHrId(hrId)
+                .stream()
+                .map(userConverter::toDTO)
+                .collect(Collectors.toList());
+    }
 }
