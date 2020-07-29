@@ -16,7 +16,7 @@ public class DateConverter
 {
     private final Integer DAYS_IN_WEEK = 7;
     public List<Date> toDateList (Date startDate, Date endDate, int[] dayWeek){
-        if (Objects.isNull(dayWeek)) {
+        if (Objects.isNull(dayWeek) || dayWeek.length == 0) {
             return Arrays.asList(startDate);
         }
 
