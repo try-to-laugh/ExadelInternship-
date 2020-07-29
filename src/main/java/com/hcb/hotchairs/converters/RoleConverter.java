@@ -4,6 +4,7 @@ import com.hcb.hotchairs.dtos.RoleDTO;
 import com.hcb.hotchairs.entities.Role;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Component
@@ -18,7 +19,7 @@ public class RoleConverter {
         role.setId(roleDTO.getId());
         role.setName(roleDTO.getName());
 
-        return role;
+        return new Role(roleDTO.getId(), roleDTO.getName(), new ArrayList<>(), new ArrayList<>());
     }
 
     public RoleDTO toDTO(Role role) {

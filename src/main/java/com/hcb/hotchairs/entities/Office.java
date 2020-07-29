@@ -39,8 +39,4 @@ public class Office {
     @ManyToOne
     @JoinColumn(name = "city_id")
     private City city;
-
-    @Basic
-    @Column(name = "svg")
-    private byte[] svg;
 }

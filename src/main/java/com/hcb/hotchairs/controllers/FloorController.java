@@ -6,7 +6,9 @@ import com.hcb.hotchairs.services.IFloorService;
 import com.hcb.hotchairs.services.impl.FloorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,5 +60,34 @@ public class FloorController {
 
         return Objects.isNull(savedFloor.getId()) ? ResponseEntity.unprocessableEntity().build()
                 : ResponseEntity.ok(savedFloor);
+    }
+
+    @GetMapping("/svg/{id}")
+    public ResponseEntity<byte[]> getOfficeSvg(@PathVariable Long id) {
+        byte[] svg = floorService.getFloorSvg(id);
+
+        if (Objects.isNull(svg)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/svg+xml")).body(svg);
+        }
+    }
+
+    @PostMapping("/svg/{id}")
+    public ResponseEntity<Object> setOfficeSvg(@RequestBody byte[] svg, @PathVariable Long id) {
+        if (floorService.setFloorSvg(svg, id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @DeleteMapping("svg/{id}")
+    public ResponseEntity<Object> deleteOfficeSvg(@PathVariable Long id) {
+        if (floorService.deleteFloorSvg(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 }

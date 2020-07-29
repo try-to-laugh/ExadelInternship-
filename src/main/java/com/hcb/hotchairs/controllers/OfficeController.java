@@ -134,33 +134,4 @@ public class OfficeController {
     public ResponseEntity<Long> getOfficesCount() {
         return ResponseEntity.ok(officeService.getCount());
     }
-
-    @GetMapping("/svg/{id}")
-    public ResponseEntity<byte[]> getOfficeSvg(@PathVariable Long id) {
-        byte[] svg = officeService.getOfficeSvg(id);
-
-        if (Objects.isNull(svg)) {
-            return ResponseEntity.notFound().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/svg+xml")).body(svg);
-        }
-    }
-
-    @PostMapping("/svg/{id}")
-    public ResponseEntity<Object> setOfficeSvg(@RequestBody byte[] svg, @PathVariable Long id) {
-        if (officeService.setOfficeSvg(svg, id)) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.unprocessableEntity().build();
-        }
-    }
-
-    @DeleteMapping("svg/{id}")
-    public ResponseEntity<Object> deleteOfficeSvg(@PathVariable Long id) {
-        if (officeService.deleteOfficeSvg(id)) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.unprocessableEntity().build();
-        }
-    }
 }

@@ -40,7 +40,7 @@ public class PlaceController {
     }
 
     @GetMapping("/byFloor/{id}")
-    public ResponseEntity<Object> getAllByFloorId(@PathVariable("id") Long id) {
+    public ResponseEntity<List<PlaceDTO>> getAllByFloorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(placeService.getAllByFloorId(id));
     }
 
@@ -63,5 +63,10 @@ public class PlaceController {
     @GetMapping("")
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(placeService.getAll());
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<List<PlaceDTO>> savePlaces(@RequestBody List<PlaceDTO> places) {
+        return ResponseEntity.ok(placeService.savePlaces(places));
     }
 }

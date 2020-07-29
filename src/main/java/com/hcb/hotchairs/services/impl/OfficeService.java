@@ -82,37 +82,6 @@ public class OfficeService implements IOfficeService {
     }
 
     @Override
-    public byte[] getOfficeSvg(Long id) {
-        return officeDAO.findById(id).map(Office::getSvg).orElse(null);
-    }
-
-    @Override
-    @Modifying
-    @Transactional
-    public boolean setOfficeSvg(byte[] svg, Long id) {
-        Optional<Office> office = officeDAO.findById(id);
-        if (office.isPresent()) {
-            office.get().setSvg(svg);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    @Modifying
-    @Transactional
-    public boolean deleteOfficeSvg(Long id) {
-        Optional<Office> office = officeDAO.findById(id);
-        if (office.isPresent()) {
-            office.get().setSvg(null);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public Long getCount() {
         return officeDAO.count();
     }

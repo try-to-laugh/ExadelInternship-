@@ -4,12 +4,14 @@ import com.hcb.hotchairs.converters.FloorConverter;
 import com.hcb.hotchairs.daos.IFloorDAO;
 import com.hcb.hotchairs.dtos.FloorDTO;
 import com.hcb.hotchairs.entities.Floor;
+import com.hcb.hotchairs.entities.Office;
 import com.hcb.hotchairs.services.IFloorService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,5 +55,36 @@ public class FloorService implements IFloorService {
     @Modifying
     public FloorDTO save(FloorDTO floorDTO) {
         return floorConverter.toDTO(floorDAO.saveAndFlush(floorConverter.fromDTO(floorDTO)));
+    }
+
+    @Override
+    public byte[] getFloorSvg(Long id) {
+        return floorDAO.findById(id).map(Floor::getSvg).orElse(null);
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean setFloorSvg(byte[] svg, Long id) {
+        Optional<Floor> floor = floorDAO.findById(id);
+        if (floor.isPresent()) {
+            floor.get().setSvg(svg);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean deleteFloorSvg(Long id) {
+        Optional<Floor> floor = floorDAO.findById(id);
+        if (floor.isPresent()) {
+            floor.get().setSvg(null);
+            return true;
+        }
+
+        return false;
     }
 }

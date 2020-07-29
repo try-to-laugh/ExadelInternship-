@@ -11,8 +11,5 @@ public interface IOfficeService {
     OfficeDTO saveOffice(OfficeDTO newOffice);
     List<OfficeDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod, String sortDirection);
     boolean getOfficeExists(Long id);
-    byte[] getOfficeSvg(Long id);
-    boolean setOfficeSvg(byte[] svg, Long id);
-    boolean deleteOfficeSvg(Long id);
     Long getCount();
 }

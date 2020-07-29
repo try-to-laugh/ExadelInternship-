@@ -9,4 +9,7 @@ public interface IFloorService {
     FloorDTO getById(Long id);
     List<FloorDTO> saveBatch(List<FloorDTO> floors);
     FloorDTO save(FloorDTO floorDTO);
+    byte[] getFloorSvg(Long id);
+    boolean setFloorSvg(byte[] svg, Long id);
+    boolean deleteFloorSvg(Long id);
 }
