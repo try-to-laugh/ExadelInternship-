@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,10 +79,6 @@ public class ReservationService implements IReservationService {
         List<DetailDTO> detailDTOs = detailDAO.findByReservationId(id).stream()
                 .map(detailConverter::toDTO)
                 .collect(Collectors.toList());
-
-        if (Objects.isNull(detailDTOs)) {
-            return null;
-        }
 
         return detailDTOs;
     }
