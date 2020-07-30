@@ -11,10 +11,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class HotChairsExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NoDate.class)
+    @ExceptionHandler(NoDateException.class)
     protected ResponseEntity<ExceptionMessage> handleWrongData(){
-        return new ResponseEntity<>(new ExceptionMessage("There is no selected days in chosen period")
-                , HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ExceptionMessage("There is no selected days in chosen period"),
+                HttpStatus.NOT_FOUND);
     }
 
     @Data

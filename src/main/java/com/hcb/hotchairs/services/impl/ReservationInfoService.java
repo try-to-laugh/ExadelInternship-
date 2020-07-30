@@ -6,8 +6,7 @@ import com.hcb.hotchairs.converters.ReservationConverter;
 import com.hcb.hotchairs.converters.ReservationInfoConverter;
 import com.hcb.hotchairs.dtos.*;
 import com.hcb.hotchairs.entities.Reservation;
-import com.hcb.hotchairs.exceptions.NoDate;
-import com.hcb.hotchairs.exceptions.NotFoundException;
+import com.hcb.hotchairs.exceptions.NoDateException;
 import com.hcb.hotchairs.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -58,7 +57,7 @@ public class ReservationInfoService implements IReservationInfoService {
                 reservationFilter.getEndDate(), reservationFilter.getWeekDay());
 
         if(requiredDays.isEmpty()){
-            throw new NoDate();
+            throw new NoDateException();
         }
 
         List<TagDTO> requestedTags = (Objects.isNull(reservationFilter.getTagsId()))
@@ -96,10 +95,11 @@ public class ReservationInfoService implements IReservationInfoService {
     public ReservationInfoDTO saveReservationInfo(ReservationInfoDTO reservationInfo) {
 
         List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
-                reservationInfo.getEndDate(), reservationInfo.getWeekDay());
+                reservationInfo.getEndDate(),
+                reservationInfo.getWeekDay());
 
-        if(requiredDate.isEmpty()){
-            throw new NoDate();
+        if (requiredDate.isEmpty()) {
+            throw new NoDateException();
         }
 
         Reservation hostReservation = reservationConverter.fromDTO(reservationInfo, null);
@@ -128,13 +128,13 @@ public class ReservationInfoService implements IReservationInfoService {
     public List<ReservationInfoDTO> getIntersectionInfo(ReservationInfoDTO reservationInfo) {
         List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
                 reservationInfo.getEndDate(),reservationInfo.getWeekDay());
-        if(requiredDate.isEmpty()){
-            throw new NoDate();
-        }
 
+        if (requiredDate.isEmpty()) {
+            throw new NoDateException();
+        }
         requiredDate.sort(Comparator.naturalOrder());
 
-        List<ReservationDTO> probablyIntersectionReservation = reservationService.getIntersectionByDateTimeForUser(
+        List<ReservationDTO> probablyIntersectionReservations = reservationService.getIntersectionByDateTimeForUser(
                 reservationInfo.getStartDate(),
                 reservationInfo.getEndDate(),
                 reservationInfo.getStartTime(),
@@ -142,10 +142,8 @@ public class ReservationInfoService implements IReservationInfoService {
                 reservationInfo.getCurrentUserId()
         );
 
-        System.out.println(probablyIntersectionReservation);
-
         List<ReservationDTO> intersectionReservation = new ArrayList<>();
-        for(ReservationDTO reservation : probablyIntersectionReservation) {
+        for(ReservationDTO reservation : probablyIntersectionReservations) {
             List<DetailDTO> resDetails = detailService.getActiveByReservationId(reservation.getId());
             int requiredDatePointer = 0;
             int currentReservationDatePointer = 0;

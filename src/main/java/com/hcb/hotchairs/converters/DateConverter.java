@@ -1,6 +1,6 @@
 package com.hcb.hotchairs.converters;
 
-import com.hcb.hotchairs.exceptions.NoDate;
+import com.hcb.hotchairs.exceptions.NoDateException;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -16,7 +16,7 @@ public class DateConverter
     public List<Date> toDateList (Date startDate, Date endDate, int[] dayWeek){
         if (Objects.isNull(dayWeek) || dayWeek.length == 0) {
             if(!startDate.equals(endDate)){
-                throw new NoDate();
+                throw new NoDateException();
             }
             return Collections.singletonList(startDate);
         }
