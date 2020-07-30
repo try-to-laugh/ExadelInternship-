@@ -7,6 +7,7 @@ import com.hcb.hotchairs.dtos.FloorDTO;
 import com.hcb.hotchairs.services.IFloorService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -63,7 +64,10 @@ public class FloorService implements IFloorService {
     @Modifying
     public boolean deleteById(Long id) {
 
-        if (reservationDAO.findRelevantReservationsByFloorId(id) != null && reservationDAO.findRelevantReservationsByFloorId(id).size() != 0){
+        boolean floorHasRelevantReservations =
+                !CollectionUtils.isEmpty(reservationDAO.findRelevantReservationsByFloorId(id));
+
+        if (floorHasRelevantReservations){
             return false;
         }
 

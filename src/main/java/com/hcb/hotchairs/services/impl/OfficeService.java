@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -95,8 +96,10 @@ public class OfficeService implements IOfficeService {
     @Modifying
     public boolean deleteById(Long id){
 
-        if (reservationDAO.findRelevantReservationsByOfficeId(id) != null
-                && reservationDAO.findRelevantReservationsByOfficeId(id).size() != 0){
+        boolean officeHasRelevantReservations =
+                !CollectionUtils.isEmpty(reservationDAO.findRelevantReservationsByOfficeId(id));
+
+        if (officeHasRelevantReservations){
             return false;
         }
 
