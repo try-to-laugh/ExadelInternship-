@@ -37,4 +37,12 @@ public class DetailService implements IDetailService {
     public DetailDTO saveDetail(Detail detail) {
         return detailConverter.toDTO(detailDAO.save(detail));
     }
+
+    @Override
+    public List<DetailDTO> getActiveByReservationId(Long reservationId) {
+        return detailDAO.findByReservationId(reservationId)
+                .stream()
+                .map(detailConverter::toDTO)
+                .collect(Collectors.toList());
+    }
 }

@@ -79,4 +79,21 @@ public class ReservationService implements IReservationService {
                 .map(detailConverter::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ReservationDTO> getIntersectionByDateTimeForUser(Date startDate,
+                                                          Date endDate,
+                                                          Time startTime,
+                                                          Time endTime,
+                                                          Long userId) {
+
+
+
+
+        //List<Reservation> temp =  reservationDAO.findIntersectionForUser(startDate,endDate,startTime,endTime,userId);
+        return reservationDAO.findIntersectionForUser(startDate,endDate,startTime,endTime,userId)
+                .stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
+    }
 }

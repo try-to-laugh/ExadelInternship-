@@ -12,13 +12,14 @@ public interface IDetailDAO extends JpaRepository<Detail, Long>{
 
     @Query("FROM Detail " +
             "WHERE reservation.id = ?1 AND (date > CURRENT_DATE OR " +
-            "(date = CURRENT_DATE AND reservation.startTime > CURRENT_TIME)) " +
+            "(date = CURRENT_DATE AND reservation.endTime > CURRENT_TIME)) " +
             "ORDER BY date ASC")
     List<Detail> findByReservationId(Long reservationId);
 
+    //Некит, я тоже это юзаю не меня ничего пажойжда
     @Query("FROM Detail " +
             "WHERE reservation.user.id = ?1 AND (date > CURRENT_DATE OR " +
-            "(date = CURRENT_DATE AND reservation.startTime > CURRENT_TIME)) " +
+            "(date = CURRENT_DATE AND reservation.endTime > CURRENT_TIME)) " +
             "ORDER BY date ASC, reservation.startTime ASC")
     List<Detail> findByUserId(Long userId);
 }

@@ -49,4 +49,15 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
             "(endDate = CURRENT_DATE AND startTime > CURRENT_TIME)) " +
             "ORDER BY startDate ASC, startTime ASC")
     List<Reservation> findByUserId(Long userId);
+
+
+    @Query("FROM Reservation res WHERE " +
+            "res.startDate < ?2 " +
+            "AND res.endDate > ?1 " +
+            "AND res.startTime < ?4 " +
+            "AND res.endTime > ?3 " +
+            "AND res.user.id = ?5 ")
+    List<Reservation> findIntersectionForUser(Date startDate, Date endDate,
+                                              Time startTime, Time endTime,
+                                              Long userId);
 }
