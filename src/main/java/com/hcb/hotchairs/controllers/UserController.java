@@ -138,7 +138,7 @@ public class UserController {
     }
 
     @GetMapping("/current/subordinate")
-    public ResponseEntity<List<UserDTO>> getCurrentUserSubordinate(Authentication authentication){
+    public ResponseEntity<List<UserDTO>> getCurrentUserSubordinate(Authentication authentication) {
         UserDTO currentUser = userService.getByEmail(authentication.getName());
         return ResponseEntity.ok(userService.getByHrId(currentUser.getId()));
     }
