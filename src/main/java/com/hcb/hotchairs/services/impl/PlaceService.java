@@ -74,7 +74,7 @@ public class PlaceService implements IPlaceService {
     public List<PlaceDTO> savePlaces(List<PlaceDTO> places, Long floorId) {
 
         List<Long> placesIds = places.stream().map(PlaceDTO::getId).collect(Collectors.toList());
-        placesIds.add((long) 0);
+        placesIds.add(0L);
 
         placeDAO.deleteAllFromIdCollection(placesIds, floorId);
         return placeDAO.saveAll(places.stream().map(placeConverter::fromDTO).collect(Collectors.toList()))
