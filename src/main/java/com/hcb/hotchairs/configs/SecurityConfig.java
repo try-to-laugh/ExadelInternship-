@@ -52,8 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                     .disable()
                 .requiresChannel()
-                   .anyRequest()
-                    .requiresSecure()
+                .anyRequest()
+                .requiresSecure()
                 .and()
                 .authorizeRequests()
                     .antMatchers("/v2/api-docs",

@@ -2,6 +2,7 @@ package com.hcb.hotchairs.services.impl;
 
 import com.hcb.hotchairs.converters.OfficeConverter;
 import com.hcb.hotchairs.daos.IOfficeDAO;
+import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.OfficeDTO;
 import com.hcb.hotchairs.entities.Office;
 import com.hcb.hotchairs.services.IOfficeService;
@@ -23,11 +24,14 @@ public class OfficeService implements IOfficeService {
 
     private final IOfficeDAO officeDAO;
     private final OfficeConverter officeConverter;
+    private final IReservationDAO reservationDAO;
 
     @Autowired
-    public OfficeService(IOfficeDAO officeDAO, OfficeConverter officeConverter) {
+    public OfficeService(IOfficeDAO officeDAO, OfficeConverter officeConverter,
+                         IReservationDAO reservationDAO) {
         this.officeDAO = officeDAO;
         this.officeConverter = officeConverter;
+        this.reservationDAO = reservationDAO;
     }
 
     @Override
@@ -82,38 +86,22 @@ public class OfficeService implements IOfficeService {
     }
 
     @Override
-    public byte[] getOfficeSvg(Long id) {
-        return officeDAO.findById(id).map(Office::getSvg).orElse(null);
-    }
-
-    @Override
-    @Modifying
-    @Transactional
-    public boolean setOfficeSvg(byte[] svg, Long id) {
-        Optional<Office> office = officeDAO.findById(id);
-        if (office.isPresent()) {
-            office.get().setSvg(svg);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
-    @Modifying
-    @Transactional
-    public boolean deleteOfficeSvg(Long id) {
-        Optional<Office> office = officeDAO.findById(id);
-        if (office.isPresent()) {
-            office.get().setSvg(null);
-            return true;
-        }
-
-        return false;
-    }
-
-    @Override
     public Long getCount() {
         return officeDAO.count();
+    }
+
+    @Override
+    @Transactional
+    @Modifying
+    public boolean deleteById(Long id){
+
+        if (reservationDAO.findRelevantReservationsByOfficeId(id) != null
+                && reservationDAO.findRelevantReservationsByOfficeId(id).size() != 0){
+            return false;
+        }
+
+        officeDAO.deleteOfficeById(id);
+
+        return true;
     }
 }
