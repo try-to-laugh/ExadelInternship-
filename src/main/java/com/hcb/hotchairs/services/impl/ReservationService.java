@@ -75,8 +75,11 @@ public class ReservationService implements IReservationService {
 
     @Override
     public List<DetailDTO> getReservationDetails(Long id) {
-        return detailDAO.findByReservationId(id).stream()
+
+        List<DetailDTO> detailDTOs = detailDAO.findByReservationId(id).stream()
                 .map(detailConverter::toDTO)
                 .collect(Collectors.toList());
+
+        return detailDTOs;
     }
 }

@@ -103,7 +103,7 @@ public class UserController {
     }
 
     @GetMapping("/reservations/nearest/{id}")
-    public ResponseEntity<ExtendedReservationInfo> getNearestReservationByUserId(Long id) {
+    public ResponseEntity<ExtendedReservationInfo> getCurrentUserNearestReservation(Long id) {
 
         List<DetailDTO> userDetails = userService.getUserDetails(id);
 
@@ -114,6 +114,10 @@ public class UserController {
     public ResponseEntity<List<ExtendedReservationInfo>> getCurrentUserReservations
             (Authentication authentication) {
 
+        if (Objects.isNull(authentication)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         UserDTO user = userService.getByEmail(authentication.getName());
         List<ReservationDTO> userReservations = userService.getUserReservations(user.getId());
 
@@ -123,8 +127,12 @@ public class UserController {
     }
 
     @GetMapping("/current/reservations/nearest")
-   public ResponseEntity<ExtendedReservationInfo> getNearestReservationByUserId
+   public ResponseEntity<ExtendedReservationInfo> getCurrentUserNearestReservation
             (Authentication authentication) {
+
+        if (Objects.isNull(authentication)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
         UserDTO user = userService.getByEmail(authentication.getName());
         List<DetailDTO> userDetails = userService.getUserDetails(user.getId());

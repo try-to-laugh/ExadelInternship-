@@ -26,5 +26,4 @@ public interface IPlaceDAO extends JpaRepository<Place, Long> {
     @Query(value = "SELECT p FROM Place p WHERE p.floor.office.id = :officeId AND p.id NOT IN :closed")
     List<Place> findFreePlaceOnOffice(@Param("closed") Collection<Long> identifiers,
                                      @Param("officeId") Long floorId);
-
 }

@@ -9,4 +9,5 @@ public interface IFloorService {
     FloorDTO getById(Long id);
     List<FloorDTO> saveBatch(List<FloorDTO> floors);
     FloorDTO save(FloorDTO floorDTO);
+    boolean deleteById(Long id);
 }
