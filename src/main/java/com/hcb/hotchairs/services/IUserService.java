@@ -13,4 +13,6 @@ public interface IUserService {
     List<UserDTO> getAll();
     List<ReservationDTO> getUserReservations(Long id);
     List<DetailDTO> getUserDetails(Long id);
+    List<UserDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod, String sortDirection);
+    Long getUsersCount();
 }

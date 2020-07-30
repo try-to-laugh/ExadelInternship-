@@ -9,8 +9,13 @@ import com.hcb.hotchairs.daos.IUserDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
+import com.hcb.hotchairs.entities.User;
 import com.hcb.hotchairs.services.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -65,5 +70,24 @@ public class UserService implements IUserService {
     @Override
     public List<DetailDTO> getUserDetails(Long id) {
         return detailDAO.findByUserId(id).stream().map(detailConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod, String sortDirection) {
+        Sort sortConfig;
+
+        if ("name".equals(sortMethod)) {
+            sortConfig = Sort.by(sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, "name");
+        } else {
+            sortConfig = Sort.by(sortDirection.equals("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC, "id");
+        }
+
+        Pageable pageConfig = PageRequest.of(pageNumber, pageSize, sortConfig);
+        return userDAO.findAll(pageConfig).get().map(userConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Long getUsersCount() {
+        return userDAO.count();
     }
 }
