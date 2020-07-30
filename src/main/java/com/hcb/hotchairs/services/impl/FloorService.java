@@ -92,7 +92,6 @@ public class FloorService implements IFloorService {
 
         return false;
     }
-}
 
     @Override
     @Transactional

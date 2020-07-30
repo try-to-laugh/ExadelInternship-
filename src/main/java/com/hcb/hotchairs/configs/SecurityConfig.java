@@ -51,10 +51,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf()
                     .disable()
-//                .requiresChannel()
-//                .anyRequest()
-//                .requiresSecure()
-//                .and()
+                .requiresChannel()
+                .anyRequest()
+                .requiresSecure()
+                .and()
                 .authorizeRequests()
                     .antMatchers("/v2/api-docs",
                     "/configuration/ui",
@@ -62,7 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     "/configuration/security",
                     "/swagger-ui.html",
                     "/webjars/**").permitAll()
-                .antMatchers("/**").permitAll()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                     .antMatchers("/api/login", "/api/logout").permitAll()
                     .antMatchers("/api/**").authenticated()
