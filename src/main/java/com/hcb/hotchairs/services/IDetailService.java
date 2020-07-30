@@ -9,4 +9,5 @@ public interface IDetailService {
     List<DetailDTO> getAll();
     DetailDTO getById(Long id);
     DetailDTO saveDetail(Detail detail);
+    List<DetailDTO> getActiveByReservationId(Long reservationId);
 }

@@ -19,4 +19,10 @@ public interface IReservationService {
     ReservationDTO saveReservation(Reservation reservation);
     ReservationDTO getById(Long id);
     List<DetailDTO> getReservationDetails(Long id);
+
+    List<ReservationDTO> getIntersectionByDateTimeForUser(Date startDate,
+                                                          Date endDate,
+                                                          Time startTime,
+                                                          Time endTime,
+                                                          Long userId);
 }

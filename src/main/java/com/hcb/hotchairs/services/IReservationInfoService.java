@@ -11,4 +11,6 @@ public interface IReservationInfoService {
     List<ReservationInfoDTO> getFreePlace(ReservationFilterDTO reservationFilter);
 
     ReservationInfoDTO saveReservationInfo(ReservationInfoDTO reservationInfo);
+
+    List<ReservationInfoDTO> getIntersectionInfo(ReservationInfoDTO reservationInfo);
 }
