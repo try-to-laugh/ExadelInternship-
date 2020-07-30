@@ -11,6 +11,7 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -97,9 +98,14 @@ public class UserController {
     }
 
     @GetMapping("/reservations/{id}")
-    public ResponseEntity<List<ExtendedReservationInfo>> getReservationsByUserId(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<List<Object>> getReservationsByUserId(@PathVariable(name = "id") Long id) {
 
         List<ReservationDTO> userReservations = userService.getUserReservations(id);
+        boolean userHasReservations = !CollectionUtils.isEmpty(userReservations);
+
+        if (!userHasReservations){
+            return ResponseEntity.ok(new ArrayList<>());
+        }
 
         return ResponseEntity.ok(userReservations.stream()
                 .map(res -> toExtendedReservationInfo(reservationService.getReservationDetails(res.getId())))
@@ -107,15 +113,20 @@ public class UserController {
     }
 
     @GetMapping("/reservations/nearest/{id}")
-    public ResponseEntity<ExtendedReservationInfo> getCurrentUserNearestReservation(Long id) {
+    public ResponseEntity<?> getCurrentUserNearestReservation(Long id) {
 
         List<DetailDTO> userDetails = userService.getUserDetails(id);
+        boolean userHasDetails = !CollectionUtils.isEmpty(userDetails);
+
+        if (!userHasDetails){
+            return ResponseEntity.ok(new ArrayList<>());
+        }
 
         return ResponseEntity.ok(toExtendedReservationInfo(userDetails));
     }
 
     @GetMapping("/current/reservations")
-    public ResponseEntity<List<ExtendedReservationInfo>> getCurrentUserReservations
+    public ResponseEntity<List<Object>> getCurrentUserReservations
             (Authentication authentication) {
 
         if (Objects.isNull(authentication)) {
@@ -124,6 +135,11 @@ public class UserController {
 
         UserDTO user = userService.getByEmail(authentication.getName());
         List<ReservationDTO> userReservations = userService.getUserReservations(user.getId());
+        boolean userHasReservations = !CollectionUtils.isEmpty(userReservations);
+
+        if (!userHasReservations){
+            return ResponseEntity.ok(new ArrayList<>());
+        }
 
         return ResponseEntity.ok(userReservations.stream()
                 .map(res -> toExtendedReservationInfo(reservationService.getReservationDetails(res.getId())))
@@ -131,7 +147,7 @@ public class UserController {
     }
 
     @GetMapping("/current/reservations/nearest")
-   public ResponseEntity<ExtendedReservationInfo> getCurrentUserNearestReservation
+   public ResponseEntity<?> getCurrentUserNearestReservation
             (Authentication authentication) {
 
         if (Objects.isNull(authentication)) {
@@ -140,6 +156,11 @@ public class UserController {
 
         UserDTO user = userService.getByEmail(authentication.getName());
         List<DetailDTO> userDetails = userService.getUserDetails(user.getId());
+        boolean userHasDetails = !CollectionUtils.isEmpty(userDetails);
+
+        if (!userHasDetails){
+            return ResponseEntity.ok(new ArrayList<>());
+        }
 
         return ResponseEntity.ok(toExtendedReservationInfo(userDetails));
     }
