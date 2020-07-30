@@ -15,10 +15,6 @@ public class RoleConverter {
             return null;
         }
 
-        Role role = new Role();
-        role.setId(roleDTO.getId());
-        role.setName(roleDTO.getName());
-
         return new Role(roleDTO.getId(), roleDTO.getName(), new ArrayList<>(), new ArrayList<>());
     }
 
