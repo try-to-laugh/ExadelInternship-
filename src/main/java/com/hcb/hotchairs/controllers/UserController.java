@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -217,6 +216,14 @@ public class UserController {
 
     @PostMapping("/roles/{id}")
     public ResponseEntity<List<RoleDTO>> setUserRoles(@RequestBody List<RoleDTO> roles, @PathVariable Long id) {
+        return ResponseEntity.ok(userService.setUserRoles(roles, id));
+    }
+
+    @PostMapping("/reservations/staff")
+    public ResponseEntity<List<Object>> getStaffReservations(@RequestBody List<String> filtersInfo, Authentication authentication) {
+
+
+
         return ResponseEntity.ok(userService.setUserRoles(roles, id));
     }
 
