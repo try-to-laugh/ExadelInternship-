@@ -6,33 +6,37 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Component
 public class UserDTOModelAssembler implements RepresentationModelAssembler<UserDTO, EntityModel<UserDTO>> {
 
-    private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("/home", "Staff Bookings");
+    private static final Link CAN_BOOK_FOR_EMPLOYEES = new Link("/staff-bookings", "Staff Bookings");
     private static final Link CAN_MANAGE_OFFICES = new Link("/offices", "Manage Offices");
-    private static final Link CAN_MANAGE_ROLES = new Link("/home", "Manage Roles");
+    private static final Link CAN_MANAGE_ROLES = new Link("/manage-roles", "Manage Roles");
 
     @Override
     public EntityModel<UserDTO> toModel(UserDTO userDTO) {
 
         EntityModel<UserDTO> entityModel;
+        Set<Link> links = new HashSet<>();
 
         if (userDTO.is("Admin")) {
-            entityModel = EntityModel.of(userDTO, CAN_BOOK_FOR_EMPLOYEES, CAN_MANAGE_OFFICES, CAN_MANAGE_ROLES);
-        } else if (userDTO.is("Office Manager")) {
-            entityModel = EntityModel.of(userDTO, CAN_MANAGE_OFFICES);
-        } else if (userDTO.is("HR")) {
-            entityModel = EntityModel.of(userDTO, CAN_BOOK_FOR_EMPLOYEES);
-        } else {
-            entityModel = EntityModel.of(userDTO);
+            links.addAll(List.of(CAN_MANAGE_OFFICES, CAN_MANAGE_ROLES));
         }
 
-        /**TODO
-         * 1. clarify about the roles, whether the user can have the HR and Office Manager roles,
-         * and, if so, implement additional checks
-         */
+        if (userDTO.is("HR")) {
+            links.add(CAN_BOOK_FOR_EMPLOYEES);
+        }
 
+        if (userDTO.is("Office Manager")) {
+            links.add(CAN_MANAGE_OFFICES);
+        }
+
+        entityModel = EntityModel.of(userDTO, links.toArray(Link[]::new));
         return entityModel;
     }
 }
