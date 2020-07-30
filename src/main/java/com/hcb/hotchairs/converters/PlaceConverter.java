@@ -49,13 +49,31 @@ public class PlaceConverter {
         }
 
         Place place = new Place();
-        place.setId(placeDTO.getId());
+
+        if (Objects.isNull(placeDTO.getId())) {
+            place.setId(0L);
+        } else {
+            place.setId(placeDTO.getId());
+        }
+
         place.setCapacity(placeDTO.getCapacity());
         place.setName(placeDTO.getName());
 
 
         place.setFloor(new Floor());
         place.getFloor().setId(placeDTO.getFloorId());
+
+        if (Objects.isNull(placeDTO.getRoles())) {
+            place.setRoles(new ArrayList<>());
+        } else {
+            place.setRoles(placeDTO.getRoles().stream().map(roleConverter::fromDTO).collect(Collectors.toList()));
+        }
+
+        if (Objects.isNull(placeDTO.getTags())) {
+            place.setTags(new ArrayList<>());
+        } else {
+            place.setTags(placeDTO.getTags().stream().map(tagConverter::fromDTO).collect(Collectors.toList()));
+        }
 
         return place;
     }

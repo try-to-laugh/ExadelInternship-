@@ -4,6 +4,8 @@ import com.hcb.hotchairs.converters.FloorConverter;
 import com.hcb.hotchairs.daos.IFloorDAO;
 import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.FloorDTO;
+import com.hcb.hotchairs.entities.Floor;
+import com.hcb.hotchairs.entities.Office;
 import com.hcb.hotchairs.services.IFloorService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,6 +61,38 @@ public class FloorService implements IFloorService {
     public FloorDTO save(FloorDTO floorDTO) {
         return floorConverter.toDTO(floorDAO.saveAndFlush(floorConverter.fromDTO(floorDTO)));
     }
+
+    @Override
+    public byte[] getFloorMap(Long id) {
+        return floorDAO.findById(id).map(Floor::getMap).orElse(null);
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean setFloorMap(byte[] svg, Long id) {
+        Optional<Floor> floor = floorDAO.findById(id);
+        if (floor.isPresent()) {
+            floor.get().setMap(svg);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean deleteFloorMap(Long id) {
+        Optional<Floor> floor = floorDAO.findById(id);
+        if (floor.isPresent()) {
+            floor.get().setMap(null);
+            return true;
+        }
+
+        return false;
+    }
+}
 
     @Override
     @Transactional

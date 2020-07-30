@@ -4,6 +4,7 @@ import com.hcb.hotchairs.dtos.FloorDTO;
 import com.hcb.hotchairs.services.IFloorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,5 +62,34 @@ public class FloorController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    @GetMapping("/map/{id}")
+    public ResponseEntity<byte[]> getFloorMap(@PathVariable Long id) {
+        byte[] svg = floorService.getFloorMap(id);
+
+        if (Objects.isNull(svg)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf("image/svg+xml")).body(svg);
+        }
+    }
+
+    @PostMapping("/map/{id}")
+    public ResponseEntity<Object> setFloorMap(@RequestBody byte[] svg, @PathVariable Long id) {
+        if (floorService.setFloorMap(svg, id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @DeleteMapping("map/{id}")
+    public ResponseEntity<Object> deleteFloorMap(@PathVariable Long id) {
+        if (floorService.deleteFloorMap(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
     }
 }

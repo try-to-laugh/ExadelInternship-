@@ -4,6 +4,7 @@ import com.hcb.hotchairs.dtos.TagDTO;
 import com.hcb.hotchairs.entities.Tag;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 @Component
@@ -18,5 +19,13 @@ public class TagConverter {
         tagDTO.setName(tag.getName());
 
         return tagDTO;
+    }
+
+    public Tag fromDTO(TagDTO tagDTO) {
+        if (Objects.isNull(tagDTO)) {
+            return null;
+        }
+
+        return new Tag(tagDTO.getId(), tagDTO.getName(), new ArrayList<>());
     }
 }

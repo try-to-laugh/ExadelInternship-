@@ -76,9 +76,7 @@ public class OfficeService implements IOfficeService {
         }
 
         Pageable pageConfig = PageRequest.of(pageNumber, pageSize, sortConfig);
-        Page<Office> officePage = officeDAO.findAll(pageConfig);
-
-        return officePage.get().map(officeConverter::toDTO).collect(Collectors.toList());
+        return officeDAO.findAll(pageConfig).get().map(officeConverter::toDTO).collect(Collectors.toList());
     }
 
     @Override

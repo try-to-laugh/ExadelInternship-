@@ -13,9 +13,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -93,7 +97,7 @@ public class UserController {
     }
 
     @GetMapping("/reservations/{id}")
-    public ResponseEntity<List<ExtendedReservationInfo>> getReservationsByUserId(Long id) {
+    public ResponseEntity<List<ExtendedReservationInfo>> getReservationsByUserId(@PathVariable(name = "id") Long id) {
 
         List<ReservationDTO> userReservations = userService.getUserReservations(id);
 
@@ -151,7 +155,51 @@ public class UserController {
         return ResponseEntity.ok(userService.getByHrId(currentUser.getId()));
     }
 
-    /**TODO:
-     * Add some checks with exceptions
+    @GetMapping("extended/paging")
+    public ResponseEntity<?> getPagedAndSortedUsers(@RequestParam(name = "pageNumber") Integer pageNumber,
+                                                @RequestParam(name = "pageSize") Integer pageSize,
+                                                @RequestParam(name = "sortMethod", defaultValue = "id") String sortMethod,
+                                                @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection) {
+        List<UserDTO> users = userService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection);
+
+        @Data
+        @NoArgsConstructor
+        @AllArgsConstructor
+        class ExtendedUserInfo {
+            Long id;
+            String name;
+            String email;
+            List<RoleDTO> roles;
+            UserDTO hr;
+        }
+
+        return ResponseEntity.ok(users
+                .stream()
+                .map(user -> new ExtendedUserInfo(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRoles(),
+                        Objects.isNull(user.getHrId()) ? null : userService.getById(user.getHrId())))
+                .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getUsersCount() {
+        return ResponseEntity.ok(userService.getUsersCount());
+    }
+
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<List<RoleDTO>> getUserRoles(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getById(id).getRoles());
+    }
+
+    @PostMapping("/roles/{id}")
+    public ResponseEntity<List<RoleDTO>> setUserRoles(@RequestBody List<RoleDTO> roles, @PathVariable Long id) {
+        return ResponseEntity.ok(userService.setUserRoles(roles, id));
+    }
+
+    /* TODO:
+        1) Add some checks with exceptions
      */
 }

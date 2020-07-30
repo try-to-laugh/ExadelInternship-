@@ -3,6 +3,7 @@ package com.hcb.hotchairs.services.impl;
 import com.hcb.hotchairs.converters.PlaceConverter;
 import com.hcb.hotchairs.daos.IPlaceDAO;
 import com.hcb.hotchairs.dtos.PlaceDTO;
+import com.hcb.hotchairs.entities.Place;
 import com.hcb.hotchairs.services.IPlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -65,5 +66,20 @@ public class PlaceService implements IPlaceService {
     @Override
     public PlaceDTO getById(Long id){
         return placeConverter.toDTO(placeDAO.findById(id).orElse(null));
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public List<PlaceDTO> savePlaces(List<PlaceDTO> places, Long floorId) {
+
+        List<Long> placesIds = places.stream().map(PlaceDTO::getId).collect(Collectors.toList());
+        placesIds.add(0L);
+
+        placeDAO.deleteAllFromIdCollection(placesIds, floorId);
+        return placeDAO.saveAll(places.stream().map(placeConverter::fromDTO).collect(Collectors.toList()))
+                .stream()
+                .map(placeConverter::toDTO)
+                .collect(Collectors.toList());
     }
 }

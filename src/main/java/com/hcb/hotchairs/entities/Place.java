@@ -3,6 +3,8 @@ package com.hcb.hotchairs.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,6 +60,7 @@ public class Place {
     private Floor floor;
 
     @OneToMany(mappedBy = "place", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Comment> comments = new ArrayList<>();
 
     @OneToMany(mappedBy = "place", orphanRemoval = true, cascade = CascadeType.ALL)

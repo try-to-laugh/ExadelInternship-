@@ -41,6 +41,6 @@ public class Floor {
     private Office office;
 
     @Basic
-    @Column(name = "svg")
-    private byte[] svg;
+    @Column(name = "map")
+    private byte[] map;
 }
