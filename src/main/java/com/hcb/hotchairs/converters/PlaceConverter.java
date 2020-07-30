@@ -51,7 +51,7 @@ public class PlaceConverter {
         Place place = new Place();
 
         if (Objects.isNull(placeDTO.getId())) {
-            place.setId((long) 0);
+            place.setId(0L);
         } else {
             place.setId(placeDTO.getId());
         }

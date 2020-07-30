@@ -58,17 +58,17 @@ public class FloorService implements IFloorService {
     }
 
     @Override
-    public byte[] getFloorSvg(Long id) {
-        return floorDAO.findById(id).map(Floor::getSvg).orElse(null);
+    public byte[] getFloorMap(Long id) {
+        return floorDAO.findById(id).map(Floor::getMap).orElse(null);
     }
 
     @Override
     @Modifying
     @Transactional
-    public boolean setFloorSvg(byte[] svg, Long id) {
+    public boolean setFloorMap(byte[] svg, Long id) {
         Optional<Floor> floor = floorDAO.findById(id);
         if (floor.isPresent()) {
-            floor.get().setSvg(svg);
+            floor.get().setMap(svg);
             return true;
         }
 
@@ -78,10 +78,10 @@ public class FloorService implements IFloorService {
     @Override
     @Modifying
     @Transactional
-    public boolean deleteFloorSvg(Long id) {
+    public boolean deleteFloorMap(Long id) {
         Optional<Floor> floor = floorDAO.findById(id);
         if (floor.isPresent()) {
-            floor.get().setSvg(null);
+            floor.get().setMap(null);
             return true;
         }
 

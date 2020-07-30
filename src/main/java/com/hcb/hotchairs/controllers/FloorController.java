@@ -62,9 +62,9 @@ public class FloorController {
                 : ResponseEntity.ok(savedFloor);
     }
 
-    @GetMapping("/svg/{id}")
-    public ResponseEntity<byte[]> getOfficeSvg(@PathVariable Long id) {
-        byte[] svg = floorService.getFloorSvg(id);
+    @GetMapping("/map/{id}")
+    public ResponseEntity<byte[]> getFloorMap(@PathVariable Long id) {
+        byte[] svg = floorService.getFloorMap(id);
 
         if (Objects.isNull(svg)) {
             return ResponseEntity.notFound().build();
@@ -73,18 +73,18 @@ public class FloorController {
         }
     }
 
-    @PostMapping("/svg/{id}")
-    public ResponseEntity<Object> setOfficeSvg(@RequestBody byte[] svg, @PathVariable Long id) {
-        if (floorService.setFloorSvg(svg, id)) {
+    @PostMapping("/map/{id}")
+    public ResponseEntity<Object> setFloorMap(@RequestBody byte[] svg, @PathVariable Long id) {
+        if (floorService.setFloorMap(svg, id)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.unprocessableEntity().build();
         }
     }
 
-    @DeleteMapping("svg/{id}")
-    public ResponseEntity<Object> deleteOfficeSvg(@PathVariable Long id) {
-        if (floorService.deleteFloorSvg(id)) {
+    @DeleteMapping("map/{id}")
+    public ResponseEntity<Object> deleteFloorMap(@PathVariable Long id) {
+        if (floorService.deleteFloorMap(id)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.unprocessableEntity().build();
