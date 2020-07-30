@@ -132,6 +132,17 @@ public class UserController {
         return ResponseEntity.ok(toExtendedReservationInfo(userDetails));
     }
 
+    @GetMapping("/subordinate/{id}")
+    public ResponseEntity<List<UserDTO>> getSubordinate(@PathVariable("id") Long hrId){
+        return ResponseEntity.ok(userService.getByHrId(hrId));
+    }
+
+    @GetMapping("/current/subordinate")
+    public ResponseEntity<List<UserDTO>> getCurrentUserSubordinate(Authentication authentication) {
+        UserDTO currentUser = userService.getByEmail(authentication.getName());
+        return ResponseEntity.ok(userService.getByHrId(currentUser.getId()));
+    }
+
     /**TODO:
      * Add some checks with exceptions
      */
