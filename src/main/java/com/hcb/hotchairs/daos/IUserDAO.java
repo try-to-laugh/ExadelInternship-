@@ -20,4 +20,8 @@ public interface IUserDAO extends JpaRepository<User, Long> {
 
     @Query("SELECT user FROM User user WHERE user.hr.id = :hr_id")
     List<User> finByHrId(@Param("hr_id")Long hrId);
+
+    @Query("SELECT u FROM User u WHERE lower(u.name) LIKE lower(CONCAT('%', :name, '%')) " +
+            "OR lower(u.email) LIKE lower(CONCAT('%', :email, '%'))")
+    List<User> findAllByNameContainsOrEmailContains(String name, String email);
 }

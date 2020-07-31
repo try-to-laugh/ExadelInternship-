@@ -125,4 +125,12 @@ public class UserService implements IUserService {
 
         return savedRoles.stream().map(roleConverter::toDTO).collect(Collectors.toList());
     }
+
+    @Override
+    public List<UserDTO> getUsersByCredentials(String credentials) {
+        return userDAO.findAllByNameContainsOrEmailContains(credentials, credentials)
+                .stream()
+                .map(userConverter::toDTO)
+                .collect(Collectors.toList());
+    }
 }

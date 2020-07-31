@@ -22,4 +22,5 @@ public interface IUserService {
                                     String username);
     Long getUsersCount();
     List<RoleDTO> setUserRoles(List<RoleDTO> roles, Long userId);
+    List<UserDTO> getUsersByCredentials(String credentials);
 }
