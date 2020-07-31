@@ -2,10 +2,11 @@ package com.hcb.hotchairs.services.impl;
 
 import com.hcb.hotchairs.converters.PlaceConverter;
 import com.hcb.hotchairs.daos.IPlaceDAO;
+import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.PlaceDTO;
-import com.hcb.hotchairs.entities.Place;
 import com.hcb.hotchairs.services.IPlaceService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
@@ -19,11 +20,13 @@ public class PlaceService implements IPlaceService {
 
     private final IPlaceDAO placeDAO;
     private final PlaceConverter placeConverter;
+    private final IReservationDAO reservationDAO;
 
     @Autowired
-    public PlaceService(IPlaceDAO placeDAO, PlaceConverter placeConverter){
+    public PlaceService(IPlaceDAO placeDAO, PlaceConverter placeConverter, IReservationDAO reservationDAO){
         this.placeDAO = placeDAO;
         this.placeConverter = placeConverter;
+        this.reservationDAO = reservationDAO;
     }
 
     @Override
@@ -76,10 +79,19 @@ public class PlaceService implements IPlaceService {
         List<Long> placesIds = places.stream().map(PlaceDTO::getId).collect(Collectors.toList());
         placesIds.add(0L);
 
+        if (reservationDAO.checkForDeletingViolation(placesIds, floorId) != 0) {
+            throw new DataIntegrityViolationException("Trying to delete reserved place.");
+        }
+
         placeDAO.deleteAllFromIdCollection(placesIds, floorId);
         return placeDAO.saveAll(places.stream().map(placeConverter::fromDTO).collect(Collectors.toList()))
                 .stream()
                 .map(placeConverter::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean isPlaceEditable(PlaceDTO placeDTO) {
+        return (reservationDAO.isPlaceReserved(placeDTO.getId()) == 0L);
     }
 }

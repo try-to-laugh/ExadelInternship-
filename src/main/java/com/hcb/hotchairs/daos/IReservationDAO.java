@@ -3,10 +3,12 @@ package com.hcb.hotchairs.daos;
 import com.hcb.hotchairs.entities.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,6 +62,9 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
             "(endDate = CURRENT_DATE AND endTime > CURRENT_TIME))")
     List<Reservation> findRelevantReservationsByOfficeId(Long officeId);
 
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.place.id = :placeId " +
+            "AND (r.endDate > CURRENT_DATE OR (r.endDate = CURRENT_DATE AND r.endTime > CURRENT_TIME))")
+    Long isPlaceReserved(@Param("placeId") Long placeId);
 
     @Query("FROM Reservation res WHERE " +
             " res.startDate <= ?2 " +
@@ -70,4 +75,8 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
     List<Reservation> findIntersectionForUser(Date startDate, Date endDate,
                                               Time startTime, Time endTime,
                                               Long userId);
+
+    @Query("SELECT COUNT(r) FROM Reservation r WHERE r.place.floor.id = :floorId AND r.place.id NOT IN :placesId AND " +
+            "(r.endDate > CURRENT_DATE OR (r.endDate = CURRENT_DATE AND r.endTime > CURRENT_TIME))")
+    Long checkForDeletingViolation(@Param("placesId") Collection<Long> placesIds, @Param("floorId") Long floorId);
 }

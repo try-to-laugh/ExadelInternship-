@@ -17,4 +17,5 @@ public interface IPlaceService {
     List<PlaceDTO> getFreePlaceInOffice(Collection<Long> closed, Long officeId);
     PlaceDTO getById(Long id);
     List<PlaceDTO> savePlaces(List<PlaceDTO> places, Long floorId);
+    Boolean isPlaceEditable(PlaceDTO placeDTO);
 }
