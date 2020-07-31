@@ -12,7 +12,6 @@ import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.dtos.RoleDTO;
 import com.hcb.hotchairs.dtos.UserDTO;
-import com.hcb.hotchairs.entities.Detail;
 import com.hcb.hotchairs.entities.Role;
 import com.hcb.hotchairs.entities.User;
 import com.hcb.hotchairs.services.IUserService;
@@ -79,8 +78,14 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public List<ReservationDTO> getStaffReservations(Long id) {
+        return reservationDAO.findByHrId(id).stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<DetailDTO> getUserDetails(Long id) {
-        List<Detail> details = detailDAO.findByUserId(id);
         return detailDAO.findByUserId(id).stream().map(detailConverter::toDTO).collect(Collectors.toList());
     }
 
