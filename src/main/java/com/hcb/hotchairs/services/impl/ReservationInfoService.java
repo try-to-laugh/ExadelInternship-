@@ -8,11 +8,14 @@ import com.hcb.hotchairs.dtos.*;
 import com.hcb.hotchairs.entities.Reservation;
 import com.hcb.hotchairs.exceptions.NoDateException;
 import com.hcb.hotchairs.services.*;
+import org.apache.logging.log4j.CloseableThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Date;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -146,21 +149,21 @@ public class ReservationInfoService implements IReservationInfoService {
         for(ReservationDTO reservation : probablyIntersectionReservations) {
             List<DetailDTO> resDetails = detailService.getActiveByReservationId(reservation.getId());
             int requiredDatePointer = 0;
-            int currentReservationDatePointer = 0;
+            int resDetailPointer = 0;
             int pointer = 0;
             while(pointer < (resDetails.size() + requiredDate.size())) {
-                if(requiredDatePointer >= requiredDate.size()
-                 || currentReservationDatePointer >= resDetails.size()) {
+                if(requiredDatePointer >= requiredDate.size() || resDetailPointer >= resDetails.size()) {
                     break;
                 }
-                else if(requiredDate.get(requiredDatePointer)
-                        .equals(resDetails.get(currentReservationDatePointer).getDate())) {
+                LocalDate fromRequired = requiredDate.get(requiredDatePointer).toLocalDate();
+                LocalDate fromResDetail = resDetails.get(resDetailPointer).getDate().toLocalDate();
+
+                if(fromRequired.equals(fromResDetail)) {
                     intersectionReservation.add(reservation);
                     break;
                 }
-                else if(requiredDate.get(requiredDatePointer)
-                        .compareTo(resDetails.get(currentReservationDatePointer).getDate()) > 0) {
-                    currentReservationDatePointer++;
+                else if(fromRequired.compareTo(fromResDetail) > 0) {
+                    resDetailPointer++;
                 }
                 else {
                     requiredDatePointer++;

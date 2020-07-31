@@ -21,8 +21,8 @@ public class DateConverter
             return Collections.singletonList(startDate);
         }
 
-        LocalDate localDateStart = LocalDate.parse(startDate.toString());
-        LocalDate localDateEnd = LocalDate.parse(endDate.toString());
+        LocalDate localDateStart = startDate.toLocalDate();
+        LocalDate localDateEnd = endDate.toLocalDate();
 
         List<LocalDate> dateStartWith = new ArrayList<>();
         for (int dayNumber : dayWeek) {
