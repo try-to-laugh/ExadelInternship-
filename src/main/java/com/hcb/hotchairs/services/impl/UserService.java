@@ -111,6 +111,11 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Long getPagedAndSortedCount(String username) {
+        return userDAO.countAllByNameContains(username);
+    }
+
+    @Override
     public Long getUsersCount() {
         return userDAO.count();
     }

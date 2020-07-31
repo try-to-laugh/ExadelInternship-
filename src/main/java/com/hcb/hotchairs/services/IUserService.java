@@ -20,6 +20,7 @@ public interface IUserService {
                                     String sortMethod,
                                     String sortDirection,
                                     String username);
+    Long getPagedAndSortedCount(String username);
     Long getUsersCount();
     List<RoleDTO> setUserRoles(List<RoleDTO> roles, Long userId);
     List<UserDTO> getUsersByCredentials(String credentials);

@@ -181,6 +181,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getByHrId(currentUser.getId()));
     }
 
+    @GetMapping("extended/paging/count")
+    public ResponseEntity<Long> getPagedAndSortedCount(@RequestParam(name = "username", defaultValue = "") String username) {
+        return ResponseEntity.ok(userService.getPagedAndSortedCount(username));
+    }
+
     @GetMapping("extended/paging")
     public ResponseEntity<?> getPagedAndSortedUsers(@RequestParam(name = "pageNumber") Integer pageNumber,
                                                     @RequestParam(name = "pageSize") Integer pageSize,

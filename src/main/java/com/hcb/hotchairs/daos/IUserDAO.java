@@ -24,4 +24,7 @@ public interface IUserDAO extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE lower(u.name) LIKE lower(CONCAT('%', :name, '%')) " +
             "OR lower(u.email) LIKE lower(CONCAT('%', :email, '%'))")
     List<User> findAllByNameContainsOrEmailContains(String name, String email);
+
+    @Query("SELECT COUNT(u) FROM User u WHERE lower(u.name) LIKE lower(CONCAT('%', :username, '%'))")
+    Long countAllByNameContains(String username);
 }
