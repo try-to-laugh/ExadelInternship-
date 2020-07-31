@@ -113,7 +113,7 @@ public class UserController {
     }
 
     @GetMapping("/reservations/nearest/{id}")
-    public ResponseEntity<?> getCurrentUserNearestReservation(Long id) {
+    public ResponseEntity<?> getCurrentUserNearestReservation(@PathVariable(name = "id") Long id) {
 
         List<DetailDTO> userDetails = userService.getUserDetails(id);
         boolean userHasDetails = !CollectionUtils.isEmpty(userDetails);
@@ -178,10 +178,11 @@ public class UserController {
 
     @GetMapping("extended/paging")
     public ResponseEntity<?> getPagedAndSortedUsers(@RequestParam(name = "pageNumber") Integer pageNumber,
-                                                @RequestParam(name = "pageSize") Integer pageSize,
-                                                @RequestParam(name = "sortMethod", defaultValue = "id") String sortMethod,
-                                                @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection) {
-        List<UserDTO> users = userService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection);
+                                                    @RequestParam(name = "pageSize") Integer pageSize,
+                                                    @RequestParam(name = "sortMethod", defaultValue = "id") String sortMethod,
+                                                    @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection,
+                                                    @RequestParam(name = "username", defaultValue = "") String username) {
+        List<UserDTO> users = userService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection, username);
 
         @Data
         @NoArgsConstructor
