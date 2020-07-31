@@ -1,8 +1,9 @@
 package com.hcb.hotchairs.controllers;
 
 import com.hcb.hotchairs.dtos.*;
-import com.hcb.hotchairs.mas.UserDTOModelAssembler;
+import com.hcb.hotchairs.entities.User;
 import com.hcb.hotchairs.services.*;
+import com.hcb.hotchairs.mas.UserDTOModelAssembler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,22 +34,21 @@ public class UserController {
     private final ICountryService countryService;
     private final IReservationService reservationService;
 
-    @Autowired
-    public UserController(IUserService userService, UserDTOModelAssembler assembler,
-                          IPlaceService placeService, IFloorService floorService, IOfficeService officeService,
-                          ICityService cityService, ICountryService countryService, IReservationService reservationService) {
-        this.userService = userService;
-        this.assembler = assembler;
-        this.placeService = placeService;
-        this.floorService = floorService;
-        this.officeService = officeService;
-        this.cityService = cityService;
-        this.countryService = countryService;
-        this.reservationService = reservationService;
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    private class ExtendedReservationInfo {
+        private UserDTO user;
+        private ReservationDTO reservation;
+        private DetailDTO detail;
+        private PlaceDTO place;
+        private FloorDTO floor;
+        private OfficeDTO office;
+        private CityDTO city;
+        private CountryDTO country;
     }
 
     public ExtendedReservationInfo toExtendedReservationInfo(List<DetailDTO> detailDTOs) {
-
 
         ReservationDTO reservationDTO = reservationService.getById(detailDTOs.get(0).getReservationId());
         UserDTO userDTO = userService.getById(reservationDTO.getUserId());
@@ -62,14 +62,33 @@ public class UserController {
                 officeDTO, cityDTO, countryDTO);
     }
 
+    @Autowired
+    public UserController(IUserService userService,
+                          UserDTOModelAssembler assembler,
+                          IPlaceService placeService,
+                          IFloorService floorService,
+                          IOfficeService officeService,
+                          ICityService cityService,
+                          ICountryService countryService,
+                          IReservationService reservationService) {
+        this.userService = userService;
+        this.assembler = assembler;
+        this.placeService = placeService;
+        this.floorService = floorService;
+        this.officeService = officeService;
+        this.cityService = cityService;
+        this.countryService = countryService;
+        this.reservationService = reservationService;
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<UserDTO>> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(assembler.toModel(userService.getById(id)));
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserDTO>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<List<UserDTO>> getUsers(@RequestParam(name = "credentials", defaultValue = "") String credentials) {
+        return ResponseEntity.ok(userService.getUsersByCredentials(credentials));
     }
 
     @GetMapping("/current")
@@ -160,12 +179,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getByHrId(currentUser.getId()));
     }
 
+    @GetMapping("extended/paging/count")
+    public ResponseEntity<Long> getPagedAndSortedCount(@RequestParam(name = "username", defaultValue = "") String username) {
+        return ResponseEntity.ok(userService.getPagedAndSortedCount(username));
+    }
+
     @GetMapping("extended/paging")
     public ResponseEntity<?> getPagedAndSortedUsers(@RequestParam(name = "pageNumber") Integer pageNumber,
                                                     @RequestParam(name = "pageSize") Integer pageSize,
                                                     @RequestParam(name = "sortMethod", defaultValue = "id") String sortMethod,
-                                                    @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection) {
-        List<UserDTO> users = userService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection);
+                                                    @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection,
+                                                    @RequestParam(name = "username", defaultValue = "") String username) {
+        List<UserDTO> users = userService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection, username);
 
         @Data
         @NoArgsConstructor
@@ -364,20 +389,6 @@ public class UserController {
         }
 
         return ResponseEntity.ok(staffFilterExtendedReservations);
-    }
-
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    private class ExtendedReservationInfo {
-        private UserDTO user;
-        private ReservationDTO reservation;
-        private DetailDTO detail;
-        private PlaceDTO place;
-        private FloorDTO floor;
-        private OfficeDTO office;
-        private CityDTO city;
-        private CountryDTO country;
     }
 
     /* TODO:

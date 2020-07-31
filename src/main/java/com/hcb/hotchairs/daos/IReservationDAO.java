@@ -45,9 +45,9 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
                                                 Long placeId);
 
     @Query("FROM Reservation " +
-            "WHERE user.id = ?1 AND (endDate > CURRENT_DATE OR " +
-            "(endDate = CURRENT_DATE AND endTime > CURRENT_TIME)) " +
-            "ORDER BY startDate ASC, startTime ASC")
+            " WHERE user.id = ?1 AND (endDate > CURRENT_DATE OR " +
+            " (endDate = CURRENT_DATE AND endTime > CURRENT_TIME)) " +
+            " ORDER BY startDate ASC, startTime ASC")
     List<Reservation> findByUserId(Long userId);
 
     @Query("FROM Reservation " +
@@ -59,6 +59,17 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
             "WHERE place.floor.office.id = ?1 AND (endDate > CURRENT_DATE OR " +
             "(endDate = CURRENT_DATE AND endTime > CURRENT_TIME))")
     List<Reservation> findRelevantReservationsByOfficeId(Long officeId);
+
+
+    @Query("FROM Reservation res WHERE " +
+            " res.startDate <= ?2 " +
+            " AND res.endDate >= ?1 " +
+            " AND res.startTime < ?4 " +
+            " AND res.endTime > ?3 " +
+            " AND res.user.id = ?5 ")
+    List<Reservation> findIntersectionForUser(Date startDate, Date endDate,
+                                              Time startTime, Time endTime,
+                                              Long userId);
 
     @Query("FROM Reservation " +
             "WHERE user.hr.id = ?1 AND (endDate > CURRENT_DATE OR " +

@@ -1,15 +1,13 @@
 package com.hcb.hotchairs.converters;
 
+import com.hcb.hotchairs.exceptions.NoDateException;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class DateConverter
@@ -17,11 +15,14 @@ public class DateConverter
     private final Integer DAYS_IN_WEEK = 7;
     public List<Date> toDateList (Date startDate, Date endDate, int[] dayWeek){
         if (Objects.isNull(dayWeek) || dayWeek.length == 0) {
-            return Arrays.asList(startDate);
+            if(!startDate.equals(endDate)){
+                throw new NoDateException();
+            }
+            return Collections.singletonList(startDate);
         }
 
-        LocalDate localDateStart = LocalDate.parse(startDate.toString());
-        LocalDate localDateEnd = LocalDate.parse(endDate.toString());
+        LocalDate localDateStart = startDate.toLocalDate();
+        LocalDate localDateEnd = endDate.toLocalDate();
 
         List<LocalDate> dateStartWith = new ArrayList<>();
         for (int dayNumber : dayWeek) {

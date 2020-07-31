@@ -36,4 +36,9 @@ public class ReservationInfoController {
     public ResponseEntity<ReservationInfoDTO> bookPlace(@RequestBody ReservationInfoDTO request) {
         return ResponseEntity.ok(reservationInfoService.saveReservationInfo(request));
     }
+
+    @PostMapping("/showIntersection")
+    public ResponseEntity<List<ReservationInfoDTO>> getIntersection(@RequestBody ReservationInfoDTO request) {
+        return ResponseEntity.ok(reservationInfoService.getIntersectionInfo(request));
+    }
 }

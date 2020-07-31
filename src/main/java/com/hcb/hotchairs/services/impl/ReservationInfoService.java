@@ -6,15 +6,17 @@ import com.hcb.hotchairs.converters.ReservationConverter;
 import com.hcb.hotchairs.converters.ReservationInfoConverter;
 import com.hcb.hotchairs.dtos.*;
 import com.hcb.hotchairs.entities.Reservation;
+import com.hcb.hotchairs.exceptions.NoDateException;
 import com.hcb.hotchairs.services.*;
+import org.apache.logging.log4j.CloseableThreadContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,6 +58,11 @@ public class ReservationInfoService implements IReservationInfoService {
     public List<ReservationInfoDTO> getFreePlace(ReservationFilterDTO reservationFilter) {
         List<Date> requiredDays = dateConverter.toDateList(reservationFilter.getStartDate(),
                 reservationFilter.getEndDate(), reservationFilter.getWeekDay());
+
+        if(requiredDays.isEmpty()){
+            throw new NoDateException();
+        }
+
         List<TagDTO> requestedTags = (Objects.isNull(reservationFilter.getTagsId()))
                 ? Collections.emptyList()
                 : tagService.getAllFromIdCollection(reservationFilter.getTagsId());
@@ -86,14 +93,21 @@ public class ReservationInfoService implements IReservationInfoService {
     }
 
     @Transactional
+    @Modifying
     @Override
     public ReservationInfoDTO saveReservationInfo(ReservationInfoDTO reservationInfo) {
+
+        List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
+                reservationInfo.getEndDate(),
+                reservationInfo.getWeekDay());
+
+        if (requiredDate.isEmpty()) {
+            throw new NoDateException();
+        }
 
         Reservation hostReservation = reservationConverter.fromDTO(reservationInfo, null);
         ReservationDTO hostReservationDTO = reservationService.saveReservation(hostReservation);
 
-        List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
-                reservationInfo.getEndDate(), reservationInfo.getWeekDay());
         requiredDate.forEach(currentDay ->
                 detailService.saveDetail(detailConverter.fromDTO(currentDay, hostReservationDTO.getId())));
 
@@ -111,5 +125,59 @@ public class ReservationInfoService implements IReservationInfoService {
                 placeService.getById(hostReservation.getPlace().getId()),
                 floorService.getById(placeService.getById(hostReservation.getPlace().getId()).getFloorId()),
                 hostReservationDTO);
+    }
+
+    @Override
+    public List<ReservationInfoDTO> getIntersectionInfo(ReservationInfoDTO reservationInfo) {
+        List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
+                reservationInfo.getEndDate(),reservationInfo.getWeekDay());
+
+        if (requiredDate.isEmpty()) {
+            throw new NoDateException();
+        }
+        requiredDate.sort(Comparator.naturalOrder());
+
+        List<ReservationDTO> probablyIntersectionReservations = reservationService.getIntersectionByDateTimeForUser(
+                reservationInfo.getStartDate(),
+                reservationInfo.getEndDate(),
+                reservationInfo.getStartTime(),
+                reservationInfo.getEndTime(),
+                reservationInfo.getCurrentUserId()
+        );
+
+        List<ReservationDTO> intersectionReservation = new ArrayList<>();
+        for(ReservationDTO reservation : probablyIntersectionReservations) {
+            List<DetailDTO> resDetails = detailService.getActiveByReservationId(reservation.getId());
+            int requiredDatePointer = 0;
+            int resDetailPointer = 0;
+            int pointer = 0;
+            while(pointer < (resDetails.size() + requiredDate.size())) {
+                if(requiredDatePointer >= requiredDate.size() || resDetailPointer >= resDetails.size()) {
+                    break;
+                }
+                LocalDate fromRequired = requiredDate.get(requiredDatePointer).toLocalDate();
+                LocalDate fromResDetail = resDetails.get(resDetailPointer).getDate().toLocalDate();
+
+                if(fromRequired.equals(fromResDetail)) {
+                    intersectionReservation.add(reservation);
+                    break;
+                }
+                else if(fromRequired.compareTo(fromResDetail) > 0) {
+                    resDetailPointer++;
+                }
+                else {
+                    requiredDatePointer++;
+                }
+                pointer++;
+            }
+        }
+
+        return intersectionReservation
+                .stream()
+                .map(currentRes -> reservationInfoConverter.toDTO(
+                        placeService.getById(currentRes.getPlaceId()),
+                        floorService.getById(placeService.getById(currentRes.getPlaceId()).getFloorId()),
+                        currentRes))
+                .collect(Collectors.toList());
     }
 }
