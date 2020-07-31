@@ -65,9 +65,14 @@ public class UserController {
     }
 
     @Autowired
-    public UserController(IUserService userService, UserDTOModelAssembler assembler,
-    IPlaceService placeService, IFloorService floorService, IOfficeService officeService,
-            ICityService cityService, ICountryService countryService, IReservationService reservationService) {
+    public UserController(IUserService userService,
+                          UserDTOModelAssembler assembler,
+                          IPlaceService placeService,
+                          IFloorService floorService,
+                          IOfficeService officeService,
+                          ICityService cityService,
+                          ICountryService countryService,
+                          IReservationService reservationService) {
         this.userService = userService;
         this.assembler = assembler;
         this.placeService = placeService;
@@ -75,7 +80,7 @@ public class UserController {
         this.officeService = officeService;
         this.cityService = cityService;
         this.countryService = countryService;
-        this.reservationService=reservationService;
+        this.reservationService = reservationService;
     }
 
     @GetMapping("/{id}")
@@ -84,8 +89,8 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserDTO>> getAll() {
-        return ResponseEntity.ok(userService.getAll());
+    public ResponseEntity<List<UserDTO>> getUsers(@RequestParam(name = "credentials", defaultValue = "") String credentials) {
+        return ResponseEntity.ok(userService.getUsersByCredentials(credentials));
     }
 
     @GetMapping("/current")
@@ -103,7 +108,7 @@ public class UserController {
         List<ReservationDTO> userReservations = userService.getUserReservations(id);
         boolean userHasReservations = !CollectionUtils.isEmpty(userReservations);
 
-        if (!userHasReservations){
+        if (!userHasReservations) {
             return ResponseEntity.ok(new ArrayList<>());
         }
 
@@ -113,12 +118,12 @@ public class UserController {
     }
 
     @GetMapping("/reservations/nearest/{id}")
-    public ResponseEntity<?> getCurrentUserNearestReservation(Long id) {
+    public ResponseEntity<?> getCurrentUserNearestReservation(@PathVariable(name = "id") Long id) {
 
         List<DetailDTO> userDetails = userService.getUserDetails(id);
         boolean userHasDetails = !CollectionUtils.isEmpty(userDetails);
 
-        if (!userHasDetails){
+        if (!userHasDetails) {
             return ResponseEntity.ok(new ArrayList<>());
         }
 
@@ -137,7 +142,7 @@ public class UserController {
         List<ReservationDTO> userReservations = userService.getUserReservations(user.getId());
         boolean userHasReservations = !CollectionUtils.isEmpty(userReservations);
 
-        if (!userHasReservations){
+        if (!userHasReservations) {
             return ResponseEntity.ok(new ArrayList<>());
         }
 
@@ -147,7 +152,7 @@ public class UserController {
     }
 
     @GetMapping("/current/reservations/nearest")
-   public ResponseEntity<?> getCurrentUserNearestReservation
+    public ResponseEntity<?> getCurrentUserNearestReservation
             (Authentication authentication) {
 
         if (Objects.isNull(authentication)) {
@@ -158,7 +163,7 @@ public class UserController {
         List<DetailDTO> userDetails = userService.getUserDetails(user.getId());
         boolean userHasDetails = !CollectionUtils.isEmpty(userDetails);
 
-        if (!userHasDetails){
+        if (!userHasDetails) {
             return ResponseEntity.ok(new ArrayList<>());
         }
 
@@ -166,7 +171,7 @@ public class UserController {
     }
 
     @GetMapping("/subordinate/{id}")
-    public ResponseEntity<List<UserDTO>> getSubordinate(@PathVariable("id") Long hrId){
+    public ResponseEntity<List<UserDTO>> getSubordinate(@PathVariable("id") Long hrId) {
         return ResponseEntity.ok(userService.getByHrId(hrId));
     }
 
@@ -178,10 +183,11 @@ public class UserController {
 
     @GetMapping("extended/paging")
     public ResponseEntity<?> getPagedAndSortedUsers(@RequestParam(name = "pageNumber") Integer pageNumber,
-                                                @RequestParam(name = "pageSize") Integer pageSize,
-                                                @RequestParam(name = "sortMethod", defaultValue = "id") String sortMethod,
-                                                @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection) {
-        List<UserDTO> users = userService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection);
+                                                    @RequestParam(name = "pageSize") Integer pageSize,
+                                                    @RequestParam(name = "sortMethod", defaultValue = "id") String sortMethod,
+                                                    @RequestParam(name = "sortDirection", defaultValue = "ASC") String sortDirection,
+                                                    @RequestParam(name = "username", defaultValue = "") String username) {
+        List<UserDTO> users = userService.getPagedAndSorted(pageNumber, pageSize, sortMethod, sortDirection, username);
 
         @Data
         @NoArgsConstructor

@@ -93,7 +93,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserDTO> getPagedAndSorted(Integer pageNumber, Integer pageSize, String sortMethod, String sortDirection) {
+    public List<UserDTO> getPagedAndSorted(Integer pageNumber,
+                                           Integer pageSize,
+                                           String sortMethod,
+                                           String sortDirection,
+                                           String username) {
         Sort sortConfig;
 
         if ("name".equals(sortMethod)) {
@@ -103,7 +107,7 @@ public class UserService implements IUserService {
         }
 
         Pageable pageConfig = PageRequest.of(pageNumber, pageSize, sortConfig);
-        return userDAO.findAll(pageConfig).get().map(userConverter::toDTO).collect(Collectors.toList());
+        return userDAO.findAllByNameContains(username, pageConfig).stream().map(userConverter::toDTO).collect(Collectors.toList());
     }
 
     @Override
@@ -120,5 +124,13 @@ public class UserService implements IUserService {
         user.setRoles(savedRoles);
 
         return savedRoles.stream().map(roleConverter::toDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserDTO> getUsersByCredentials(String credentials) {
+        return userDAO.findAllByNameContainsOrEmailContains(credentials, credentials)
+                .stream()
+                .map(userConverter::toDTO)
+                .collect(Collectors.toList());
     }
 }
