@@ -1,6 +1,7 @@
 package com.hcb.hotchairs.controllers;
 
 import com.hcb.hotchairs.dtos.*;
+import com.hcb.hotchairs.entities.User;
 import com.hcb.hotchairs.services.*;
 import com.hcb.hotchairs.mas.UserDTOModelAssembler;
 import lombok.AllArgsConstructor;
@@ -12,13 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +38,7 @@ public class UserController {
     @AllArgsConstructor
     @NoArgsConstructor
     private class ExtendedReservationInfo {
+        private UserDTO user;
         private ReservationDTO reservation;
         private DetailDTO detail;
         private PlaceDTO place;
@@ -54,13 +51,14 @@ public class UserController {
     public ExtendedReservationInfo toExtendedReservationInfo(List<DetailDTO> detailDTOs) {
 
         ReservationDTO reservationDTO = reservationService.getById(detailDTOs.get(0).getReservationId());
+        UserDTO userDTO = userService.getById(reservationDTO.getUserId());
         PlaceDTO placeDTO = placeService.getById(reservationDTO.getPlaceId());
         FloorDTO floorDTO = floorService.getById(placeDTO.getFloorId());
         OfficeDTO officeDTO = officeService.getById(floorDTO.getOfficeId());
         CityDTO cityDTO = cityService.getById(officeDTO.getCityId());
         CountryDTO countryDTO = countryService.getById(cityDTO.getCountryId());
 
-        return new ExtendedReservationInfo(reservationDTO, detailDTOs.get(0), placeDTO, floorDTO,
+        return new ExtendedReservationInfo(userDTO, reservationDTO, detailDTOs.get(0), placeDTO, floorDTO,
                 officeDTO, cityDTO, countryDTO);
     }
 
@@ -118,7 +116,7 @@ public class UserController {
     }
 
     @GetMapping("/reservations/nearest/{id}")
-    public ResponseEntity<?> getCurrentUserNearestReservation(@PathVariable(name = "id") Long id) {
+    public ResponseEntity<?> getNearestReservationByUserId(@PathVariable(name = "id") Long id) {
 
         List<DetailDTO> userDetails = userService.getUserDetails(id);
         boolean userHasDetails = !CollectionUtils.isEmpty(userDetails);
@@ -229,6 +227,168 @@ public class UserController {
     @PostMapping("/roles/{id}")
     public ResponseEntity<List<RoleDTO>> setUserRoles(@RequestBody List<RoleDTO> roles, @PathVariable Long id) {
         return ResponseEntity.ok(userService.setUserRoles(roles, id));
+    }
+
+    @PostMapping("/reservations/staff/{id}")
+    public ResponseEntity<List<ExtendedReservationInfo>> getStaffReservationsByUserId
+            (@PathVariable Long id, @RequestBody List<String> filtersInfo) {
+
+        UserDTO user = userService.getById(id);
+        List<ReservationDTO> staffReservations = userService.getStaffReservations(user.getId());
+        boolean staffHasReservations = !CollectionUtils.isEmpty(staffReservations);
+
+        if (!staffHasReservations) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        List<ExtendedReservationInfo> staffExtendedReservations = staffReservations.stream()
+                .map(res -> toExtendedReservationInfo(reservationService.getReservationDetails(res.getId())))
+                .collect(Collectors.toList());
+        List<ExtendedReservationInfo> staffFilterExtendedReservations;
+
+        if (!StringUtils.isEmpty(filtersInfo.get(0))) {
+            staffFilterExtendedReservations = staffExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.user.getName().equals(filtersInfo.get(0)))
+                    .collect(Collectors.toList());
+        } else {
+            staffFilterExtendedReservations = staffExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(1))) {
+            staffExtendedReservations = staffFilterExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.country.getName().equals(filtersInfo.get(1)))
+                    .collect(Collectors.toList());
+        } else {
+            staffExtendedReservations = staffFilterExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffFilterExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(2))) {
+            staffFilterExtendedReservations = staffExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.city.getName().equals(filtersInfo.get(2)))
+                    .collect(Collectors.toList());
+        } else {
+            staffFilterExtendedReservations = staffExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(3))) {
+            staffExtendedReservations = staffFilterExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.office.getStreet().equals(filtersInfo.get(3)))
+                    .collect(Collectors.toList());
+        } else {
+            staffExtendedReservations = staffFilterExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffFilterExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(4))) {
+            staffFilterExtendedReservations = staffExtendedReservations.stream()
+                    .filter(reservation -> {
+
+                        List<DetailDTO> reservationDetails =
+                                reservationService.getReservationDetails(reservation.reservation.getId());
+
+                        DetailDTO hasData = reservationDetails.stream()
+                                .filter(detail -> detail.getDate().compareTo(java.sql.Date.valueOf(filtersInfo.get(4))) == 0)
+                                .findFirst().orElse(null);
+
+                        if (hasData == null)
+                            return false;
+
+                        reservation.detail.setDate(hasData.getDate());
+
+                        return true;
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            staffFilterExtendedReservations = staffExtendedReservations.stream().collect(Collectors.toList());
+        }
+
+        return ResponseEntity.ok(staffFilterExtendedReservations);
+    }
+
+    @PostMapping("current/reservations/staff")
+    public ResponseEntity<List<ExtendedReservationInfo>> getCurrentUserStaffReservations
+            (Authentication authentication, @RequestBody List<String> filtersInfo) {
+
+        if (Objects.isNull(authentication)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        UserDTO currentUser = userService.getByEmail(authentication.getName());
+        List<ReservationDTO> staffReservations = userService.getStaffReservations(currentUser.getId());
+        boolean staffHasReservations = !CollectionUtils.isEmpty(staffReservations);
+
+        if (!staffHasReservations) {
+            return ResponseEntity.ok(new ArrayList<>());
+        }
+
+        List<ExtendedReservationInfo> staffExtendedReservations = staffReservations.stream()
+                .map(res -> toExtendedReservationInfo(reservationService.getReservationDetails(res.getId())))
+                .collect(Collectors.toList());
+        List<ExtendedReservationInfo> staffFilterExtendedReservations;
+
+        if (!StringUtils.isEmpty(filtersInfo.get(0))) {
+            staffFilterExtendedReservations = staffExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.user.getName().equals(filtersInfo.get(0)))
+                    .collect(Collectors.toList());
+        } else {
+            staffFilterExtendedReservations = staffExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(1))) {
+            staffExtendedReservations = staffFilterExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.country.getName().equals(filtersInfo.get(1)))
+                    .collect(Collectors.toList());
+        } else {
+            staffExtendedReservations = staffFilterExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffFilterExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(2))) {
+            staffFilterExtendedReservations = staffExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.city.getName().equals(filtersInfo.get(2)))
+                    .collect(Collectors.toList());
+        } else {
+            staffFilterExtendedReservations = staffExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(3))) {
+            staffExtendedReservations = staffFilterExtendedReservations.stream()
+                    .filter(staffReservation -> staffReservation.office.getStreet().equals(filtersInfo.get(3)))
+                    .collect(Collectors.toList());
+        } else {
+            staffExtendedReservations = staffFilterExtendedReservations.stream().collect(Collectors.toList());
+        }
+        staffFilterExtendedReservations.clear();
+
+        if (!StringUtils.isEmpty(filtersInfo.get(4))) {
+            staffFilterExtendedReservations = staffExtendedReservations.stream()
+                    .filter(reservation -> {
+
+                        List<DetailDTO> reservationDetails =
+                                reservationService.getReservationDetails(reservation.reservation.getId());
+
+                        DetailDTO hasData = reservationDetails.stream()
+                                .filter(detail -> detail.getDate().compareTo(java.sql.Date.valueOf(filtersInfo.get(4))) == 0)
+                                .findFirst().orElse(null);
+
+                        if (hasData == null)
+                            return false;
+
+                        reservation.detail.setDate(hasData.getDate());
+
+                        return true;
+                    })
+                    .collect(Collectors.toList());
+        } else {
+            staffFilterExtendedReservations = staffExtendedReservations.stream().collect(Collectors.toList());
+        }
+
+        return ResponseEntity.ok(staffFilterExtendedReservations);
     }
 
     /* TODO:

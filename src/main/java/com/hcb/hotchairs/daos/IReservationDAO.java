@@ -79,4 +79,10 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
     @Query("SELECT COUNT(r) FROM Reservation r WHERE r.place.floor.id = :floorId AND r.place.id NOT IN :placesId AND " +
             "(r.endDate > CURRENT_DATE OR (r.endDate = CURRENT_DATE AND r.endTime > CURRENT_TIME))")
     Long checkForDeletingViolation(@Param("placesId") Collection<Long> placesIds, @Param("floorId") Long floorId);
+
+    @Query("FROM Reservation " +
+            "WHERE user.hr.id = ?1 AND (endDate > CURRENT_DATE OR " +
+            "(endDate = CURRENT_DATE AND endTime > CURRENT_TIME)) " +
+            "ORDER BY startDate ASC, startTime ASC")
+    List<Reservation> findByHrId(Long userId);
 }
