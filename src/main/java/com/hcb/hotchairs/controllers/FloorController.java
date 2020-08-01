@@ -3,6 +3,8 @@ package com.hcb.hotchairs.controllers;
 import com.hcb.hotchairs.dtos.FloorDTO;
 import com.hcb.hotchairs.services.IFloorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +18,12 @@ import java.util.Objects;
 public class FloorController {
 
     private final IFloorService floorService;
+    private final ResourceLoader resourceLoader;
 
     @Autowired
-    FloorController(IFloorService floorService){
+    FloorController(IFloorService floorService, ResourceLoader resourceLoader){
         this.floorService = floorService;
+        this.resourceLoader = resourceLoader;
     }
 
     @GetMapping("/{id}")
@@ -84,7 +88,7 @@ public class FloorController {
         }
     }
 
-    @DeleteMapping("map/{id}")
+    @DeleteMapping("/map/{id}")
     public ResponseEntity<Object> deleteFloorMap(@PathVariable Long id) {
         if (floorService.deleteFloorMap(id)) {
             return ResponseEntity.ok().build();
@@ -92,4 +96,34 @@ public class FloorController {
             return ResponseEntity.unprocessableEntity().build();
         }
     }
+
+    @GetMapping(value = "/plan/{id}", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<byte[]> getFloorPlan(@PathVariable Long id) {
+        byte[] png = floorService.getFloorPlan(id);
+
+        if (Objects.isNull(png)) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(png);
+        }
+    }
+
+    @PostMapping("/plan/{id}")
+    public ResponseEntity<Object> setFloorPlan(@RequestBody byte[] png, @PathVariable Long id) {
+        if (floorService.setFloorPlan(png, id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
+    @DeleteMapping("/plan/{id}")
+    public ResponseEntity<Object> deleteFloorPlan(@PathVariable Long id) {
+        if (floorService.deleteFloorPlan(id)) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+    }
+
 }

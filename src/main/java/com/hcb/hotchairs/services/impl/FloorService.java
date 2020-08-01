@@ -94,6 +94,37 @@ public class FloorService implements IFloorService {
     }
 
     @Override
+    public byte[] getFloorPlan(Long id) {
+        return floorDAO.findById(id).map(Floor::getPlan).orElse(null);
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean setFloorPlan(byte[] png, Long id) {
+        Optional<Floor> floor = floorDAO.findById(id);
+        if (floor.isPresent()) {
+            floor.get().setPlan(png);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean deleteFloorPlan(Long id) {
+        Optional<Floor> floor = floorDAO.findById(id);
+        if (floor.isPresent()) {
+            floor.get().setPlan(null);
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     @Transactional
     @Modifying
     public boolean deleteById(Long id) {
