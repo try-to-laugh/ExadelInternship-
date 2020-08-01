@@ -43,4 +43,8 @@ public class Floor {
     @Basic
     @Column(name = "map")
     private byte[] map;
+
+    @Basic
+    @Column(name = "plan")
+    private byte[] plan;
 }
