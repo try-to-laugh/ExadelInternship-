@@ -6,7 +6,6 @@ import com.hcb.hotchairs.daos.ICityDAO;
 import com.hcb.hotchairs.daos.ICountryDAO;
 import com.hcb.hotchairs.dtos.CityDTO;
 import com.hcb.hotchairs.dtos.CountryDTO;
-import com.hcb.hotchairs.entities.Country;
 import com.hcb.hotchairs.services.ICountryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

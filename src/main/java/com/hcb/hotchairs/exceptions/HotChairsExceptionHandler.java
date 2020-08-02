@@ -17,6 +17,12 @@ public class HotChairsExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(WrongSeatTypeInfo.class)
+    protected ResponseEntity<ExceptionMessage> handleWrongSeatType(){
+        return new ResponseEntity<>(new ExceptionMessage("not possible to reserve SINGLE-place for many people"),
+        HttpStatus.BAD_REQUEST);
+    }
+
     @Data
     @AllArgsConstructor
     private static class ExceptionMessage {
