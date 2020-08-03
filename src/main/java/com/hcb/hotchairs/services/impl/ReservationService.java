@@ -56,10 +56,11 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public ReservationDTO getByTimeDateAndPlace(Date date, Time startTime, Time endTime, Long placeId) {
-        return reservationConverter.toDTO(reservationDAO.findByTimeDateAndPlace(date, startTime, endTime, placeId)
-                .orElse(null));
-
+    public List<ReservationDTO> getByTimeDateAndPlace(Date date, Time startTime, Time endTime, Long placeId) {
+        return reservationDAO.findByTimeDateAndPlace(date, startTime, endTime, placeId)
+                .stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -75,12 +76,10 @@ public class ReservationService implements IReservationService {
 
     @Override
     public List<DetailDTO> getReservationDetails(Long id) {
-
-        List<DetailDTO> detailDTOs = detailDAO.findByReservationId(id).stream()
+        return detailDAO.findByReservationId(id)
+                .stream()
                 .map(detailConverter::toDTO)
                 .collect(Collectors.toList());
-
-        return detailDTOs;
     }
 
     @Override
@@ -90,13 +89,19 @@ public class ReservationService implements IReservationService {
                                                           Time endTime,
                                                           Long userId) {
 
-
-
-
         //List<Reservation> temp =  reservationDAO.findIntersectionForUser(startDate,endDate,startTime,endTime,userId);
         return reservationDAO.findIntersectionForUser(startDate,endDate,startTime,endTime,userId)
                 .stream()
                 .map(reservationConverter::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean deleteById(Long reservationId) {
+        if(reservationDAO.findById(reservationId).isPresent()){
+            reservationDAO.deleteById(reservationId);
+            return true;
+        }
+        return false;
     }
 }

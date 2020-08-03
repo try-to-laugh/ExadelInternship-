@@ -4,10 +4,8 @@ import com.hcb.hotchairs.converters.OfficeConverter;
 import com.hcb.hotchairs.daos.IOfficeDAO;
 import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.OfficeDTO;
-import com.hcb.hotchairs.entities.Office;
 import com.hcb.hotchairs.services.IOfficeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,7 +15,6 @@ import org.springframework.util.CollectionUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

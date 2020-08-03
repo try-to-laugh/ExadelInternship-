@@ -1,10 +1,8 @@
 package com.hcb.hotchairs.services.impl;
 
-import com.hcb.hotchairs.controllers.RoleController;
 import com.hcb.hotchairs.converters.RoleConverter;
 import com.hcb.hotchairs.daos.IRoleDAO;
 import com.hcb.hotchairs.dtos.RoleDTO;
-import com.hcb.hotchairs.entities.Role;
 import com.hcb.hotchairs.services.IRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

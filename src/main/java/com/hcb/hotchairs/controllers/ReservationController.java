@@ -1,11 +1,9 @@
 package com.hcb.hotchairs.controllers;
 
 import com.hcb.hotchairs.services.IReservationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/reservations")
@@ -25,5 +23,11 @@ public class ReservationController {
     @GetMapping("")
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(reservationService.getAll());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> DeleteReservation(@PathVariable("id") Long reservationId) {
+        return (reservationService.deleteById(reservationId)) ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }
