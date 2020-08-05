@@ -97,6 +97,18 @@ public class FloorController {
         }
     }
 
+    @GetMapping(value = "/plan/default", produces = MediaType.IMAGE_PNG_VALUE)
+    public ResponseEntity<Resource> getDefaultPlan() {
+        Resource image =
+                resourceLoader.getResource("classpath:static/floors/plans/default.png");
+
+        if (image.exists()) {
+            return ResponseEntity.ok(image);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping(value = "/plan/{id}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity<byte[]> getFloorPlan(@PathVariable Long id) {
         byte[] png = floorService.getFloorPlan(id);
