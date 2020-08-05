@@ -13,6 +13,6 @@ public interface ICommentDAO extends JpaRepository<Comment, Long> {
     @Query("FROM Comment WHERE user.id = ?1")
     List<Comment> findAllByUserId(Long userId);
 
-    @Query("FROM Comment WHERE place.id = ?1")
-    List<Comment> findAllByPlaceId(Long placeId);
+    Comment findFirstByReservationId(Long reservationId);
+    List<Comment> findAllByReservationPlaceId(Long placeId);
 }

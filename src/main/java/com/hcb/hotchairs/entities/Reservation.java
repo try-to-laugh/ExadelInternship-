@@ -3,6 +3,8 @@ package com.hcb.hotchairs.entities;
 import com.vladmihalcea.hibernate.type.array.IntArrayType;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -69,4 +71,8 @@ public class Reservation {
 
     @OneToMany(mappedBy = "reservation", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Detail> details = new ArrayList<>();
+
+    @OneToMany(mappedBy = "reservation", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private List<Comment> comments = new ArrayList<>();
 }

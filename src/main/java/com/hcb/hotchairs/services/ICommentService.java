@@ -7,7 +7,9 @@ import java.util.List;
 public interface ICommentService {
     List<CommentDTO> getAll();
     List<CommentDTO> getAllByUserId(Long userId);
-    List<CommentDTO> getAllByPlaceId(Long placeId);
+    CommentDTO getByReservationId(Long reservationId);
+    CommentDTO saveCommentByReservationId(Long reservationId, Long userId, String text);
     CommentDTO getById(Long id);
 
+    List<CommentDTO> getAllByPlaceId(Long placeId);
 }

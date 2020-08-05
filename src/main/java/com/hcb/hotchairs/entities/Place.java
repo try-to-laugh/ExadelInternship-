@@ -60,10 +60,6 @@ public class Place {
     private Floor floor;
 
     @OneToMany(mappedBy = "place", orphanRemoval = true, cascade = CascadeType.ALL)
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private List<Comment> comments = new ArrayList<>();
-
-    @OneToMany(mappedBy = "place", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
 }
 
