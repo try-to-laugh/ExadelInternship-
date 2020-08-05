@@ -26,5 +26,5 @@ public class ReservationFilterDTO {
     private int[] weekDay;
 
     List<Long> tagsId = new ArrayList<>();
-    List<Long> userIds = new ArrayList<>();
+    List<Long> usersId = new ArrayList<>();
 }

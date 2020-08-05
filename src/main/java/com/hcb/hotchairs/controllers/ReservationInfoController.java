@@ -15,9 +15,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/reservationInfo")
 public class ReservationInfoController {
-
     private final IReservationInfoService reservationInfoService;
-    private static final Long SINGLE = 1L;
 
     public ReservationInfoController(IReservationInfoService reservationInfoService) {
         this.reservationInfoService = reservationInfoService;
@@ -25,11 +23,7 @@ public class ReservationInfoController {
 
     @PostMapping("/free")
     public ResponseEntity<List<ReservationInfoDTO>> getFreePlaces(@RequestBody ReservationFilterDTO request) {
-        return ResponseEntity.ok(reservationInfoService.getFreePlace(request)
-                .stream().filter(reservationInfo -> request.getIsMeeting().equals(SINGLE)
-                        ? reservationInfo.getCapacity() == 1
-                        : reservationInfo.getCapacity() > 1)
-                .collect(Collectors.toList()));
+        return ResponseEntity.ok(reservationInfoService.getFreePlace(request));
     }
 
     @PostMapping("/save")

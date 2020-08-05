@@ -2,6 +2,8 @@ package com.hcb.hotchairs.converters;
 
 import com.hcb.hotchairs.dtos.*;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 import java.util.Objects;
 
 @Component
@@ -17,7 +19,7 @@ public class ReservationInfoConverter {
         reservationInfo.setStartTime(placeFilter.getStartTime());
         reservationInfo.setEndTime(placeFilter.getEndTime());
         reservationInfo.setWeekDay(placeFilter.getWeekDay());
-        reservationInfo.setUsersId(placeFilter.getUserIds());
+        reservationInfo.setUsersId(placeFilter.getUsersId());
         reservationInfo.setCapacity(placeDTO.getCapacity());
 
         reservationInfo.setPlaceId(placeDTO.getId());
@@ -31,7 +33,10 @@ public class ReservationInfoConverter {
         return reservationInfo;
     }
 
-    public ReservationInfoDTO toDTO(PlaceDTO placeDTO, FloorDTO floorDTO, ReservationDTO reservationDTO){
+    public ReservationInfoDTO toDTO(PlaceDTO placeDTO,
+                                    FloorDTO floorDTO,
+                                    ReservationDTO reservationDTO,
+                                    List<Long> usersId){
         if(Objects.isNull(placeDTO) || Objects.isNull(floorDTO) || Objects.isNull(reservationDTO)){
             return null;
         }
@@ -54,6 +59,7 @@ public class ReservationInfoConverter {
         reservationInfoDTO.setReservationId(reservationDTO.getId());
         reservationInfoDTO.setCurrentUserId(reservationDTO.getUserId());
 
+        reservationInfoDTO.setUsersId(usersId);
         return reservationInfoDTO;
     }
 }

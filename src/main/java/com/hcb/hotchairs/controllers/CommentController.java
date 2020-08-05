@@ -1,10 +1,7 @@
 package com.hcb.hotchairs.controllers;
 
-import com.hcb.hotchairs.converters.CommentConverter;
 import com.hcb.hotchairs.services.ICommentService;
-import com.hcb.hotchairs.services.impl.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

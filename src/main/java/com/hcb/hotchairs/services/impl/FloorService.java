@@ -5,7 +5,6 @@ import com.hcb.hotchairs.daos.IFloorDAO;
 import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.FloorDTO;
 import com.hcb.hotchairs.entities.Floor;
-import com.hcb.hotchairs.entities.Office;
 import com.hcb.hotchairs.services.IFloorService;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
