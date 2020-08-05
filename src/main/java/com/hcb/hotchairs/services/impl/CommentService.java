@@ -33,13 +33,27 @@ public class CommentService implements ICommentService {
     }
 
     @Override
-    public List<CommentDTO> getAllByPlaceId(Long placeId){
-        return commentDAO.findAllByPlaceId(placeId).stream().map(commentConverter::toDTO).collect(Collectors.toList());
+    public CommentDTO getByReservationId(Long reservationId) {
+        return commentConverter.toDTO(commentDAO.findFirstByReservationId(reservationId));
+    }
+
+    @Override
+    public CommentDTO saveCommentByReservationId(Long reservationId, Long userId, String text) {
+        CommentDTO commentDTO = new CommentDTO(0L, userId, reservationId, null, text);
+        return commentConverter.toDTO(commentDAO.save(commentConverter.fromDTO(commentDTO)));
     }
 
     @Override
     public CommentDTO getById(Long id){
         return commentConverter.toDTO(commentDAO.findById(id).orElse(null));
+    }
+
+    @Override
+    public List<CommentDTO> getAllByPlaceId(Long placeId) {
+        return commentDAO.findAllByReservationPlaceId(placeId)
+                .stream()
+                .map(commentConverter::toDTO)
+                .collect(Collectors.toList());
     }
 
 }

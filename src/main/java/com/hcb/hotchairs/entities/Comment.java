@@ -3,6 +3,7 @@ package com.hcb.hotchairs.entities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,12 +32,13 @@ public class Comment {
     private User user;
 
     @Column(name = "time_stamp")
+    @CreationTimestamp
     private Timestamp timestamp;
 
     @Column(name = "text")
     private String text;
 
     @ManyToOne
-    @JoinColumn(name = "place_id")
-    private Place place;
+    @JoinColumn(name = "reservation_id")
+    private Reservation reservation;
 }
