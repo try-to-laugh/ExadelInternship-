@@ -13,4 +13,6 @@ public interface IReservationInfoService {
     ReservationInfoDTO saveReservationInfo(ReservationInfoDTO reservationInfo);
 
     List<ReservationInfoDTO> getIntersectionInfo(ReservationInfoDTO reservationInfo);
+
+    ReservationInfoDTO addToCurrent(ReservationInfoDTO reservationInfo);
 }

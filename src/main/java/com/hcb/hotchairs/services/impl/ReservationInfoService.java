@@ -5,9 +5,11 @@ import com.hcb.hotchairs.converters.DetailConverter;
 import com.hcb.hotchairs.converters.ReservationConverter;
 import com.hcb.hotchairs.converters.ReservationInfoConverter;
 import com.hcb.hotchairs.dtos.*;
+import com.hcb.hotchairs.entities.Detail;
 import com.hcb.hotchairs.entities.Reservation;
 import com.hcb.hotchairs.exceptions.NoDateException;
-import com.hcb.hotchairs.exceptions.WrongSeatTypeInfo;
+import com.hcb.hotchairs.exceptions.NotExistException;
+import com.hcb.hotchairs.exceptions.WrongSeatTypeException;
 import com.hcb.hotchairs.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -101,10 +103,10 @@ public class ReservationInfoService implements IReservationInfoService {
     @Modifying
     @Override
     public ReservationInfoDTO saveReservationInfo(ReservationInfoDTO reservationInfo) {
-        if(!Objects.isNull(reservationInfo.getUsersId())
+        if (!Objects.isNull(reservationInfo.getUsersId())
                 && !reservationInfo.getUsersId().isEmpty()
                 && reservationInfo.getCapacity().equals(SINGLE)) {
-            throw new WrongSeatTypeInfo();
+            throw new WrongSeatTypeException();
         }
 
 
@@ -145,7 +147,6 @@ public class ReservationInfoService implements IReservationInfoService {
     public List<ReservationInfoDTO> getIntersectionInfo(ReservationInfoDTO reservationInfo) {
         List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
                 reservationInfo.getEndDate(), reservationInfo.getWeekDay());
-
         if (requiredDate.isEmpty()) {
             throw new NoDateException();
         }
@@ -192,5 +193,41 @@ public class ReservationInfoService implements IReservationInfoService {
                         currentRes,
                         Collections.emptyList()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    @Modifying
+    public ReservationInfoDTO addToCurrent(ReservationInfoDTO reservationInfo) {
+        if (Objects.isNull(reservationInfo.getHostId())) {
+            throw new NotExistException();
+        }
+
+        ReservationDTO currentReservation = reservationService.getById(reservationInfo.getHostId());
+        if (Objects.isNull(currentReservation)) {
+            throw new NotExistException();
+        }
+        else if (placeService.getById(currentReservation.getPlaceId()).getCapacity().equals(SINGLE)) {
+            throw new WrongSeatTypeException();
+        }
+
+        List<Date> dates = dateConverter.toDateList(currentReservation.getStartDate(),
+                currentReservation.getEndDate(),
+                currentReservation.getWeekDays());
+
+        currentReservation.setHostId(currentReservation.getId());
+        currentReservation.setId(0L);
+        currentReservation.setUserId(reservationInfo.getCurrentUserId());
+
+        ReservationDTO reservationForCurrentUser = reservationService.saveReservation(
+                reservationConverter.fromDTO(currentReservation));
+        for(Date currentDate: dates){
+            detailService.saveDetail(detailConverter.fromDTO(currentDate,reservationForCurrentUser.getId()));
+        }
+
+        return reservationInfoConverter.toDTO(placeService.getById(reservationForCurrentUser.getPlaceId()),
+                floorService.getById(placeService.getById(reservationForCurrentUser.getPlaceId()).getFloorId()),
+                reservationForCurrentUser,
+                null);
     }
 }

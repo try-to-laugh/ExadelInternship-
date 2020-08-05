@@ -24,6 +24,10 @@ public class DateConverter
         LocalDate localDateStart = startDate.toLocalDate();
         LocalDate localDateEnd = endDate.toLocalDate();
 
+        if(localDateStart.compareTo(localDateEnd) > 0){
+            throw new NoDateException();
+        }
+
         List<LocalDate> dateStartWith = new ArrayList<>();
         for (int dayNumber : dayWeek) {
             DayOfWeek currentDay = DayOfWeek.MONDAY.plus(dayNumber);

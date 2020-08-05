@@ -7,14 +7,17 @@ import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.entities.Reservation;
+import com.hcb.hotchairs.exceptions.NotExistException;
 import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -84,22 +87,35 @@ public class ReservationService implements IReservationService {
 
     @Override
     public List<ReservationDTO> getIntersectionByDateTimeForUser(Date startDate,
-                                                          Date endDate,
-                                                          Time startTime,
-                                                          Time endTime,
-                                                          Long userId) {
+                                                                 Date endDate,
+                                                                 Time startTime,
+                                                                 Time endTime,
+                                                                 Long userId) {
 
         //List<Reservation> temp =  reservationDAO.findIntersectionForUser(startDate,endDate,startTime,endTime,userId);
-        return reservationDAO.findIntersectionForUser(startDate,endDate,startTime,endTime,userId)
+        return reservationDAO.findIntersectionForUser(startDate, endDate, startTime, endTime, userId)
                 .stream()
                 .map(reservationConverter::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Modifying
+    @Transactional
     public boolean deleteById(Long reservationId) {
-        if(reservationDAO.findById(reservationId).isPresent()){
+        if (reservationDAO.findById(reservationId).isPresent()) {
             reservationDAO.deleteById(reservationId);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @Modifying
+    public boolean deleteFromCurrentByHostAndUser(Long hostId, Long userId) {
+        Optional<Reservation> optionalReservation = reservationDAO.findByHostAnUser(hostId, userId);
+        if (optionalReservation.isPresent()) {
+            reservationDAO.deleteById(optionalReservation.get().getId());
             return true;
         }
         return false;

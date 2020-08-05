@@ -27,4 +27,5 @@ public interface IReservationService {
                                                           Long userId);
 
     boolean deleteById(Long reservationId);
+    boolean deleteFromCurrentByHostAndUser(Long hostId, Long userId);
 }
