@@ -7,9 +7,12 @@ import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.entities.Reservation;
+import com.hcb.hotchairs.services.IBotMailSenderService;
 import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -26,14 +29,19 @@ public class ReservationService implements IReservationService {
     private final ReservationConverter reservationConverter;
     private final IDetailDAO detailDAO;
     private final DetailConverter detailConverter;
+    private final IBotMailSenderService mailSender;
 
     @Autowired
-    ReservationService(IReservationDAO reservationDAO, ReservationConverter reservationConverter,
-                       IDetailDAO detailDAO, DetailConverter detailConverter) {
+    ReservationService(IReservationDAO reservationDAO,
+                       ReservationConverter reservationConverter,
+                       IDetailDAO detailDAO,
+                       DetailConverter detailConverter,
+                       IBotMailSenderService mailSender) {
         this.reservationDAO = reservationDAO;
         this.reservationConverter = reservationConverter;
         this.detailDAO = detailDAO;
         this.detailConverter = detailConverter;
+        this.mailSender = mailSender;
     }
 
     @Override
@@ -68,7 +76,17 @@ public class ReservationService implements IReservationService {
     @Override
     @Modifying
     public ReservationDTO saveReservation(Reservation reservation) {
-        return reservationConverter.toDTO(reservationDAO.save(reservation));
+        ReservationDTO reservationDTO = reservationConverter.toDTO(reservationDAO.save(reservation));
+        String sendTo = "someoneuser2020@gmail.com";
+        String subject = "hotchairs booking";
+        String text = "your booking:" +
+                "\nplace: " + reservationDTO.getPlaceId() +
+                "\nstart date: " + reservationDTO.getStartDate() +
+                "\nend date: " + reservationDTO.getEndDate() +
+                "\nstart time: " + reservationDTO.getStartTime() +
+                "\nend time: " + reservationDTO.getEndTime();
+        mailSender.send(sendTo, subject, text);
+        return reservationDTO;
     }
 
     @Override

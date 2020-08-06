@@ -6,8 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
+@RequestMapping("/api/mail")
 public class TestMailSenderController {
 
     private final BotMailSenderService mailSender;
@@ -18,17 +22,15 @@ public class TestMailSenderController {
     }
 
     @GetMapping("/send")
-    public ResponseEntity<String> sendMessage(){
+    public ResponseEntity<String> sendMessage(@RequestParam(value = "email",defaultValue = "ivan_kushner@mail.ru") String sendTo,
+                                              @RequestParam(value = "subject", defaultValue = "Your booking") String subject,
+                                              @RequestParam(value = "text", defaultValue = "Place booked successfully") String text) {
         try {
-            String sendTo = "ivan_kushner@mail.ru";
-            String subject = "Test mailSender";
-            String text = "success!";
             mailSender.send(sendTo, subject, text);
         }
-        catch (Exception exception){
-            // make something if mail wos not send
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("mail wasn't send");
+        catch (Exception exception) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("mail wasn't send");
         }
-        return ResponseEntity.ok("eee boy!!!");
+        return ResponseEntity.ok("sent");
     }
 }
