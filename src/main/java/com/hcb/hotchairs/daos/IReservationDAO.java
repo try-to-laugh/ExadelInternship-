@@ -2,6 +2,7 @@ package com.hcb.hotchairs.daos;
 
 import com.hcb.hotchairs.entities.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -86,7 +87,10 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
             "ORDER BY startDate ASC, startTime ASC")
     List<Reservation> findByHrId(Long userId);
 
-
+    @Modifying
     @Query("DELETE FROM Reservation WHERE id = ?1 ")
     void deleteReservation(Long reservationId);
+
+    @Query("FROM Reservation res WHERE res.host.id = ?1 AND res.user.id = ?2 ")
+    Optional<Reservation> findByHostAnUser(Long hostId, Long userId);
 }

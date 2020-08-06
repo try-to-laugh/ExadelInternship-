@@ -26,8 +26,16 @@ public class ReservationController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> DeleteReservation(@PathVariable("id") Long reservationId) {
+    public ResponseEntity<?> deleteReservation(@PathVariable("id") Long reservationId) {
         return (reservationService.deleteById(reservationId)) ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @DeleteMapping("/fromCurrent")
+    public ResponseEntity<?> deleteFromCurrent(@RequestParam("hostId") Long hostId,
+                                               @RequestParam("userId") Long userId){
+        return reservationService.deleteFromCurrentByHostAndUser(hostId, userId)
+                ? ResponseEntity.status(HttpStatus.OK).build()
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

@@ -23,12 +23,4 @@ public interface IPlaceDAO extends JpaRepository<Place, Long> {
     @Modifying
     @Query("DELETE FROM Place p WHERE p.floor.id = :floorId AND p.id NOT IN :idList")
     void deleteAllFromIdCollection(@Param("idList") Collection<Long> idList, @Param("floorId") Long floorId);
-
-    @Query(value = "SELECT p FROM Place p WHERE p.floor.id = :floorId AND p.id NOT IN :closed")
-    List<Place> findFreePlaceOnFloor(@Param("closed") Collection<Long> identifiers,
-                                     @Param("floorId") Long floorId);
-
-    @Query(value = "SELECT p FROM Place p WHERE p.floor.office.id = :officeId AND p.id NOT IN :closed")
-    List<Place> findFreePlaceOnOffice(@Param("closed") Collection<Long> identifiers,
-                                     @Param("officeId") Long floorId);
 }

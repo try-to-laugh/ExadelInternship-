@@ -11,17 +11,26 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class HotChairsExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NoDateException.class)
-    protected ResponseEntity<ExceptionMessage> handleWrongData(){
+    @ExceptionHandler(DateMissingException.class)
+    protected ResponseEntity<ExceptionMessage> handleWrongData() {
         return new ResponseEntity<>(new ExceptionMessage("There is no selected days in chosen period"),
                 HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(WrongSeatTypeInfo.class)
-    protected ResponseEntity<ExceptionMessage> handleWrongSeatType(){
-        return new ResponseEntity<>(new ExceptionMessage("not possible to reserve SINGLE-place for many people"),
-        HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(WrongSeatTypeException.class)
+    protected ResponseEntity<ExceptionMessage> handleWrongSeatType() {
+        return new ResponseEntity<>(new ExceptionMessage("Can't reserve SINGLE-place for many people"),
+                HttpStatus.BAD_REQUEST);
     }
+
+
+    @ExceptionHandler(RowDoesNotExistException.class)
+    protected ResponseEntity<ExceptionMessage> handleNotExist() {
+        return new ResponseEntity<>(new ExceptionMessage("Сurrent object doesn't exist"),
+                HttpStatus.NOT_FOUND);
+    }
+
+
 
     @Data
     @AllArgsConstructor

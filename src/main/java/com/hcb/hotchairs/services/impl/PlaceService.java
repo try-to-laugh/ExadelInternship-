@@ -51,22 +51,6 @@ public class PlaceService implements IPlaceService {
     }
 
     @Override
-    public List<PlaceDTO> getFreePlaceOnFloor(Collection<Long> closed, Long floorId) {
-       return  placeDAO.findFreePlaceOnFloor(closed, floorId)
-                .stream()
-                .map(placeConverter::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<PlaceDTO> getFreePlaceInOffice(Collection<Long> closed, Long officeId) {
-       return placeDAO.findFreePlaceOnOffice(closed, officeId)
-                .stream()
-                .map(placeConverter::toDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public PlaceDTO getById(Long id){
         return placeConverter.toDTO(placeDAO.findById(id).orElse(null));
     }

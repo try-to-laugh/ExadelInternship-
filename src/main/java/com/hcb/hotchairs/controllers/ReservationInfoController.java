@@ -35,4 +35,9 @@ public class ReservationInfoController {
     public ResponseEntity<List<ReservationInfoDTO>> getIntersection(@RequestBody ReservationInfoDTO request) {
         return ResponseEntity.ok(reservationInfoService.getIntersectionInfo(request));
     }
+
+    @PostMapping("/addToCurrent")
+    public ResponseEntity<ReservationInfoDTO> addToCurrent(@RequestBody ReservationInfoDTO request){
+        return ResponseEntity.ok(reservationInfoService.addToCurrent(request));
+    }
 }
