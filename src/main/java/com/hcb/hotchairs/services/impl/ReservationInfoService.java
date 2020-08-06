@@ -5,10 +5,9 @@ import com.hcb.hotchairs.converters.DetailConverter;
 import com.hcb.hotchairs.converters.ReservationConverter;
 import com.hcb.hotchairs.converters.ReservationInfoConverter;
 import com.hcb.hotchairs.dtos.*;
-import com.hcb.hotchairs.entities.Detail;
 import com.hcb.hotchairs.entities.Reservation;
-import com.hcb.hotchairs.exceptions.NoDateException;
-import com.hcb.hotchairs.exceptions.NotExistException;
+import com.hcb.hotchairs.exceptions.DateMissingException;
+import com.hcb.hotchairs.exceptions.RowDoesNotExistException;
 import com.hcb.hotchairs.exceptions.WrongSeatTypeException;
 import com.hcb.hotchairs.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +63,7 @@ public class ReservationInfoService implements IReservationInfoService {
                 reservationFilter.getEndDate(),
                 reservationFilter.getWeekDay());
         if (requiredDays.isEmpty()) {
-            throw new NoDateException();
+            throw new DateMissingException();
         }
 
         List<TagDTO> requestedTags = (Objects.isNull(reservationFilter.getTagsId()))
@@ -114,7 +113,7 @@ public class ReservationInfoService implements IReservationInfoService {
                 reservationInfo.getEndDate(),
                 reservationInfo.getWeekDay());
         if (requiredDate.isEmpty()) {
-            throw new NoDateException();
+            throw new DateMissingException();
         }
 
         Reservation hostReservation = reservationConverter.fromDTO(reservationInfo, null);
@@ -148,7 +147,7 @@ public class ReservationInfoService implements IReservationInfoService {
         List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
                 reservationInfo.getEndDate(), reservationInfo.getWeekDay());
         if (requiredDate.isEmpty()) {
-            throw new NoDateException();
+            throw new DateMissingException();
         }
         requiredDate.sort(Comparator.naturalOrder());
 
@@ -200,12 +199,12 @@ public class ReservationInfoService implements IReservationInfoService {
     @Modifying
     public ReservationInfoDTO addToCurrent(ReservationInfoDTO reservationInfo) {
         if (Objects.isNull(reservationInfo.getHostId())) {
-            throw new NotExistException();
+            throw new RowDoesNotExistException();
         }
 
         ReservationDTO currentReservation = reservationService.getById(reservationInfo.getHostId());
         if (Objects.isNull(currentReservation)) {
-            throw new NotExistException();
+            throw new RowDoesNotExistException();
         }
         else if (placeService.getById(currentReservation.getPlaceId()).getCapacity().equals(SINGLE)) {
             throw new WrongSeatTypeException();

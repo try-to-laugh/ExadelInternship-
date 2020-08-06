@@ -11,7 +11,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class HotChairsExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(NoDateException.class)
+    @ExceptionHandler(DateMissingException.class)
     protected ResponseEntity<ExceptionMessage> handleWrongData() {
         return new ResponseEntity<>(new ExceptionMessage("There is no selected days in chosen period"),
                 HttpStatus.NOT_FOUND);
@@ -24,9 +24,9 @@ public class HotChairsExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
 
-    @ExceptionHandler(NotExistException.class)
+    @ExceptionHandler(RowDoesNotExistException.class)
     protected ResponseEntity<ExceptionMessage> handleNotExist() {
-        return new ResponseEntity<>(new ExceptionMessage("current object doesn't exist"),
+        return new ResponseEntity<>(new ExceptionMessage("Сurrent object doesn't exist"),
                 HttpStatus.NOT_FOUND);
     }
 

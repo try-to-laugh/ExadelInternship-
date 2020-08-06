@@ -7,7 +7,6 @@ import com.hcb.hotchairs.daos.IReservationDAO;
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
 import com.hcb.hotchairs.entities.Reservation;
-import com.hcb.hotchairs.exceptions.NotExistException;
 import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
