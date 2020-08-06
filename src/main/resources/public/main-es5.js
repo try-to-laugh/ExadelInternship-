@@ -1149,13 +1149,19 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     /* harmony import */
 
 
-    var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    var rxjs_operators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+    /*! rxjs/operators */
+    "./node_modules/rxjs/_esm2015/operators/index.js");
+    /* harmony import */
+
+
+    var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! @angular/router */
     "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
     /* harmony import */
 
 
-    var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
+    var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
     /*! @shared/services/user.service */
     "./src/app/shared/services/user.service.ts");
 
@@ -1170,36 +1176,32 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
       _createClass(HotchairsGuard, [{
         key: "canActivate",
         value: function canActivate(next, state) {
-          return this.checkUser(next);
+          var url = state.url;
+          return this.checkUser(next, url);
         }
       }, {
         key: "checkUser",
-        value: function checkUser(route) {
+        value: function checkUser(route, url) {
           var _this3 = this;
 
-          var triggerOfCheck = false;
-
-          if (this.userService.user$.getValue() !== null) {
+          return this.userService.user$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(function (user) {
+            return user !== null;
+          }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (user) {
+            var triggerOfCheck = false;
             route.data.expectedRole.split(',').forEach(function (roleForCheck) {
-              _this3.userService.user$.getValue().roles.forEach(function (role) {
+              user.roles.forEach(function (role) {
                 if (role.name === roleForCheck) {
                   triggerOfCheck = true;
                 }
               });
             });
-          }
 
-          if (triggerOfCheck || this.isPageRefresh()) {
-            return true;
-          } else {
-            this.router.navigate(['/home']);
-            return false;
-          }
-        }
-      }, {
-        key: "isPageRefresh",
-        value: function isPageRefresh() {
-          return !this.router.navigated;
+            if (!triggerOfCheck) {
+              _this3.router.navigate(['/home']);
+            }
+
+            return triggerOfCheck;
+          }));
         }
       }]);
 
@@ -1207,7 +1209,7 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
     }();
 
     HotchairsGuard.ɵfac = function HotchairsGuard_Factory(t) {
-      return new (t || HotchairsGuard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_2__["UserService"]));
+      return new (t || HotchairsGuard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_3__["UserService"]));
     };
 
     HotchairsGuard.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({
@@ -1225,9 +1227,9 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
         }]
       }], function () {
         return [{
-          type: _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]
+          type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]
         }, {
-          type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_2__["UserService"]
+          type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_3__["UserService"]
         }];
       }, null);
     })();

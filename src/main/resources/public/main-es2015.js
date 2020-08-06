@@ -746,8 +746,10 @@ AppModule.ɵinj = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineInjector
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HotchairsGuard", function() { return HotchairsGuard; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/__ivy_ngcc__/fesm2015/core.js");
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
-/* harmony import */ var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @shared/services/user.service */ "./src/app/shared/services/user.service.ts");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm2015/operators/index.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/__ivy_ngcc__/fesm2015/router.js");
+/* harmony import */ var _shared_services_user_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @shared/services/user.service */ "./src/app/shared/services/user.service.ts");
+
 
 
 
@@ -758,39 +760,34 @@ class HotchairsGuard {
         this.userService = userService;
     }
     canActivate(next, state) {
-        return this.checkUser(next);
+        const url = state.url;
+        return this.checkUser(next, url);
     }
-    checkUser(route) {
-        let triggerOfCheck = false;
-        if (this.userService.user$.getValue() !== null) {
+    checkUser(route, url) {
+        return this.userService.user$.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["filter"])(user => user !== null), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(user => {
+            let triggerOfCheck = false;
             route.data.expectedRole.split(',').forEach((roleForCheck) => {
-                this.userService.user$.getValue().roles.forEach((role) => {
+                user.roles.forEach((role) => {
                     if (role.name === roleForCheck) {
                         triggerOfCheck = true;
                     }
                 });
             });
-        }
-        if (triggerOfCheck || this.isPageRefresh()) {
-            return true;
-        }
-        else {
-            this.router.navigate(['/home']);
-            return false;
-        }
-    }
-    isPageRefresh() {
-        return (!this.router.navigated);
+            if (!triggerOfCheck) {
+                this.router.navigate(['/home']);
+            }
+            return triggerOfCheck;
+        }));
     }
 }
-HotchairsGuard.ɵfac = function HotchairsGuard_Factory(t) { return new (t || HotchairsGuard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_2__["UserService"])); };
+HotchairsGuard.ɵfac = function HotchairsGuard_Factory(t) { return new (t || HotchairsGuard)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵinject"](_shared_services_user_service__WEBPACK_IMPORTED_MODULE_3__["UserService"])); };
 HotchairsGuard.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineInjectable"]({ token: HotchairsGuard, factory: HotchairsGuard.ɵfac, providedIn: 'root' });
 /*@__PURE__*/ (function () { _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵsetClassMetadata"](HotchairsGuard, [{
         type: _angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"],
         args: [{
                 providedIn: 'root'
             }]
-    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"] }, { type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_2__["UserService"] }]; }, null); })();
+    }], function () { return [{ type: _angular_router__WEBPACK_IMPORTED_MODULE_2__["Router"] }, { type: _shared_services_user_service__WEBPACK_IMPORTED_MODULE_3__["UserService"] }]; }, null); })();
 
 
 /***/ }),
