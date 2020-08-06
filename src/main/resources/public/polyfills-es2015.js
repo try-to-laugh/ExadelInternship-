@@ -3035,7 +3035,7 @@ console.warn('"__Zone_disable_requestAnimationFrame" is set to "true" purposely.
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Users\Ярослав\HotChairs\hotchairs_front\src\polyfills.ts */"./src/polyfills.ts");
+module.exports = __webpack_require__(/*! /Users/alex/Desktop/HotChair/hotchairs_front/src/polyfills.ts */"./src/polyfills.ts");
 
 
 /***/ })
