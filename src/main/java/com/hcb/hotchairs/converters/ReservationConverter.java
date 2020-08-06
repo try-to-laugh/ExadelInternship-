@@ -56,4 +56,32 @@ public class ReservationConverter {
 
         return reservation;
     }
+
+    public Reservation fromDTO(ReservationDTO reservationDTO) {
+        if (Objects.isNull(reservationDTO)) {
+            return null;
+        }
+        Reservation reservation  = new Reservation();
+
+        if (!Objects.isNull(reservationDTO.getHostId())) {
+            reservation.setHost(new Reservation());
+            reservation.getHost().setId(reservationDTO.getHostId());
+        }
+
+        reservation.setUser(new User());
+        reservation.getUser().setId(reservationDTO.getUserId());
+
+        reservation.setStartDate(reservationDTO.getStartDate());
+        reservation.setEndDate(reservationDTO.getEndDate());
+        reservation.setStartTime(reservationDTO.getStartTime());
+        reservation.setEndTime(reservationDTO.getEndTime());
+
+        reservation.setWeekDays(reservationDTO.getWeekDays());
+
+        reservation.setPlace(new Place());
+        reservation.getPlace().setId(reservationDTO.getPlaceId());
+
+        reservation.setId(reservationDTO.getId());
+        return reservation;
+    }
 }

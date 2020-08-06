@@ -13,8 +13,6 @@ public interface IPlaceService {
     List<PlaceDTO> getAll();
     List<PlaceDTO> getAllByFloorId(Long floorId);
     List<PlaceDTO> getAllByOfficeId(Long officeId);
-    List<PlaceDTO> getFreePlaceOnFloor(Collection<Long> closed, Long floorId);
-    List<PlaceDTO> getFreePlaceInOffice(Collection<Long> closed, Long officeId);
     PlaceDTO getById(Long id);
     List<PlaceDTO> savePlaces(List<PlaceDTO> places, Long floorId);
     Boolean isPlaceEditable(PlaceDTO placeDTO);
