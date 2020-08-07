@@ -67,6 +67,15 @@ public class FloorController {
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+    
+    @GetMapping("/checkMap/{id}")
+    public ResponseEntity<Boolean> checkIfMapExists(@PathVariable Long id) {
+        if (Objects.isNull(floorService.getFloorMap(id))) {
+            return ResponseEntity.ok(false);
+        } else {
+            return ResponseEntity.ok(true);
+        }
+    }
 
     @GetMapping("/map/{id}")
     public ResponseEntity<byte[]> getFloorMap(@PathVariable Long id) {
