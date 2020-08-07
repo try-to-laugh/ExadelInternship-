@@ -76,17 +76,7 @@ public class ReservationService implements IReservationService {
     @Override
     @Modifying
     public ReservationDTO saveReservation(Reservation reservation) {
-        ReservationDTO reservationDTO = reservationConverter.toDTO(reservationDAO.save(reservation));
-        String sendTo = "someoneuser2020@gmail.com";
-        String subject = "hotchairs booking";
-        String text = "your booking:" +
-                "\nplace: " + reservationDTO.getPlaceId() +
-                "\nstart date: " + reservationDTO.getStartDate() +
-                "\nend date: " + reservationDTO.getEndDate() +
-                "\nstart time: " + reservationDTO.getStartTime() +
-                "\nend time: " + reservationDTO.getEndTime();
-        mailSender.send(sendTo, subject, text);
-        return reservationDTO;
+        return reservationConverter.toDTO(reservationDAO.save(reservation));
     }
 
     @Override

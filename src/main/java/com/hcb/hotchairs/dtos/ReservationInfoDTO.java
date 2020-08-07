@@ -1,7 +1,9 @@
 package com.hcb.hotchairs.dtos;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Date;
@@ -9,8 +11,9 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 @NoArgsConstructor
+@Getter
+@Setter
 public class ReservationInfoDTO {
     @NotNull
     private Long currentUserId;
@@ -32,4 +35,5 @@ public class ReservationInfoDTO {
     private Date endDate;
     private int[] weekDay;
     private List<Long> usersId = new ArrayList<>();
+
 }
