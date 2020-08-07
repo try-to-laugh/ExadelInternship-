@@ -32,6 +32,7 @@ public class ReservationInfoService implements IReservationInfoService {
     private final ReservationConverter reservationConverter;
     private final IDetailService detailService;
     private final DetailConverter detailConverter;
+    private final IBotMailSenderService mailSender;
 
     private static final Long SINGLE = 1L;
 
@@ -44,7 +45,8 @@ public class ReservationInfoService implements IReservationInfoService {
                                   IFloorService floorService,
                                   ReservationConverter reservationConverter,
                                   IDetailService detailService,
-                                  DetailConverter detailConverter) {
+                                  DetailConverter detailConverter,
+                                  IBotMailSenderService mailSender) {
         this.placeService = placeService;
         this.tagService = tagService;
         this.dateConverter = dateConverter;
@@ -54,6 +56,7 @@ public class ReservationInfoService implements IReservationInfoService {
         this.reservationConverter = reservationConverter;
         this.detailService = detailService;
         this.detailConverter = detailConverter;
+        this.mailSender = mailSender;
     }
 
 
@@ -124,7 +127,14 @@ public class ReservationInfoService implements IReservationInfoService {
 
         if (!Objects.isNull(reservationInfo.getUsersId())) {
             Long currentHostId = reservationInfo.getCurrentUserId();
-            for (Long userId : reservationInfo.getUsersId()) {
+
+            List<Long> users = reservationInfo.getUsersId();
+            users = users.stream()
+                    .distinct()
+                    .filter(id -> !id.equals(reservationInfo.getCurrentUserId()))
+                    .collect(Collectors.toList());
+
+            for (Long userId : users) {
                 reservationInfo.setCurrentUserId(userId);
                 ReservationDTO currentReservationDTO = reservationService
                         .saveReservation(reservationConverter.fromDTO(reservationInfo, hostReservationDTO.getId()));
@@ -134,12 +144,16 @@ public class ReservationInfoService implements IReservationInfoService {
             }
             reservationInfo.setCurrentUserId(currentHostId);
         }
-
-        return reservationInfoConverter.toDTO(
+        ReservationInfoDTO resultInfo = reservationInfoConverter.toDTO(
                 placeService.getById(hostReservation.getPlace().getId()),
                 floorService.getById(placeService.getById(hostReservation.getPlace().getId()).getFloorId()),
                 hostReservationDTO,
                 reservationInfo.getUsersId());
+
+        try { mailSender.send(resultInfo); }
+        catch (Exception e){ }
+
+        return resultInfo;
     }
 
     @Override
@@ -224,9 +238,14 @@ public class ReservationInfoService implements IReservationInfoService {
             detailService.saveDetail(detailConverter.fromDTO(currentDate,reservationForCurrentUser.getId()));
         }
 
-        return reservationInfoConverter.toDTO(placeService.getById(reservationForCurrentUser.getPlaceId()),
+        ReservationInfoDTO resultInfo = reservationInfoConverter.toDTO(placeService.getById(reservationForCurrentUser.getPlaceId()),
                 floorService.getById(placeService.getById(reservationForCurrentUser.getPlaceId()).getFloorId()),
                 reservationForCurrentUser,
                 null);
+
+        try { mailSender.send(resultInfo); }
+        catch (Exception e){ }
+
+        return resultInfo;
     }
 }
