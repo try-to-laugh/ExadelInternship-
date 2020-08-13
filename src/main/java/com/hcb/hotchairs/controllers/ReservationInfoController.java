@@ -3,11 +3,9 @@ package com.hcb.hotchairs.controllers;
 import com.hcb.hotchairs.dtos.ReservationFilterDTO;
 import com.hcb.hotchairs.dtos.ReservationInfoDTO;
 import com.hcb.hotchairs.services.IReservationInfoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,5 +37,19 @@ public class ReservationInfoController {
     @PostMapping("/addToCurrent")
     public ResponseEntity<ReservationInfoDTO> addToCurrent(@RequestBody ReservationInfoDTO request){
         return ResponseEntity.ok(reservationInfoService.addToCurrent(request));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteReservation(@PathVariable("id") Long reservationId) {
+        return (reservationInfoService.deleteReservationById(reservationId)) ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @DeleteMapping("/fromCurrent")
+    public ResponseEntity<?> deleteFromCurrent(@RequestParam("hostId") Long hostId,
+                                               @RequestParam("userId") Long userId){
+        return reservationInfoService.deleteFromExistingByHostAndUser(hostId, userId)
+                ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

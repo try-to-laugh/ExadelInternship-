@@ -150,8 +150,10 @@ public class ReservationInfoService implements IReservationInfoService {
                 hostReservationDTO,
                 reservationInfo.getUsersId());
 
-        try { mailSender.send(resultInfo); }
-        catch (Exception e){ }
+        try {
+            mailSender.send(resultInfo);
+        } catch (Exception e) {
+        }
 
         return resultInfo;
     }
@@ -219,8 +221,7 @@ public class ReservationInfoService implements IReservationInfoService {
         ReservationDTO currentReservation = reservationService.getById(reservationInfo.getHostId());
         if (Objects.isNull(currentReservation)) {
             throw new RowDoesNotExistException();
-        }
-        else if (placeService.getById(currentReservation.getPlaceId()).getCapacity().equals(SINGLE)) {
+        } else if (placeService.getById(currentReservation.getPlaceId()).getCapacity().equals(SINGLE)) {
             throw new WrongSeatTypeException();
         }
 
@@ -234,8 +235,8 @@ public class ReservationInfoService implements IReservationInfoService {
 
         ReservationDTO reservationForCurrentUser = reservationService.saveReservation(
                 reservationConverter.fromDTO(currentReservation));
-        for(Date currentDate: dates){
-            detailService.saveDetail(detailConverter.fromDTO(currentDate,reservationForCurrentUser.getId()));
+        for (Date currentDate : dates) {
+            detailService.saveDetail(detailConverter.fromDTO(currentDate, reservationForCurrentUser.getId()));
         }
 
         ReservationInfoDTO resultInfo = reservationInfoConverter.toDTO(placeService.getById(reservationForCurrentUser.getPlaceId()),
@@ -243,9 +244,72 @@ public class ReservationInfoService implements IReservationInfoService {
                 reservationForCurrentUser,
                 null);
 
-        try { mailSender.send(resultInfo); }
-        catch (Exception e){ }
+        try {
+            mailSender.send(resultInfo);
+        } catch (Exception e) {
+        }
 
         return resultInfo;
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean deleteReservationById(Long reservationId) {
+        ReservationDTO reservationToDelete = reservationService.getById(reservationId);
+        if (reservationToDelete != null) {
+            Date newEndDate = Date.valueOf(LocalDate.now().minusDays(1));
+            if (reservationToDelete.getEndDate().compareTo(newEndDate) <= 0) {
+                return true;
+            }
+
+            List<ReservationDTO> dependentReservation = reservationService.getAllByHostId(reservationId);
+            ReservationDTO deletedReservation = reservationService.deleteById(reservationId);
+            List<Date> newDays = Collections.emptyList();
+            try {
+                newDays = dateConverter.toDateList(deletedReservation.getStartDate(),
+                        newEndDate,
+                        deletedReservation.getWeekDays());
+            } catch (DateMissingException dateException) {
+                return true;
+            }
+            if (newDays.isEmpty()) {
+                return true;
+            }
+
+            deletedReservation.setId(null);
+            deletedReservation.setHostId(null);
+            deletedReservation.setEndDate(newEndDate);
+            ReservationDTO newHostReservation = reservationService
+                    .saveReservation(reservationConverter.fromDTO(deletedReservation));
+            for (Date day : newDays) {
+                detailService.saveDetail(detailConverter.fromDTO(day, newHostReservation.getId()));
+            }
+
+            for (ReservationDTO reservation : dependentReservation) {
+                reservation.setId(null);
+                reservation.setHostId(newHostReservation.getId());
+                reservation.setEndDate(newEndDate);
+                ReservationDTO newReservation = reservationService
+                        .saveReservation(reservationConverter.fromDTO(reservation));
+                for (Date day : newDays) {
+                    detailService.saveDetail(detailConverter.fromDTO(day, newReservation.getId()));
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    @Modifying
+    public boolean deleteFromExistingByHostAndUser(Long hostId, Long userId) {
+        ReservationDTO toDelete = reservationService.getByHostAndUser(hostId, userId);
+        if (toDelete != null) {
+            this.deleteReservationById(toDelete.getId());
+            return true;
+        }
+        return false;
     }
 }

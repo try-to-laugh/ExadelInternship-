@@ -11,11 +11,8 @@ import com.hcb.hotchairs.services.IBotMailSenderService;
 import com.hcb.hotchairs.services.IReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
@@ -108,23 +105,24 @@ public class ReservationService implements IReservationService {
 
     @Override
     @Modifying
-    @Transactional
-    public boolean deleteById(Long reservationId) {
-        if (reservationDAO.findById(reservationId).isPresent()) {
+    public ReservationDTO deleteById(Long reservationId) {
+        Optional<Reservation> optionalReservation = reservationDAO.findById(reservationId);
+        if (optionalReservation.isPresent()) {
             reservationDAO.deleteById(reservationId);
-            return true;
         }
-        return false;
+        return reservationConverter.toDTO(optionalReservation.orElse(null));
     }
 
     @Override
-    @Modifying
-    public boolean deleteFromCurrentByHostAndUser(Long hostId, Long userId) {
-        Optional<Reservation> optionalReservation = reservationDAO.findByHostAnUser(hostId, userId);
-        if (optionalReservation.isPresent()) {
-            reservationDAO.deleteById(optionalReservation.get().getId());
-            return true;
-        }
-        return false;
+    public ReservationDTO getByHostAndUser(Long hostId, Long userId) {
+        return reservationConverter.toDTO(reservationDAO.findByHostAnUser(hostId,userId).orElse(null));
+    }
+
+    @Override
+    public List<ReservationDTO> getAllByHostId(Long hostReservationId) {
+        return reservationDAO.findAllByHost(hostReservationId)
+                .stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -24,18 +24,4 @@ public class ReservationController {
     public ResponseEntity<Object> getAll() {
         return ResponseEntity.ok(reservationService.getAll());
     }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteReservation(@PathVariable("id") Long reservationId) {
-        return (reservationService.deleteById(reservationId)) ? ResponseEntity.status(HttpStatus.OK).build()
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-    @DeleteMapping("/fromCurrent")
-    public ResponseEntity<?> deleteFromCurrent(@RequestParam("hostId") Long hostId,
-                                               @RequestParam("userId") Long userId){
-        return reservationService.deleteFromCurrentByHostAndUser(hostId, userId)
-                ? ResponseEntity.status(HttpStatus.OK).build()
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
 }

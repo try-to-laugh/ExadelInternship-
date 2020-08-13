@@ -2,12 +2,10 @@ package com.hcb.hotchairs.services;
 
 import com.hcb.hotchairs.dtos.DetailDTO;
 import com.hcb.hotchairs.dtos.ReservationDTO;
-import com.hcb.hotchairs.entities.Detail;
 import com.hcb.hotchairs.entities.Reservation;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.time.LocalTime;
 import java.util.List;
 
 public interface IReservationService {
@@ -26,6 +24,7 @@ public interface IReservationService {
                                                           Time endTime,
                                                           Long userId);
 
-    boolean deleteById(Long reservationId);
-    boolean deleteFromCurrentByHostAndUser(Long hostId, Long userId);
+    ReservationDTO deleteById(Long reservationId);
+    ReservationDTO getByHostAndUser(Long hostId, Long userId);
+    List<ReservationDTO> getAllByHostId(Long hostReservationId);
 }
