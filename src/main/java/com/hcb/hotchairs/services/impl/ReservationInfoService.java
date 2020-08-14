@@ -32,7 +32,6 @@ public class ReservationInfoService implements IReservationInfoService {
     private final ReservationConverter reservationConverter;
     private final IDetailService detailService;
     private final DetailConverter detailConverter;
-    private final IBotMailSenderService mailSender;
 
     private static final Long SINGLE = 1L;
 
@@ -45,8 +44,7 @@ public class ReservationInfoService implements IReservationInfoService {
                                   IFloorService floorService,
                                   ReservationConverter reservationConverter,
                                   IDetailService detailService,
-                                  DetailConverter detailConverter,
-                                  IBotMailSenderService mailSender) {
+                                  DetailConverter detailConverter) {
         this.placeService = placeService;
         this.tagService = tagService;
         this.dateConverter = dateConverter;
@@ -56,7 +54,6 @@ public class ReservationInfoService implements IReservationInfoService {
         this.reservationConverter = reservationConverter;
         this.detailService = detailService;
         this.detailConverter = detailConverter;
-        this.mailSender = mailSender;
     }
 
 
@@ -144,16 +141,12 @@ public class ReservationInfoService implements IReservationInfoService {
             }
             reservationInfo.setCurrentUserId(currentHostId);
         }
-        ReservationInfoDTO resultInfo = reservationInfoConverter.toDTO(
+
+        return reservationInfoConverter.toDTO(
                 placeService.getById(hostReservation.getPlace().getId()),
                 floorService.getById(placeService.getById(hostReservation.getPlace().getId()).getFloorId()),
                 hostReservationDTO,
                 reservationInfo.getUsersId());
-
-        try { mailSender.send(resultInfo); }
-        catch (Exception e){ }
-
-        return resultInfo;
     }
 
     @Override
@@ -219,8 +212,7 @@ public class ReservationInfoService implements IReservationInfoService {
         ReservationDTO currentReservation = reservationService.getById(reservationInfo.getHostId());
         if (Objects.isNull(currentReservation)) {
             throw new RowDoesNotExistException();
-        }
-        else if (placeService.getById(currentReservation.getPlaceId()).getCapacity().equals(SINGLE)) {
+        } else if (placeService.getById(currentReservation.getPlaceId()).getCapacity().equals(SINGLE)) {
             throw new WrongSeatTypeException();
         }
 
@@ -234,18 +226,75 @@ public class ReservationInfoService implements IReservationInfoService {
 
         ReservationDTO reservationForCurrentUser = reservationService.saveReservation(
                 reservationConverter.fromDTO(currentReservation));
-        for(Date currentDate: dates){
-            detailService.saveDetail(detailConverter.fromDTO(currentDate,reservationForCurrentUser.getId()));
+        for (Date currentDate : dates) {
+            detailService.saveDetail(detailConverter.fromDTO(currentDate, reservationForCurrentUser.getId()));
         }
 
-        ReservationInfoDTO resultInfo = reservationInfoConverter.toDTO(placeService.getById(reservationForCurrentUser.getPlaceId()),
+        return reservationInfoConverter.toDTO(placeService.getById(reservationForCurrentUser.getPlaceId()),
                 floorService.getById(placeService.getById(reservationForCurrentUser.getPlaceId()).getFloorId()),
                 reservationForCurrentUser,
                 null);
 
-        try { mailSender.send(resultInfo); }
-        catch (Exception e){ }
 
-        return resultInfo;
+    }
+
+    @Override
+    @Modifying
+    @Transactional
+    public boolean deleteReservationById(Long reservationId) {
+        ReservationDTO reservationToDelete = reservationService.getById(reservationId);
+        if (reservationToDelete == null) {
+            return false;
+        }
+
+        Date newEndDate = Date.valueOf(LocalDate.now().minusDays(1));
+        if (reservationToDelete.getEndDate().compareTo(newEndDate) <= 0) {
+            return true;
+        }
+
+        List<ReservationDTO> dependentReservation = reservationService.getAllByHostId(reservationId);
+        ReservationDTO deletedReservation = reservationService.deleteById(reservationId);
+        if (deletedReservation.getStartDate().compareTo(newEndDate) > 0) {
+            return true;
+        }
+        List<Date> newDays = dateConverter.toDateList(deletedReservation.getStartDate(),
+                newEndDate,
+                deletedReservation.getWeekDays());
+        if (newDays.isEmpty()) {
+            return true;
+        }
+
+        deletedReservation.setId(null);
+        deletedReservation.setHostId(null);
+        deletedReservation.setEndDate(newEndDate);
+        ReservationDTO newHostReservation = reservationService
+                .saveReservation(reservationConverter.fromDTO(deletedReservation));
+        for (Date day : newDays) {
+            detailService.saveDetail(detailConverter.fromDTO(day, newHostReservation.getId()));
+        }
+
+        for (ReservationDTO reservation : dependentReservation) {
+            reservation.setId(null);
+            reservation.setHostId(newHostReservation.getId());
+            reservation.setEndDate(newEndDate);
+            ReservationDTO newReservation = reservationService
+                    .saveReservation(reservationConverter.fromDTO(reservation));
+            for (Date day : newDays) {
+                detailService.saveDetail(detailConverter.fromDTO(day, newReservation.getId()));
+            }
+        }
+        return true;
+    }
+
+
+    @Override
+    @Modifying
+    public boolean deleteFromExistingByHostAndUser(Long hostId, Long userId) {
+        ReservationDTO toDelete = reservationService.getByHostAndUser(hostId, userId);
+        if (toDelete != null) {
+            this.deleteReservationById(toDelete.getId());
+            return true;
+        }
+        return false;
     }
 }

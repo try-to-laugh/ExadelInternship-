@@ -93,4 +93,7 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
 
     @Query("FROM Reservation res WHERE res.host.id = ?1 AND res.user.id = ?2 ")
     Optional<Reservation> findByHostAnUser(Long hostId, Long userId);
+
+    @Query("FROM Reservation res WHERE res.host.id = ?1 ")
+    List<Reservation> findAllByHost(Long hostReservationId);
 }

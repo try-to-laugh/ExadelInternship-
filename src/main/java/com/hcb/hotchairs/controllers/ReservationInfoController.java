@@ -2,23 +2,24 @@ package com.hcb.hotchairs.controllers;
 
 import com.hcb.hotchairs.dtos.ReservationFilterDTO;
 import com.hcb.hotchairs.dtos.ReservationInfoDTO;
+import com.hcb.hotchairs.services.IBotMailSenderService;
 import com.hcb.hotchairs.services.IReservationInfoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/reservationInfo")
 public class ReservationInfoController {
     private final IReservationInfoService reservationInfoService;
+    private final IBotMailSenderService mailSenderService;
 
-    public ReservationInfoController(IReservationInfoService reservationInfoService) {
+    public ReservationInfoController(IReservationInfoService reservationInfoService,
+                                     IBotMailSenderService mailSenderService) {
         this.reservationInfoService = reservationInfoService;
+        this.mailSenderService = mailSenderService;
     }
 
     @PostMapping("/free")
@@ -28,7 +29,15 @@ public class ReservationInfoController {
 
     @PostMapping("/save")
     public ResponseEntity<ReservationInfoDTO> bookPlace(@RequestBody ReservationInfoDTO request) {
-        return ResponseEntity.ok(reservationInfoService.saveReservationInfo(request));
+        ReservationInfoDTO result = reservationInfoService.saveReservationInfo(request);
+        try{
+            mailSenderService.send(result);
+        }
+        catch (Exception e){
+            // I didn't want to create logger now=) And if something bad happen there, i don't want FRONT knew that)
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/showIntersection")
@@ -38,6 +47,29 @@ public class ReservationInfoController {
 
     @PostMapping("/addToCurrent")
     public ResponseEntity<ReservationInfoDTO> addToCurrent(@RequestBody ReservationInfoDTO request){
-        return ResponseEntity.ok(reservationInfoService.addToCurrent(request));
+        ReservationInfoDTO result = reservationInfoService.addToCurrent(request);
+        try{
+            mailSenderService.send(result);
+        }
+        catch (Exception e){
+            // I didn't want to create logger now=) And if something bad happen there, i don't want FRONT knew that)
+            e.printStackTrace();
+        }
+        return ResponseEntity.ok(result);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteReservation(@PathVariable("id") Long reservationId) {
+        return (reservationInfoService.deleteReservationById(reservationId))
+                ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @DeleteMapping("/fromCurrent")
+    public ResponseEntity<?> deleteFromCurrent(@RequestParam("hostId") Long hostId,
+                                               @RequestParam("userId") Long userId){
+        return reservationInfoService.deleteFromExistingByHostAndUser(hostId, userId)
+                ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }
