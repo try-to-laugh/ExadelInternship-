@@ -98,7 +98,7 @@ public class BotMailSenderService implements IBotMailSenderService {
 
         if ((reservationInfo.getStartTime().toLocalTime().equals(LocalTime.of(0, 0, 0))
                 || reservationInfo.getEndTime().toLocalTime().equals(LocalTime.of(23, 59, 59)))) {
-            infoPart.append("Time: Full Day");
+            infoPart.append("\nTime: Full Day");
         } else {
             infoPart.append("\nTime: ")
                     .append(reservationInfo.getStartTime())
@@ -108,7 +108,7 @@ public class BotMailSenderService implements IBotMailSenderService {
 
 
         if (reservationInfo.getWeekDay() != null && reservationInfo.getWeekDay().length != 0) {
-            infoPart.append("Days:\n");
+            infoPart.append("\nDays:\n");
             for (int item : reservationInfo.getWeekDay()) {
                 infoPart.append(dayOfWeek[item]);
             }
