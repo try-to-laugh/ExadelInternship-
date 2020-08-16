@@ -43,9 +43,9 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
             " AND res.endTime > ?2 " +
             " AND res.place.id = ?4")
     List<Reservation> findByTimeDateAndPlace(Date date,
-                                                Time startTime,
-                                                Time endTime,
-                                                Long placeId);
+                                             Time startTime,
+                                             Time endTime,
+                                             Long placeId);
 
     @Query("FROM Reservation " +
             " WHERE user.id = ?1 AND (endDate > CURRENT_DATE OR " +
@@ -96,4 +96,15 @@ public interface IReservationDAO extends JpaRepository<Reservation, Long> {
 
     @Query("FROM Reservation res WHERE res.host.id = ?1 ")
     List<Reservation> findAllByHost(Long hostReservationId);
+
+    @Query("FROM Reservation res WHERE res.place.id = :placeId " +
+            " AND res.endDate >= :startDate " +
+            " AND res.startDate <= :endDate " +
+            " AND res.startTime <= :endTime " +
+            " AND res.endTime >= :startTime ")
+    List<Reservation> findAllByPlaceInDateTimeRange(@Param("placeId") Long placeId,
+                                                    @Param("startDate") Date startDate,
+                                                    @Param("endDate") Date endDate,
+                                                    @Param("startTime") Time startTime,
+                                                    @Param("endTime") Time endTime);
 }
