@@ -30,6 +30,12 @@ public class HotChairsExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(CollisionException.class)
+    protected ResponseEntity<ExceptionMessage> handleCollision() {
+        return new ResponseEntity<>(new ExceptionMessage("Place already booked"),
+                HttpStatus.CONFLICT);
+    }
+
 
 
     @Data

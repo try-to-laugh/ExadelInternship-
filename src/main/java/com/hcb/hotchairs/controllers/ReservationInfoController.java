@@ -30,10 +30,9 @@ public class ReservationInfoController {
     @PostMapping("/save")
     public ResponseEntity<ReservationInfoDTO> bookPlace(@RequestBody ReservationInfoDTO request) {
         ReservationInfoDTO result = reservationInfoService.saveReservationInfo(request);
-        try{
+        try {
             mailSenderService.send(result);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             // I didn't want to create logger now=) And if something bad happen there, i don't want FRONT knew that)
             e.printStackTrace();
         }
@@ -46,12 +45,11 @@ public class ReservationInfoController {
     }
 
     @PostMapping("/addToCurrent")
-    public ResponseEntity<ReservationInfoDTO> addToCurrent(@RequestBody ReservationInfoDTO request){
+    public ResponseEntity<ReservationInfoDTO> addToCurrent(@RequestBody ReservationInfoDTO request) {
         ReservationInfoDTO result = reservationInfoService.addToCurrent(request);
-        try{
+        try {
             mailSenderService.send(result);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             // I didn't want to create logger now=) And if something bad happen there, i don't want FRONT knew that)
             e.printStackTrace();
         }
@@ -60,15 +58,22 @@ public class ReservationInfoController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReservation(@PathVariable("id") Long reservationId) {
-        return (reservationInfoService.deleteReservationById(reservationId))
+        return (reservationInfoService.closeByReservationId(reservationId))
                 ? ResponseEntity.status(HttpStatus.OK).build()
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
     @DeleteMapping("/fromCurrent")
     public ResponseEntity<?> deleteFromCurrent(@RequestParam("hostId") Long hostId,
-                                               @RequestParam("userId") Long userId){
-        return reservationInfoService.deleteFromExistingByHostAndUser(hostId, userId)
+                                               @RequestParam("userId") Long userId) {
+        return reservationInfoService.closeByHostAndUserId(hostId, userId)
+                ? ResponseEntity.status(HttpStatus.OK).build()
+                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    @DeleteMapping("/completelyRemove/{id}")
+    public ResponseEntity<?> completelyRemove(@PathVariable("id") Long id) {
+        return reservationInfoService.completelyDelete(id)
                 ? ResponseEntity.status(HttpStatus.OK).build()
                 : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

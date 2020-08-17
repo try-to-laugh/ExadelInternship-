@@ -6,6 +6,7 @@ import com.hcb.hotchairs.converters.ReservationConverter;
 import com.hcb.hotchairs.converters.ReservationInfoConverter;
 import com.hcb.hotchairs.dtos.*;
 import com.hcb.hotchairs.entities.Reservation;
+import com.hcb.hotchairs.exceptions.CollisionException;
 import com.hcb.hotchairs.exceptions.DateMissingException;
 import com.hcb.hotchairs.exceptions.RowDoesNotExistException;
 import com.hcb.hotchairs.exceptions.WrongSeatTypeException;
@@ -58,7 +59,14 @@ public class ReservationInfoService implements IReservationInfoService {
 
 
     @Override
+    @Transactional
     public List<ReservationInfoDTO> getFreePlace(ReservationFilterDTO reservationFilter) {
+        if (!Objects.isNull(reservationFilter.getUsersId())
+                && !reservationFilter.getUsersId().isEmpty()
+                && reservationFilter.getIsMeeting().equals(SINGLE)) {
+            throw new WrongSeatTypeException();
+        }
+
         List<Date> requiredDays = dateConverter.toDateList(reservationFilter.getStartDate(),
                 reservationFilter.getEndDate(),
                 reservationFilter.getWeekDay());
@@ -108,6 +116,9 @@ public class ReservationInfoService implements IReservationInfoService {
             throw new WrongSeatTypeException();
         }
 
+        if (!isFree(reservationInfo)) {
+            throw new CollisionException();
+        }
 
         List<Date> requiredDate = dateConverter.toDateList(reservationInfo.getStartDate(),
                 reservationInfo.getEndDate(),
@@ -156,7 +167,6 @@ public class ReservationInfoService implements IReservationInfoService {
         if (requiredDate.isEmpty()) {
             throw new DateMissingException();
         }
-        requiredDate.sort(Comparator.naturalOrder());
 
         List<ReservationDTO> probablyIntersectionReservations = reservationService.getIntersectionByDateTimeForUser(
                 reservationInfo.getStartDate(),
@@ -168,26 +178,17 @@ public class ReservationInfoService implements IReservationInfoService {
 
         List<ReservationDTO> intersectionReservation = new ArrayList<>();
         for (ReservationDTO reservation : probablyIntersectionReservations) {
-            List<DetailDTO> resDetails = detailService.getActiveByReservationId(reservation.getId());
-            int requiredDatePointer = 0;
-            int resDetailPointer = 0;
-            int pointer = 0;
-            while (pointer < (resDetails.size() + requiredDate.size())) {
-                if (requiredDatePointer >= requiredDate.size() || resDetailPointer >= resDetails.size()) {
-                    break;
-                }
-                LocalDate fromRequired = requiredDate.get(requiredDatePointer).toLocalDate();
-                LocalDate fromResDetail = resDetails.get(resDetailPointer).getDate().toLocalDate();
 
-                if (fromRequired.equals(fromResDetail)) {
-                    intersectionReservation.add(reservation);
-                    break;
-                } else if (fromRequired.compareTo(fromResDetail) > 0) {
-                    resDetailPointer++;
-                } else {
-                    requiredDatePointer++;
-                }
-                pointer++;
+            List<LocalDate> dates = requiredDate.stream().map(Date::toLocalDate).collect(Collectors.toList());
+            dates.retainAll(new HashSet<>(detailService
+                    .getActiveByReservationId(reservation.getId())
+                    .stream()
+                    .map(DetailDTO::getDate)
+                    .map(Date::toLocalDate)
+                    .collect(Collectors.toList())));
+
+            if (!dates.isEmpty()) {
+                intersectionReservation.add(reservation);
             }
         }
 
@@ -234,14 +235,12 @@ public class ReservationInfoService implements IReservationInfoService {
                 floorService.getById(placeService.getById(reservationForCurrentUser.getPlaceId()).getFloorId()),
                 reservationForCurrentUser,
                 null);
-
-
     }
 
     @Override
     @Modifying
     @Transactional
-    public boolean deleteReservationById(Long reservationId) {
+    public boolean closeByReservationId(Long reservationId) {
         ReservationDTO reservationToDelete = reservationService.getById(reservationId);
         if (reservationToDelete == null) {
             return false;
@@ -286,15 +285,51 @@ public class ReservationInfoService implements IReservationInfoService {
         return true;
     }
 
-
     @Override
     @Modifying
-    public boolean deleteFromExistingByHostAndUser(Long hostId, Long userId) {
+    public boolean closeByHostAndUserId(Long hostId, Long userId) {
         ReservationDTO toDelete = reservationService.getByHostAndUser(hostId, userId);
         if (toDelete != null) {
-            this.deleteReservationById(toDelete.getId());
+            this.closeByReservationId(toDelete.getId());
             return true;
         }
         return false;
+    }
+
+    public boolean isFree(ReservationInfoDTO reservationInfo) {
+        List<Date> dates = dateConverter.toDateList(reservationInfo.getStartDate(),
+                reservationInfo.getEndDate(),
+                reservationInfo.getWeekDay());
+        if (dates.isEmpty()) {
+            throw new DateMissingException();
+        }
+
+        List<ReservationDTO> probablyIntersect = reservationService
+                .getAllByPlaceInDateTimeRange(reservationInfo.getPlaceId(),
+                        reservationInfo.getStartDate(),
+                        reservationInfo.getEndDate(),
+                        reservationInfo.getStartTime(),
+                        reservationInfo.getEndTime());
+
+        for (ReservationDTO res : probablyIntersect) {
+            List<LocalDate> newResDays = dates.stream().map(Date::toLocalDate).collect(Collectors.toList());
+            newResDays.retainAll(new HashSet<>(detailService
+                    .getActiveByReservationId(res.getId()))
+                    .stream()
+                    .map(DetailDTO::getDate)
+                    .map(Date::toLocalDate)
+                    .collect(Collectors.toList()));
+
+            if (!newResDays.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Modifying
+    @Override
+    public boolean completelyDelete(Long reservationId) {
+        return reservationService.deleteById(reservationId) != null;
     }
 }

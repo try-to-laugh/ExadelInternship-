@@ -2,6 +2,7 @@ package com.hcb.hotchairs.services;
 
 import com.hcb.hotchairs.dtos.ReservationFilterDTO;
 import com.hcb.hotchairs.dtos.ReservationInfoDTO;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.List;
 
@@ -14,6 +15,9 @@ public interface IReservationInfoService {
 
     ReservationInfoDTO addToCurrent(ReservationInfoDTO reservationInfo);
 
-    boolean deleteReservationById(Long reservationId);
-    boolean deleteFromExistingByHostAndUser(Long hostId, Long userId);
+    boolean closeByReservationId(Long reservationId);
+    boolean closeByHostAndUserId(Long hostId, Long userId);
+
+    @Modifying
+    boolean completelyDelete(Long reservationId);
 }

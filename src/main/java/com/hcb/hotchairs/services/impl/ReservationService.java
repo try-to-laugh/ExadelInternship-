@@ -125,4 +125,16 @@ public class ReservationService implements IReservationService {
                 .map(reservationConverter::toDTO)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<ReservationDTO> getAllByPlaceInDateTimeRange(Long placeId,
+                                                             Date startDate,
+                                                             Date endDate,
+                                                             Time startTime,
+                                                             Time endTime) {
+        return reservationDAO.findAllByPlaceInDateTimeRange(placeId,startDate,endDate,startTime,endTime)
+                .stream()
+                .map(reservationConverter::toDTO)
+                .collect(Collectors.toList());
+    }
 }

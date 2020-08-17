@@ -27,4 +27,9 @@ public interface IReservationService {
     ReservationDTO deleteById(Long reservationId);
     ReservationDTO getByHostAndUser(Long hostId, Long userId);
     List<ReservationDTO> getAllByHostId(Long hostReservationId);
+    List<ReservationDTO> getAllByPlaceInDateTimeRange(Long placeId,
+                                                      Date startDate,
+                                                      Date endDate,
+                                                      Time startTime,
+                                                      Time endTime);
 }
